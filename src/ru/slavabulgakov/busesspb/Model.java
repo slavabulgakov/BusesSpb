@@ -33,6 +33,7 @@ import android.app.Application;
 public class Model extends Application {
 	
 	private ArrayList<ParserWebPageTask> _parsers;
+	public ArrayList<Transport> transportList;
 	
 	public interface OnLoadCompleteListener {
 		void onLoadComplete(ArrayList<Transport> array);
@@ -143,7 +144,7 @@ public class Model extends Application {
 			
 			@Override
 			public void finish() {
-//				_parsers.remove(this);
+				transportList = _array;
 				listener.onAllRoutesLoadComplete(_array);
 				for (Transport transport : _array) {
 					loadDataForRoute(transport, listener);
@@ -159,7 +160,6 @@ public class Model extends Application {
 		
 		ParserWebPageTask parser = new ParserWebPageTask(req);
 		parser.execute((Void)null);
-		_parsers.add(parser);
 	}
 	
 	public void loadDataForRoute(final Transport transport, final OnLoadCompleteListener listener) {
@@ -221,6 +221,7 @@ public class Model extends Application {
 			
 			@Override
 			public void finish() {
+				_parsers.remove(this);
 				listener.onLoadComplete(_array);
 			}
 		};

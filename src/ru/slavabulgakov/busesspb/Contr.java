@@ -2,6 +2,7 @@ package ru.slavabulgakov.busesspb;
 
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -34,7 +35,8 @@ public class Contr implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.button1:
 //			_model.loadDataForRoute("3", (OnLoadCompleteListener)_currentActivity);
-			_model.loadDataForAllRoutes((OnLoadCompleteListener)_currentActivity);
+//			_model.loadDataForAllRoutes((OnLoadCompleteListener)_currentActivity);
+			_currentActivity.startActivity(new Intent(_currentActivity, SelectRouteActivity.class));
 			break;
 
 		default:
