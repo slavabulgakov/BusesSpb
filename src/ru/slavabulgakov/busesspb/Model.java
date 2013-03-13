@@ -7,10 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -24,16 +22,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jhlabs.map.proj.StereographicAzimuthalProjection;
-
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class Model extends Application {
 	
 	private ArrayList<ParserWebPageTask> _parsers;
-	public ArrayList<Transport> transportList;
+	private ArrayList<Transport> _offlineTransportList;
 	private OnLoadCompleteListener _listener;
 	
 	public interface OnLoadCompleteListener {
@@ -59,12 +57,71 @@ public class Model extends Application {
 		}
 	}
 	
+	private static List<FavouriteAddress> loadFavouriteAddresses() {
+		 Ê Ê Ê ÊObjectInputStream in = null;
+		 Ê Ê Ê Êtry {
+		 Ê Ê Ê Ê Ê Êin = new ObjectInputStream(InTaxiApplication.getInstance().openFileInput("favouriteaddresses"));
+		 Ê Ê Ê Ê Ê Êtry {
+		 Ê Ê Ê Ê Ê Ê Ê Êreturn (List<FavouriteAddress>)in.readObject();
+		 Ê Ê Ê Ê Ê Ê} catch (Throwable t) {
+		 Ê Ê Ê Ê Ê Ê Ê Êlog(call);
+		 Ê Ê Ê Ê Ê Ê}
+		 Ê Ê Ê Ê} catch (IOException e) {
+		 Ê Ê Ê Ê Ê Êif (!(e instanceof FileNotFoundException)) {
+		 Ê Ê Ê Ê Ê Ê Ê Êlog(e);
+		 Ê Ê Ê Ê Ê Ê}
+		 Ê Ê Ê Ê} finally {
+		 Ê Ê Ê Ê Ê Êif (in != null) {
+		 Ê Ê Ê Ê Ê Ê Ê Êtry {
+		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Êin.close();
+		 Ê Ê Ê Ê Ê Ê Ê Ê} catch (IOException e1) {
+		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Êlog(e1);
+		 Ê Ê Ê Ê Ê Ê Ê Ê}
+		 Ê Ê Ê Ê Ê Ê}
+		 Ê Ê Ê Ê}
+		 Ê Ê Ê Êreturn new ArrayList<FavouriteAddress>();
+		 Ê Ê}
+
+		 Ê Êprivate static void saveFavouriteAddresses(List<FavouriteAddress> addresses, boolean isForce){
+		 Ê Ê Ê Êif (!addresses.isEmpty() || isForce) {
+		 Ê Ê Ê Ê Ê ÊObjectOutputStream out = null;
+		 Ê Ê Ê Ê Ê Êtry {
+		 Ê Ê Ê Ê Ê Ê Ê ÊFileOutputStream fout = InTaxiApplication.getInstance().openFileOutput("favouriteaddresses", 0);
+		 Ê Ê Ê Ê Ê Ê Ê Êout = new ObjectOutputStream(fout);
+		 Ê Ê Ê Ê Ê Ê Ê Êout.writeObject(addresses);
+		 Ê Ê Ê Ê Ê Ê Ê Êfout.getFD().sync();
+		 Ê Ê Ê Ê Ê Ê} catch (IOException e) {
+		 Ê Ê Ê Ê Ê Ê Ê Êlog(e);
+		 Ê Ê Ê Ê Ê Ê} finally {
+		 Ê Ê Ê Ê Ê Ê Ê Êif (out != null) {
+		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Êtry {
+		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Êout.close();
+		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê} catch (IOException e1) {
+		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Êlog(e1);
+		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê}
+		 Ê Ê Ê Ê Ê Ê Ê Ê}
+		 Ê Ê Ê Ê Ê Ê}
+		 Ê Ê Ê Ê}
+		 // http://stackoverflow.com/questions/14212745/how-to-read-write-data-dictionary-in-android-programmatically
+		 Ê Ê}
+	
+	public ArrayList<Transport> getTransportListForMap() {
+		SharedPreferences prefs = getSharedPreferences("TRANSPORT_LIST", MODE_PRIVATE);
+		prefs.
+		if (condition) {
+			
+		}
+	}
+	
 	public void changeListener(OnLoadCompleteListener listener) {
 		_listener = listener;
 	}
 	
 	public void loadDataForAllRoutes(OnLoadCompleteListener listener) {
 		_listener = listener;
+		if (transportList != null) {
+			
+		}
 		IRequest req = new IRequest() {
 			
 			boolean _canceled;

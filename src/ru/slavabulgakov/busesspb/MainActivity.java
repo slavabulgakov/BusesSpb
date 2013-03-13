@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.Model.Transport;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -26,15 +28,25 @@ public class MainActivity extends BaseActivity implements OnLoadCompleteListener
         setContentView(R.layout.activity_main);
         
         _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
+        _map.moveCamera(center);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+        _map.animateCamera(zoom);
+        _map.setMyLocationEnabled(true);
         
         Button btn = (Button)findViewById(R.id.button1);
         btn.setOnClickListener(Contr.getInstance());
-        
-        _model.loadDataForAllRoutes(this);
     }
 
 
     @Override
+	protected void onResume() {
+    	_model.loadDataForAllRoutes(this);
+		super.onResume();
+	}
+
+
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);

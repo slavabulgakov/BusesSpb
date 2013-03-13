@@ -28,10 +28,8 @@ public class SelectRouteActivity extends BaseActivity implements OnLoadCompleteL
 				convertView = inflater.inflate(R.layout.listitem_selectroute, parent, false);
 			}
 			((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_model.transportList.get(position).routeNumber);
-			return super.getView(position, convertView, parent);
+			return convertView;
 		}
-		
-		
 	}
 
 	@Override
