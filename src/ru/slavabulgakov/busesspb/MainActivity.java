@@ -1,8 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.Model.Transport;
 

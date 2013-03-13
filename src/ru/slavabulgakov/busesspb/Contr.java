@@ -1,6 +1,5 @@
 package ru.slavabulgakov.busesspb;
 
-import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
