@@ -29,6 +29,8 @@ public class MainActivity extends BaseActivity implements OnLoadCompleteListener
         
         Button btn = (Button)findViewById(R.id.button1);
         btn.setOnClickListener(Contr.getInstance());
+        
+        _model.loadDataForAllRoutes(this);
     }
 
 

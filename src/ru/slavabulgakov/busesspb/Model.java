@@ -34,6 +34,7 @@ public class Model extends Application {
 	
 	private ArrayList<ParserWebPageTask> _parsers;
 	public ArrayList<Transport> transportList;
+	private OnLoadCompleteListener _listener;
 	
 	public interface OnLoadCompleteListener {
 		void onLoadComplete(ArrayList<Transport> array);
@@ -58,7 +59,12 @@ public class Model extends Application {
 		}
 	}
 	
-	public void loadDataForAllRoutes(final OnLoadCompleteListener listener) {
+	public void changeListener(OnLoadCompleteListener listener) {
+		_listener = listener;
+	}
+	
+	public void loadDataForAllRoutes(OnLoadCompleteListener listener) {
+		_listener = listener;
 		IRequest req = new IRequest() {
 			
 			boolean _canceled;
@@ -145,9 +151,11 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				transportList = _array;
-				listener.onAllRoutesLoadComplete(_array);
-				for (Transport transport : _array) {
-					loadDataForRoute(transport, listener);
+				_listener.onAllRoutesLoadComplete(_array);
+				if (!_canceled) {
+					for (Transport transport : _array) {
+						loadDataForRoute(transport, _listener);
+					}
 				}
 			}
 		};

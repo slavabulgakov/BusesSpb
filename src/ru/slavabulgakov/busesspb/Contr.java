@@ -35,6 +35,7 @@ public class Contr implements OnClickListener {
 		case R.id.button1:
 //			_model.loadDataForRoute("3", (OnLoadCompleteListener)_currentActivity);
 //			_model.loadDataForAllRoutes((OnLoadCompleteListener)_currentActivity);
+			_model.cancel();
 			_currentActivity.startActivity(new Intent(_currentActivity, SelectRouteActivity.class));
 			break;
 
