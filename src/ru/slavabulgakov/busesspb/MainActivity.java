@@ -12,6 +12,8 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.view.Menu;
@@ -34,6 +36,9 @@ public class MainActivity extends BaseActivity implements OnLoadCompleteListener
         _map.animateCamera(zoom);
         _map.setMyLocationEnabled(true);
         
+        MyUrlTileProvider mTileProvider = new MyUrlTileProvider(256, 256);
+        _map.addTileOverlay(new TileOverlayOptions().tileProvider(mTileProvider));
+        
         Button btn = (Button)findViewById(R.id.button1);
         btn.setOnClickListener(Contr.getInstance());
     }
@@ -41,7 +46,7 @@ public class MainActivity extends BaseActivity implements OnLoadCompleteListener
 
     @Override
 	protected void onResume() {
-    	_model.loadDataForAllRoutes(this);
+//    	_model.loadDataForAllRoutes(this);
 		super.onResume();
 	}
 

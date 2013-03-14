@@ -18,7 +18,7 @@ public class SelectRouteActivity extends BaseActivity implements OnLoadCompleteL
 	class Adapter extends ArrayAdapter<Transport> {
 		
 		public Adapter() {
-			super(SelectRouteActivity.this, R.layout.listitem_selectroute, _model.transportList);
+			super(SelectRouteActivity.this, R.layout.listitem_selectroute, _model.getAll());
 		}
 		
 		@Override
@@ -27,7 +27,7 @@ public class SelectRouteActivity extends BaseActivity implements OnLoadCompleteL
 				LayoutInflater inflater = SelectRouteActivity.this.getLayoutInflater();
 				convertView = inflater.inflate(R.layout.listitem_selectroute, parent, false);
 			}
-			((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_model.transportList.get(position).routeNumber);
+			((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_model.getAll().get(position).routeNumber);
 			return convertView;
 		}
 	}
@@ -36,7 +36,7 @@ public class SelectRouteActivity extends BaseActivity implements OnLoadCompleteL
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_selectroute);
-		if (_model.transportList == null) {
+		if (_model.getAll() == null) {
 			_model.changeListener(this);
 		} else {
 			ListView listView = (ListView)findViewById(R.id.routesListView);
@@ -53,7 +53,7 @@ public class SelectRouteActivity extends BaseActivity implements OnLoadCompleteL
 
 	@Override
 	public void onAllRoutesLoadComplete(ArrayList<Transport> array) {
-		if (_model.transportList != null) {
+		if (_model.getAll() != null) {
 			ListView listView = (ListView)findViewById(R.id.routesListView);
 			Adapter adapter = new Adapter();
 			listView.setAdapter(adapter);

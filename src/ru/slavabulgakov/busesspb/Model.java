@@ -1,8 +1,14 @@
 package ru.slavabulgakov.busesspb;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -25,13 +31,12 @@ import org.json.JSONObject;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 public class Model extends Application {
 	
 	private ArrayList<ParserWebPageTask> _parsers;
-	private ArrayList<Transport> _offlineTransportList;
+	private ArrayList<Transport> _favorite;
+	private ArrayList<Transport> _all;
 	private OnLoadCompleteListener _listener;
 	
 	public interface OnLoadCompleteListener {
@@ -57,60 +62,64 @@ public class Model extends Application {
 		}
 	}
 	
-	private static List<FavouriteAddress> loadFavouriteAddresses() {
-		 Ê Ê Ê ÊObjectInputStream in = null;
-		 Ê Ê Ê Êtry {
-		 Ê Ê Ê Ê Ê Êin = new ObjectInputStream(InTaxiApplication.getInstance().openFileInput("favouriteaddresses"));
-		 Ê Ê Ê Ê Ê Êtry {
-		 Ê Ê Ê Ê Ê Ê Ê Êreturn (List<FavouriteAddress>)in.readObject();
-		 Ê Ê Ê Ê Ê Ê} catch (Throwable t) {
-		 Ê Ê Ê Ê Ê Ê Ê Êlog(call);
-		 Ê Ê Ê Ê Ê Ê}
-		 Ê Ê Ê Ê} catch (IOException e) {
-		 Ê Ê Ê Ê Ê Êif (!(e instanceof FileNotFoundException)) {
-		 Ê Ê Ê Ê Ê Ê Ê Êlog(e);
-		 Ê Ê Ê Ê Ê Ê}
-		 Ê Ê Ê Ê} finally {
-		 Ê Ê Ê Ê Ê Êif (in != null) {
-		 Ê Ê Ê Ê Ê Ê Ê Êtry {
-		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Êin.close();
-		 Ê Ê Ê Ê Ê Ê Ê Ê} catch (IOException e1) {
-		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Êlog(e1);
-		 Ê Ê Ê Ê Ê Ê Ê Ê}
-		 Ê Ê Ê Ê Ê Ê}
-		 Ê Ê Ê Ê}
-		 Ê Ê Ê Êreturn new ArrayList<FavouriteAddress>();
-		 Ê Ê}
-
-		 Ê Êprivate static void saveFavouriteAddresses(List<FavouriteAddress> addresses, boolean isForce){
-		 Ê Ê Ê Êif (!addresses.isEmpty() || isForce) {
-		 Ê Ê Ê Ê Ê ÊObjectOutputStream out = null;
-		 Ê Ê Ê Ê Ê Êtry {
-		 Ê Ê Ê Ê Ê Ê Ê ÊFileOutputStream fout = InTaxiApplication.getInstance().openFileOutput("favouriteaddresses", 0);
-		 Ê Ê Ê Ê Ê Ê Ê Êout = new ObjectOutputStream(fout);
-		 Ê Ê Ê Ê Ê Ê Ê Êout.writeObject(addresses);
-		 Ê Ê Ê Ê Ê Ê Ê Êfout.getFD().sync();
-		 Ê Ê Ê Ê Ê Ê} catch (IOException e) {
-		 Ê Ê Ê Ê Ê Ê Ê Êlog(e);
-		 Ê Ê Ê Ê Ê Ê} finally {
-		 Ê Ê Ê Ê Ê Ê Ê Êif (out != null) {
-		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Êtry {
-		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Êout.close();
-		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê} catch (IOException e1) {
-		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê Êlog(e1);
-		 Ê Ê Ê Ê Ê Ê Ê Ê Ê Ê}
-		 Ê Ê Ê Ê Ê Ê Ê Ê}
-		 Ê Ê Ê Ê Ê Ê}
-		 Ê Ê Ê Ê}
-		 // http://stackoverflow.com/questions/14212745/how-to-read-write-data-dictionary-in-android-programmatically
-		 Ê Ê}
-	
-	public ArrayList<Transport> getTransportListForMap() {
-		SharedPreferences prefs = getSharedPreferences("TRANSPORT_LIST", MODE_PRIVATE);
-		prefs.
-		if (condition) {
-			
+	@SuppressWarnings("unchecked")
+	private ArrayList<Transport> _loadFromFile(String fileName) {
+		File file = new File(getFilesDir() + "/" + fileName);
+		ArrayList<Transport> transportList = null;
+		if (file.exists()) {
+			try {
+				FileInputStream fis = new FileInputStream(file);
+	            ObjectInputStream ois = new ObjectInputStream(fis);
+	            transportList = (ArrayList<Transport>)ois.readObject();
+	            ois.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		return transportList;
+	}
+	
+	private void _saveToFile(ArrayList<Transport> transportList, String fileName) {
+		File file = new File(getFilesDir() + "/" + fileName);
+		if (file.exists()) {
+			file.delete();
+		}
+		try {
+			FileOutputStream fos = new FileOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+	        oos.writeObject(transportList);
+	        oos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<Transport> getFavorite() {
+		if (_favorite == null) {
+			_favorite = _loadFromFile("favoriteTransportList.ser");
+		}
+		return _favorite;
+	}
+	
+	public void setFavorite(ArrayList<Transport> favorite) {
+		_favorite = favorite;
+		_saveToFile(favorite, "favoriteTransportList.ser");
+	}
+	
+	public ArrayList<Transport> getAll() {
+		return _all;
+	}
+	
+	public void setAll(ArrayList<Transport> all) {
+		_all = all;
 	}
 	
 	public void changeListener(OnLoadCompleteListener listener) {
@@ -119,8 +128,15 @@ public class Model extends Application {
 	
 	public void loadDataForAllRoutes(OnLoadCompleteListener listener) {
 		_listener = listener;
+		ArrayList<Transport> transportList = getFavorite();
+		if (transportList == null) {
+			transportList = getAll();
+		}
 		if (transportList != null) {
-			
+			for (Transport transport : transportList) {
+				loadDataForRoute(transport, _listener);
+			}
+			return;
 		}
 		IRequest req = new IRequest() {
 			
@@ -207,7 +223,7 @@ public class Model extends Application {
 			
 			@Override
 			public void finish() {
-				transportList = _array;
+				setAll(_array);
 				_listener.onAllRoutesLoadComplete(_array);
 				if (!_canceled) {
 					for (Transport transport : _array) {
