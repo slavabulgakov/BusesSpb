@@ -107,11 +107,13 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	public void showTransportImgOnMap(Bitmap img) {
-		_map.clear();
-		BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
-        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-        _map.addGroundOverlay(new GroundOverlayOptions()
-            .image(image)
-            .positionFromBounds(bounds));
+		if (img != null) {
+			_map.clear();
+			BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
+	        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
+	        _map.addGroundOverlay(new GroundOverlayOptions()
+	            .image(image)
+	            .positionFromBounds(bounds));
+		}
 	}
 }
