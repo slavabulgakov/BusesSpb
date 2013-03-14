@@ -1,8 +1,5 @@
 package ru.slavabulgakov.busesspb;
 
-import java.util.ArrayList;
-
-import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.Model.Transport;
 
 import android.os.Bundle;
@@ -13,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SelectRouteActivity extends BaseActivity implements OnLoadCompleteListener {
+public class SelectRouteActivity extends BaseActivity {
 	
 	class Adapter extends ArrayAdapter<Transport> {
 		
@@ -37,27 +34,15 @@ public class SelectRouteActivity extends BaseActivity implements OnLoadCompleteL
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_selectroute);
 		if (_model.getAll() == null) {
-			_model.changeListener(this);
+			_model.loadDataForAllRoutes(Contr.getInstance());
 		} else {
-			ListView listView = (ListView)findViewById(R.id.routesListView);
-			Adapter adapter = new Adapter();
-			listView.setAdapter(adapter);
-		}
-	}
-
-	@Override
-	public void onLoadComplete(ArrayList<Transport> array) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAllRoutesLoadComplete(ArrayList<Transport> array) {
-		if (_model.getAll() != null) {
-			ListView listView = (ListView)findViewById(R.id.routesListView);
-			Adapter adapter = new Adapter();
-			listView.setAdapter(adapter);
+			showTransportList();
 		}
 	}
 	
+	public void showTransportList() {
+		ListView listView = (ListView)findViewById(R.id.routesListView);
+		Adapter adapter = new Adapter();
+		listView.setAdapter(adapter);
+	}
 }

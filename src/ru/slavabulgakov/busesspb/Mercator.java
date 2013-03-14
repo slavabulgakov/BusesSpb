@@ -161,4 +161,38 @@ public class Mercator {
     	
     	return start_deg + (mer - start_mer) * coeff;
     }
+    
+    public double mer(double deg, AxisType axis) {
+    	double box_left_mer = 	3272267.2330292;
+    	double box_up_mer = 	8264094.7670049;
+    	double box_right_mer = 	3479564.4537096;
+    	double box_bottom_mer = 8483621.912209;
+    	double box_left_deg = 	29.395276695628;
+    	double box_up_deg =		59.385115204298;
+    	double box_right_deg =	31.257459312814;
+    	double box_bottom_deg =	60.374631272666;
+    	
+    	double delta_lng_mer =	box_right_mer - box_left_mer;
+    	double delta_lat_mer =	box_bottom_mer - box_up_mer;
+    	double delta_lng_deg =	box_right_deg - box_left_deg;
+    	double delta_lat_deg =	box_bottom_deg - box_up_deg;
+    	
+    	double lng_coeff = 		delta_lng_mer / delta_lng_deg;
+    	double lat_coeff =		delta_lat_mer / delta_lat_deg;
+    	
+    	double coeff;
+    	double start_deg;
+    	double start_mer;
+    	if (axis == AxisType.LNG) {// долгота
+			coeff = lng_coeff;
+			start_deg = box_left_deg;
+			start_mer = box_left_mer;
+		} else {
+			coeff = lat_coeff;
+			start_deg = box_up_deg + .0035;
+			start_mer = box_up_mer;
+		}
+    	
+    	return start_mer + (deg - start_deg) * coeff;
+    }
 }

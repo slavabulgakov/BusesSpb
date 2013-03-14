@@ -6,15 +6,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -28,9 +29,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.maps.model.LatLngBounds;
+
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class Model extends Application {
 	
@@ -42,6 +47,7 @@ public class Model extends Application {
 	public interface OnLoadCompleteListener {
 		void onLoadComplete(ArrayList<Transport> array);
 		void onAllRoutesLoadComplete(ArrayList<Transport> array);
+		void onImgLoadComplete(Bitmap img);
 	}
 	
 	class Transport {
@@ -225,11 +231,6 @@ public class Model extends Application {
 			public void finish() {
 				setAll(_array);
 				_listener.onAllRoutesLoadComplete(_array);
-				if (!_canceled) {
-					for (Transport transport : _array) {
-						loadDataForRoute(transport, _listener);
-					}
-				}
 			}
 		};
 		
@@ -309,6 +310,54 @@ public class Model extends Application {
 		ParserWebPageTask parser = new ParserWebPageTask(req);
 		parser.execute((Void)null);
 		_parsers.add(parser);
+	}
+	
+	public void loadImg(LatLngBounds bounds, final int width, final int height, final OnLoadCompleteListener listener) {
+		Mercator m = new Mercator();
+		final double left_lon = m.mer(bounds.southwest.longitude, AxisType.LNG);
+		final double left_lat = m.mer(bounds.southwest.latitude, AxisType.LAT);
+		final double right_lon = m.mer(bounds.northeast.longitude, AxisType.LNG);
+		final double right_lat = m.mer(bounds.northeast.latitude, AxisType.LAT);
+		
+		IRequest req = new IRequest() {
+			
+			boolean _canceled;
+			int _step = 0;
+			Bitmap _img;
+			
+			@Override
+			public void setCanceled() {
+				_canceled = true;
+			}
+			
+			@Override
+			public void nextExecute() {
+				try {
+					String src = "http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&LAYERS=vehicle_bus%2Cvehicle_ship%2Cvehicle_tram%2Cvehicle_trolley&WHEELCHAIRONLY=false&SRS=EPSG%3A900913&BBOX=" + Double.toString(left_lon) + "," + Double.toString(left_lat) + "," + Double.toString(right_lon) + "," + Double.toString(right_lat) + "&WIDTH=" + Integer.toString(width) + "&HEIGHT=" + Integer.toString(height);
+		            URL url = new URL(src);
+		            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		            connection.setDoInput(true);
+		            connection.connect();
+		            InputStream input = connection.getInputStream();
+		            _img = BitmapFactory.decodeStream(input);
+		            _step++;
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        }
+			}
+			
+			@Override
+			public boolean needExecute() {
+				return _step == 0;
+			}
+			
+			@Override
+			public void finish() {
+				listener.onImgLoadComplete(_img);
+			}
+		};
+		ParserWebPageTask parser = new ParserWebPageTask(req);
+		parser.execute((Void)null);
 	}
 	
 	public void cancel() {

@@ -1,11 +1,9 @@
 package ru.slavabulgakov.busesspb;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import ru.slavabulgakov.busesspb.Model.Transport;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -14,24 +12,21 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngBoundsCreator;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends BaseActivity implements OnLoadCompleteListener {
+public class MainActivity extends BaseActivity {
 	
 	private GoogleMap _map;
+	private Timer _timer;
 
     @SuppressLint("NewApi")
 	@Override
@@ -45,38 +40,46 @@ public class MainActivity extends BaseActivity implements OnLoadCompleteListener
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
         _map.animateCamera(zoom);
         _map.setMyLocationEnabled(true);
-        
-        BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(getBitmapFromURL("http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&LAYERS=vehicle_bus%2Cvehicle_ship%2Cvehicle_tram%2Cvehicle_trolley&WHEELCHAIRONLY=false&SRS=EPSG%3A900913&BBOX=3363346.6513533,8373632.3192932,3389293.6592268,8394706.9252358&WIDTH=1326&HEIGHT=1077"));
-        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-        GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions()
-            .image(image)
-            .positionFromBounds(bounds));
+        _map.setOnCameraChangeListener(Contr.getInstance());
         
         Button btn = (Button)findViewById(R.id.button1);
         btn.setOnClickListener(Contr.getInstance());
     }
-
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    
+    @SuppressLint("NewApi")
+	public void updateTransportImg() {
+    	View mainFrame = findViewById(R.id.mainFrame);
+		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+        _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+	}
 
     @Override
 	protected void onResume() {
-//    	_model.loadDataForAllRoutes(this);
+    	_timer = new Timer();
+    	_timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				MainActivity.this.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						updateTransportImg();
+					}
+				});
+			}
+		}, 15000, 15000);
 		super.onResume();
 	}
 
+
+	@Override
+	protected void onPause() {
+		_timer.cancel();
+		_timer = null;
+		super.onPause();
+	}
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,8 +89,7 @@ public class MainActivity extends BaseActivity implements OnLoadCompleteListener
     }
 
 
-	@Override
-	public void onLoadComplete(ArrayList<Transport> array) {
+	public void showTransportListOnMap(ArrayList<Transport> array) {
 		BitmapDescriptor bitmapDescr = BitmapDescriptorFactory.fromResource(R.drawable.bus);
 		System.out.println("length:" + array.size());
 		for (Transport transport : array) {
@@ -100,9 +102,16 @@ public class MainActivity extends BaseActivity implements OnLoadCompleteListener
 		}
 	}
 
-
-	@Override
-	public void onAllRoutesLoadComplete(ArrayList<Transport> array) {
+	public void clearMap() {
 		_map.clear();
+	}
+	
+	public void showTransportImgOnMap(Bitmap img) {
+		_map.clear();
+		BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
+        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
+        _map.addGroundOverlay(new GroundOverlayOptions()
+            .image(image)
+            .positionFromBounds(bounds));
 	}
 }
