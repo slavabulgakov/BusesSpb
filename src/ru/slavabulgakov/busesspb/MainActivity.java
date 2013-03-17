@@ -42,16 +42,20 @@ public class MainActivity extends BaseActivity {
         _map.setMyLocationEnabled(true);
         _map.setOnCameraChangeListener(Contr.getInstance());
         
-        Button btn = (Button)findViewById(R.id.button1);
+        Button btn = (Button)findViewById(R.id.mainButton);
         btn.setOnClickListener(Contr.getInstance());
     }
     
     @SuppressLint("NewApi")
-	public void updateTransportImg() {
-    	View mainFrame = findViewById(R.id.mainFrame);
-		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
-		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-        _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+	public void updateTransport() {
+    	if (_model.getFavorite().size() == 0) {
+    		View mainFrame = findViewById(R.id.mainFrame);
+    		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+    		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+            _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+		} else {
+			_model.showFavoriteRoutes(Contr.getInstance());
+		}
 	}
 
     @Override
@@ -65,7 +69,7 @@ public class MainActivity extends BaseActivity {
 					
 					@Override
 					public void run() {
-						updateTransportImg();
+						updateTransport();
 					}
 				});
 			}
@@ -91,21 +95,19 @@ public class MainActivity extends BaseActivity {
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
 		BitmapDescriptor bitmapDescr = BitmapDescriptorFactory.fromResource(R.drawable.bus);
-		System.out.println("length:" + array.size());
+//		System.out.println("length:" + array.size());
 		for (Transport transport : array) {
 			LatLng latlng = new LatLng(transport.Lat, transport.Lng);
-			_map.addMarker(new MarkerOptions()
-            .position(latlng)
-            .title(transport.routeNumber)
-            .icon(bitmapDescr));
-			System.out.println("lat:" + Double.toString(latlng.latitude) + ", lng:" + Double.toString(latlng.longitude));
+//			_map.addMarker(new MarkerOptions()
+//            .position(latlng)
+//            .title(transport.routeNumber)
+//            .icon(bitmapDescr));
+//			System.out.println("lat:" + Double.toString(latlng.latitude) + ", lng:" + Double.toString(latlng.longitude));
+			
+			_map.addGroundOverlay(new GroundOverlayOptions().image(bitmapDescr).position(latlng, 8, 13).bearing(transport.direction));
 		}
 	}
 
-	public void clearMap() {
-		_map.clear();
-	}
-	
 	public void showTransportImgOnMap(Bitmap img) {
 		if (img != null) {
 			_map.clear();

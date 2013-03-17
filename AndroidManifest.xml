@@ -45,7 +45,9 @@
             </intent-filter>
         </activity>
         
-        <activity android:name="ru.slavabulgakov.busesspb.SelectRouteActivity"></activity>
+        <activity 
+            android:name="ru.slavabulgakov.busesspb.SelectRouteActivity"
+            android:theme="@android:style/Theme.NoTitleBar"></activity>
     </application>
 
 </manifest>

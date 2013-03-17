@@ -1,15 +1,9 @@
 package ru.slavabulgakov.busesspb;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -56,6 +50,7 @@ public class Model extends Application {
 		String routeNumber;
 		Double Lng;
 		Double Lat;
+		float direction;
 		
 		Transport copy() {
 			Transport transport = new Transport();
@@ -64,63 +59,51 @@ public class Model extends Application {
 			transport.Lat = this.Lat;
 			transport.Lng = this.Lng;
 			transport.routeNumber = this.routeNumber;
+			transport.direction = this.direction;
 			return transport;
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	private ArrayList<Transport> _loadFromFile(String fileName) {
-		File file = new File(getFilesDir() + "/" + fileName);
 		ArrayList<Transport> transportList = null;
-		if (file.exists()) {
-			try {
-				FileInputStream fis = new FileInputStream(file);
-	            ObjectInputStream ois = new ObjectInputStream(fis);
-	            transportList = (ArrayList<Transport>)ois.readObject();
-	            ois.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		String ser = SerializeObject.ReadSettings(this, "myobject.dat");
+		if (ser != null && !ser.equalsIgnoreCase("")) {
+		    Object obj = SerializeObject.stringToObject(ser);
+		    // Then cast it to your object and 
+		    if (obj instanceof ArrayList) {
+		        // Do something
+		    	transportList = (ArrayList<Transport>)obj;
+		    }
 		}
 		return transportList;
 	}
 	
 	private void _saveToFile(ArrayList<Transport> transportList, String fileName) {
-		File file = new File(getFilesDir() + "/" + fileName);
-		if (file.exists()) {
-			file.delete();
-		}
-		try {
-			FileOutputStream fos = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-	        oos.writeObject(transportList);
-	        oos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String ser = SerializeObject.objectToString(transportList);
+		if (ser != null && !ser.equalsIgnoreCase("")) {
+		    SerializeObject.WriteSettings(this, ser, "myobject.dat");
+		} else {
+		    SerializeObject.WriteSettings(this, "", "myobject.dat");
 		}
 	}
 	
 	public ArrayList<Transport> getFavorite() {
 		if (_favorite == null) {
 			_favorite = _loadFromFile("favoriteTransportList.ser");
+			_favorite = new ArrayList<Model.Transport>();
 		}
 		return _favorite;
 	}
 	
-	public void setFavorite(ArrayList<Transport> favorite) {
-		_favorite = favorite;
-		_saveToFile(favorite, "favoriteTransportList.ser");
+	public void saveFavorite() {
+		_saveToFile(_favorite, "favoriteTransportList.ser");
 	}
 	
 	public ArrayList<Transport> getAll() {
+		if (_all == null) {
+			_all = new ArrayList<Model.Transport>();
+		}
 		return _all;
 	}
 	
@@ -135,14 +118,8 @@ public class Model extends Application {
 	public void loadDataForAllRoutes(OnLoadCompleteListener listener) {
 		_listener = listener;
 		ArrayList<Transport> transportList = getFavorite();
-		if (transportList == null) {
+		if (transportList.size() == 0) {
 			transportList = getAll();
-		}
-		if (transportList != null) {
-			for (Transport transport : transportList) {
-				loadDataForRoute(transport, _listener);
-			}
-			return;
 		}
 		IRequest req = new IRequest() {
 			
@@ -244,7 +221,13 @@ public class Model extends Application {
 		parser.execute((Void)null);
 	}
 	
-	public void loadDataForRoute(final Transport transport, final OnLoadCompleteListener listener) {
+	public void showFavoriteRoutes(OnLoadCompleteListener listener) {
+		for (Transport transport : getFavorite()) {
+			_loadDataForRoute(transport, listener);
+		}
+	}
+	
+	private void _loadDataForRoute(final Transport transport, final OnLoadCompleteListener listener) {
 		IRequest req = new IRequest() {
 			
 			boolean _canceled;
@@ -283,6 +266,7 @@ public class Model extends Application {
 						Transport transportCopy = transport.copy();
 						transportCopy.Lat = m.deg(coordinates.getDouble(1), AxisType.LAT);
 						transportCopy.Lng = m.deg(coordinates.getDouble(0), AxisType.LNG);
+						transportCopy.direction = (float)ja.getJSONObject(i).getJSONObject("properties").getDouble("direction");
 						_array.add(transportCopy);
 						if (_canceled) {
 							throw new LoadTaskException();
