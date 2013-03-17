@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
@@ -37,6 +38,7 @@ public class Model extends Application {
 	private ArrayList<Transport> _favorite;
 	private ArrayList<Transport> _all;
 	private OnLoadCompleteListener _listener;
+	private ArrayList<Marker> _markers;
 	
 	public interface OnLoadCompleteListener {
 		void onLoadComplete(ArrayList<Transport> array);
@@ -347,6 +349,24 @@ public class Model extends Application {
 	public void cancel() {
 		for (ParserWebPageTask parser : _parsers) {
 			parser.cancel(true);
+		}
+	}
+	
+	class Marker {
+		int id;
+		GroundOverlay groundOverlay;
+	}
+	
+	public void setMarker(int id, GroundOverlay groundOverlay) {
+		if (_markers == null) {
+			_markers = new ArrayList<Model.Marker>();
+		}
+		Marker findMarker = null;
+		for (Marker marker : _markers) {
+			if (marker.id == id) {
+				findMarker = marker;
+				break;
+			}
 		}
 	}
 }

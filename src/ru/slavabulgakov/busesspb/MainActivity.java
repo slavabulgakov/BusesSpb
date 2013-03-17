@@ -12,13 +12,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -95,16 +96,15 @@ public class MainActivity extends BaseActivity {
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
 		BitmapDescriptor bitmapDescr = BitmapDescriptorFactory.fromResource(R.drawable.bus);
-//		System.out.println("length:" + array.size());
 		for (Transport transport : array) {
 			LatLng latlng = new LatLng(transport.Lat, transport.Lng);
-//			_map.addMarker(new MarkerOptions()
-//            .position(latlng)
-//            .title(transport.routeNumber)
-//            .icon(bitmapDescr));
-//			System.out.println("lat:" + Double.toString(latlng.latitude) + ", lng:" + Double.toString(latlng.longitude));
-			
-			_map.addGroundOverlay(new GroundOverlayOptions().image(bitmapDescr).position(latlng, 8, 13).bearing(transport.direction));
+			Point point = _map.getProjection().toScreenLocation(latlng);
+			Point point1 = new Point(point.x + 4, point.y - 6);
+			Point point2 = new Point(point.x - 4, point.y + 7);
+			LatLng latlng1 = _map.getProjection().fromScreenLocation(point1);
+			LatLng latlng2 = _map.getProjection().fromScreenLocation(point2);
+			LatLngBounds bounds = new LatLngBounds(latlng2, latlng1);
+			_map.addGroundOverlay(new GroundOverlayOptions().image(bitmapDescr).positionFromBounds(bounds).bearing(transport.direction));
 		}
 	}
 
