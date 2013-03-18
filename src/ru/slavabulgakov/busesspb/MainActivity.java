@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ru.slavabulgakov.busesspb.Model.Marker;
 import ru.slavabulgakov.busesspb.Model.Transport;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -47,20 +48,9 @@ public class MainActivity extends BaseActivity {
         btn.setOnClickListener(Contr.getInstance());
     }
     
-    @SuppressLint("NewApi")
-	public void updateTransport() {
-    	if (_model.getFavorite().size() == 0) {
-    		View mainFrame = findViewById(R.id.mainFrame);
-    		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
-    		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-            _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
-		} else {
-			_model.showFavoriteRoutes(Contr.getInstance());
-		}
-	}
-
     @Override
 	protected void onResume() {
+    	_map.clear();
     	_timer = new Timer();
     	_timer.schedule(new TimerTask() {
 			
@@ -93,6 +83,53 @@ public class MainActivity extends BaseActivity {
         return true;
     }
 
+	private ArrayList<Marker> _excessMarkes;
+	@SuppressLint("NewApi")
+	public void updateTransport() {
+    	if (_model.getFavorite().size() == 0) {
+    		View mainFrame = findViewById(R.id.mainFrame);
+    		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+    		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+            _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+		} else {
+			_excessMarkes = (ArrayList<Model.Marker>)_model.getMarkers().clone();
+			_model.showFavoriteRoutes(Contr.getInstance());
+		}
+	}
+	
+	public void removeExcessMarkers() {
+		for (Marker marker : _excessMarkes) {
+			marker.groundOverlay.remove();
+			_model.getMarkers().remove(marker);
+		}
+	}
+	
+	private void _setMarker(int id, GroundOverlay groundOverlay) {
+		GroundOverlay findGroundOverlay = _getMarker(id);
+		if (findGroundOverlay == null) {
+			Marker newMarker = new Marker();
+			newMarker.id = id;
+			newMarker.groundOverlay = groundOverlay;
+			_model.getMarkers().add(newMarker);
+			if (_excessMarkes != null) {
+				_excessMarkes.remove(newMarker);
+			}
+		}
+	}
+	
+	private GroundOverlay _getMarker(int id) {
+		Marker findMarker = null;
+		for (Marker marker : _model.getMarkers()) {
+			if (marker.id == id) {
+				findMarker = marker;
+				break;
+			}
+		}
+		if (findMarker != null) {
+			return findMarker.groundOverlay;
+		}
+		return null;
+	}
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
 		BitmapDescriptor bitmapDescr = BitmapDescriptorFactory.fromResource(R.drawable.bus);
@@ -104,7 +141,14 @@ public class MainActivity extends BaseActivity {
 			LatLng latlng1 = _map.getProjection().fromScreenLocation(point1);
 			LatLng latlng2 = _map.getProjection().fromScreenLocation(point2);
 			LatLngBounds bounds = new LatLngBounds(latlng2, latlng1);
-			_map.addGroundOverlay(new GroundOverlayOptions().image(bitmapDescr).positionFromBounds(bounds).bearing(transport.direction));
+			GroundOverlay groundOverlay = _getMarker(transport.id);
+			if (groundOverlay == null) {
+				groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(bitmapDescr).positionFromBounds(bounds).bearing(transport.direction));
+				_setMarker(transport.id, groundOverlay);
+			} else {
+				groundOverlay.setPositionFromBounds(bounds);
+				groundOverlay.setBearing(transport.direction);
+			}
 		}
 	}
 

@@ -71,14 +71,14 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public void onLoadComplete(ArrayList<Transport> array) {
+	public void onRouteLoadComplete(ArrayList<Transport> array) {
 		if (_currentActivity.getClass() == MainActivity.class) {
 			((MainActivity)_currentActivity).showTransportListOnMap(array);
 		}
 	}
 
 	@Override
-	public void onAllRoutesLoadComplete(ArrayList<Transport> array) {
+	public void onRouteKindsLoadComplete(ArrayList<Transport> array) {
 		if (_currentActivity.getClass() == SelectRouteActivity.class) {
 			((SelectRouteActivity)_currentActivity).showTransportList();
 		}
@@ -149,5 +149,12 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onRemove(Ticket ticket) {
 		_model.getFavorite().remove(ticket.getTransport());
+	}
+
+	@Override
+	public void onAllRoutesLoadComplete() {
+		if (_currentActivity.getClass() == MainActivity.class) {
+			((MainActivity)_currentActivity).removeExcessMarkers();
+		}
 	}
 }

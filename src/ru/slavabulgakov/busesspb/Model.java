@@ -38,11 +38,11 @@ public class Model extends Application {
 	private ArrayList<Transport> _favorite;
 	private ArrayList<Transport> _all;
 	private OnLoadCompleteListener _listener;
-	private ArrayList<Marker> _markers;
 	
 	public interface OnLoadCompleteListener {
-		void onLoadComplete(ArrayList<Transport> array);
-		void onAllRoutesLoadComplete(ArrayList<Transport> array);
+		void onAllRoutesLoadComplete();
+		void onRouteLoadComplete(ArrayList<Transport> array);
+		void onRouteKindsLoadComplete(ArrayList<Transport> array);
 		void onImgLoadComplete(Bitmap img);
 	}
 	
@@ -137,7 +137,7 @@ public class Model extends Application {
 			@Override
 			public void nextExecute() {
 				HttpClient httpClient = new DefaultHttpClient();
-				HttpPost httpPost = new HttpPost("http://transport.orgp.spb.ru/Portal/transport/routes/list");//http://xakki-pc/test.php
+				HttpPost httpPost = new HttpPost("http://transport.orgp.spb.ru/Portal/transport/routes/list");
 				
 				try {
 					List<NameValuePair> nameValuesPairs = new ArrayList<NameValuePair>(24);
@@ -209,7 +209,7 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				setAll(_array);
-				_listener.onAllRoutesLoadComplete(_array);
+				_listener.onRouteKindsLoadComplete(_array);
 			}
 		};
 		
@@ -223,7 +223,9 @@ public class Model extends Application {
 		parser.execute((Void)null);
 	}
 	
+	private int _countLoadingFavoriteRoutes = 0;
 	public void showFavoriteRoutes(OnLoadCompleteListener listener) {
+		_countLoadingFavoriteRoutes =+ getFavorite().size();
 		for (Transport transport : getFavorite()) {
 			_loadDataForRoute(transport, listener);
 		}
@@ -269,6 +271,7 @@ public class Model extends Application {
 						transportCopy.Lat = m.deg(coordinates.getDouble(1), AxisType.LAT);
 						transportCopy.Lng = m.deg(coordinates.getDouble(0), AxisType.LNG);
 						transportCopy.direction = (float)ja.getJSONObject(i).getJSONObject("properties").getDouble("direction");
+						transportCopy.id = ja.getJSONObject(i).getInt("id");
 						_array.add(transportCopy);
 						if (_canceled) {
 							throw new LoadTaskException();
@@ -289,8 +292,12 @@ public class Model extends Application {
 			
 			@Override
 			public void finish() {
+				_countLoadingFavoriteRoutes--;
+				if (_countLoadingFavoriteRoutes == 0) {
+					listener.onAllRoutesLoadComplete();
+				}
 				_parsers.remove(this);
-				listener.onLoadComplete(_array);
+				listener.onRouteLoadComplete(_array);
 			}
 		};
 		ParserWebPageTask parser = new ParserWebPageTask(req);
@@ -356,17 +363,12 @@ public class Model extends Application {
 		int id;
 		GroundOverlay groundOverlay;
 	}
+	private ArrayList<Marker> _markers;
 	
-	public void setMarker(int id, GroundOverlay groundOverlay) {
+	public ArrayList<Marker> getMarkers() {
 		if (_markers == null) {
 			_markers = new ArrayList<Model.Marker>();
 		}
-		Marker findMarker = null;
-		for (Marker marker : _markers) {
-			if (marker.id == id) {
-				findMarker = marker;
-				break;
-			}
-		}
+		return _markers;
 	}
 }
