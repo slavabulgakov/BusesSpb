@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
@@ -381,6 +382,7 @@ public class Model extends Application {
 	static class TransportOverlay {
 		Transport transport;
 		GroundOverlay groundOverlay;
+		Marker marker;
 	}
 	
 	private ArrayList<TransportOverlay> _allTransportOverlay;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.osmdroid.ResourceProxy.bitmap;
+
 import ru.slavabulgakov.busesspb.Model.Transport;
 import ru.slavabulgakov.busesspb.Model.TransportKind;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
@@ -18,10 +20,20 @@ import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.os.Bundle;
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuffXfermode;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -108,9 +120,12 @@ public class MainActivity extends BaseActivity {
 		} else {
 			if (speed) {
 				for (TransportOverlay transportOverlay : _model.getAllTransportOverlay()) {
-					LatLngBounds bounds = _getBounds(new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng));
+					LatLng position = new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng);
+					LatLngBounds bounds = _getBounds(position);
 					transportOverlay.groundOverlay.remove();
 					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).positionFromBounds(bounds).bearing(transportOverlay.transport.direction));
+					transportOverlay.marker.remove();
+					transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe"));//.icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber))
 				}
 			} else {
 				_model.cloneExcessTransportOverlay();
@@ -159,20 +174,37 @@ public class MainActivity extends BaseActivity {
 		}
 		return BitmapDescriptorFactory.fromResource(resId);
 	}
+	
+	private BitmapDescriptor _getRouteNumberBitMap(String routeNumber) {
+		Bitmap bitmap = Bitmap.createBitmap(100, 100, Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		Resources resources = getResources();
+		float scale = resources.getDisplayMetrics().density;
+		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		paint.setColor(Color.RED);
+		paint.setTextSize((int) (14 * scale));
+		canvas.drawText(routeNumber, 10, 10, paint);
+		return BitmapDescriptorFactory.fromBitmap(bitmap);
+	}
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
 		for (Transport transport : array) {
-			LatLngBounds bounds = _getBounds(new LatLng(transport.Lat, transport.Lng));
+			LatLng position = new LatLng(transport.Lat, transport.Lng);
+			LatLngBounds bounds = _getBounds(position);
 			TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
 			if (transportOverlay == null) {
 				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).positionFromBounds(bounds).bearing(transport.direction));
+				Marker marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe"));//.icon(_getRouteNumberBitMap(transport.routeNumber))
 				transportOverlay = new TransportOverlay();
 				transportOverlay.transport = transport;
 				transportOverlay.groundOverlay = groundOverlay;
+				transportOverlay.marker = marker;
 				_model.getAllTransportOverlay().add(transportOverlay);
 			} else {
 				transportOverlay.groundOverlay.remove();
+				transportOverlay.marker.remove();
 				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).positionFromBounds(bounds).bearing(transport.direction));
+				transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe"));//.icon(_getRouteNumberBitMap(transport.routeNumber))
 				if (_model.getExcessTransportOverlay() != null) {
 					_model.getExcessTransportOverlay().remove(transportOverlay);
 				}
