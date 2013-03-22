@@ -3,12 +3,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
+    <ImageView
+        android:id="@+id/listItemSelectRouteKind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/bus" />
+
     <TextView
         android:id="@+id/listItemSelectRouteRouteName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/listItemSelectRouteKind"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 

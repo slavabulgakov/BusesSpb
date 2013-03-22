@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -89,6 +90,25 @@ public class SelectRouteActivity extends BaseActivity {
 				convertView = inflater.inflate(R.layout.listitem_selectroute, parent, false);
 			}
 			((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_filtredList.get(position).routeNumber);
+			int resId = -1;
+			switch (_filtredList.get(position).kind) {
+			case Bus:
+				resId = R.drawable.bus;
+				break;
+				
+			case Trolley:
+				resId = R.drawable.trolley;
+				break;
+				
+			case Tram:
+				resId = R.drawable.tram;
+				break;
+
+			default:
+				break;
+			}
+			((ImageView)convertView.findViewById(R.id.listItemSelectRouteKind)).setImageResource(resId);
+			
 			return convertView;
 		}
 

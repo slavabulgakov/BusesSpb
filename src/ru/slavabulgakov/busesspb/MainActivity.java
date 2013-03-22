@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.Model.Transport;
+import ru.slavabulgakov.busesspb.Model.TransportKind;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -109,7 +110,7 @@ public class MainActivity extends BaseActivity {
 				for (TransportOverlay transportOverlay : _model.getAllTransportOverlay()) {
 					LatLngBounds bounds = _getBounds(new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng));
 					transportOverlay.groundOverlay.remove();
-					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap()).positionFromBounds(bounds).bearing(transportOverlay.transport.direction));
+					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).positionFromBounds(bounds).bearing(transportOverlay.transport.direction));
 				}
 			} else {
 				_model.cloneExcessTransportOverlay();
@@ -138,8 +139,25 @@ public class MainActivity extends BaseActivity {
 		return findTransportOverlay;
 	}
 	
-	private BitmapDescriptor _getBusBitMap() {
-		return BitmapDescriptorFactory.fromResource(R.drawable.bus);
+	private BitmapDescriptor _getBusBitMap(TransportKind kind) {
+		int resId  = -1;
+		switch (kind) {
+		case Bus:
+			resId = R.drawable.bus;
+			break;
+			
+		case Trolley:
+			resId = R.drawable.trolley;
+			break;
+			
+		case Tram:
+			resId = R.drawable.tram;
+			break;
+
+		default:
+			break;
+		}
+		return BitmapDescriptorFactory.fromResource(resId);
 	}
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
@@ -147,14 +165,14 @@ public class MainActivity extends BaseActivity {
 			LatLngBounds bounds = _getBounds(new LatLng(transport.Lat, transport.Lng));
 			TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
 			if (transportOverlay == null) {
-				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap()).positionFromBounds(bounds).bearing(transport.direction));
+				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).positionFromBounds(bounds).bearing(transport.direction));
 				transportOverlay = new TransportOverlay();
 				transportOverlay.transport = transport;
 				transportOverlay.groundOverlay = groundOverlay;
 				_model.getAllTransportOverlay().add(transportOverlay);
 			} else {
 				transportOverlay.groundOverlay.remove();
-				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap()).positionFromBounds(bounds).bearing(transport.direction));
+				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).positionFromBounds(bounds).bearing(transport.direction));
 				if (_model.getExcessTransportOverlay() != null) {
 					_model.getExcessTransportOverlay().remove(transportOverlay);
 				}

@@ -46,14 +46,22 @@ public class Model extends Application {
 		void onImgLoadComplete(Bitmap img);
 	}
 	
+	enum TransportKind {
+		Bus,
+		Trolley,
+		Tram,
+	}
+	
 	class Route {
 		Integer id;
 		Integer cost;
 		String routeNumber;
+		TransportKind kind;
 		Transport creatTransport() {
 			Transport transport = new Transport();
 			transport.routeNumber = this.routeNumber;
 			transport.cost = this.cost;
+			transport.kind = this.kind;
 			return transport;
 		}
 	}
@@ -65,6 +73,7 @@ public class Model extends Application {
 		Double Lng;
 		Double Lat;
 		float direction;
+		TransportKind kind;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -182,6 +191,15 @@ public class Model extends Application {
 						if (!data.getString(7).equals("null")) {
 							route.cost = data.getInt(7);
 						}
+						String kind = data.getJSONObject(1).getString("systemName");
+						if (kind.equals("bus")) {
+							route.kind = TransportKind.Bus;
+						} else if (kind.equals("tram")) {
+							route.kind = TransportKind.Tram;
+						} else if (kind.equals("trolley")) {
+							route.kind = TransportKind.Trolley;
+						}
+						
 						_array.add(route);
 					}
 			        
