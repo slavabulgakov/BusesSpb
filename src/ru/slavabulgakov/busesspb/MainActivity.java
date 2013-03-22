@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ru.slavabulgakov.busesspb.Model.Marker;
 import ru.slavabulgakov.busesspb.Model.Transport;
+import ru.slavabulgakov.busesspb.Model.TransportOverlay;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -50,7 +50,11 @@ public class MainActivity extends BaseActivity {
     
     @Override
 	protected void onResume() {
-    	_map.clear();
+    	if (_model.getAllTransportOverlay().size() == 0) {
+			_map.clear();
+		} else {
+			updateTransport(true);
+		}
     	_timer = new Timer();
     	_timer.schedule(new TimerTask() {
 			
@@ -60,11 +64,11 @@ public class MainActivity extends BaseActivity {
 					
 					@Override
 					public void run() {
-						updateTransport();
+						updateTransport(false);
 					}
 				});
 			}
-		}, 15000, 15000);
+		}, 0, 15000);
 		super.onResume();
 	}
 
@@ -82,72 +86,78 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+	
+	private LatLngBounds _getBounds(LatLng latlng) {
+		Point point = _map.getProjection().toScreenLocation(latlng);
+		Point point1 = new Point(point.x + 4, point.y - 6);
+		Point point2 = new Point(point.x - 4, point.y + 7);
+		LatLng latlng1 = _map.getProjection().fromScreenLocation(point1);
+		LatLng latlng2 = _map.getProjection().fromScreenLocation(point2);
+		LatLngBounds bounds = new LatLngBounds(latlng2, latlng1);
+		return bounds;
+	}
 
-	private ArrayList<Marker> _excessMarkes;
 	@SuppressLint("NewApi")
-	public void updateTransport() {
+	public void updateTransport(Boolean speed) {
     	if (_model.getFavorite().size() == 0) {
     		View mainFrame = findViewById(R.id.mainFrame);
     		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
     		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
             _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
 		} else {
-			_excessMarkes = (ArrayList<Model.Marker>)_model.getMarkers().clone();
-			_model.showFavoriteRoutes(Contr.getInstance());
-		}
-	}
-	
-	public void removeExcessMarkers() {
-		for (Marker marker : _excessMarkes) {
-			marker.groundOverlay.remove();
-			_model.getMarkers().remove(marker);
-		}
-	}
-	
-	private void _setMarker(int id, GroundOverlay groundOverlay) {
-		GroundOverlay findGroundOverlay = _getMarker(id);
-		if (findGroundOverlay == null) {
-			Marker newMarker = new Marker();
-			newMarker.id = id;
-			newMarker.groundOverlay = groundOverlay;
-			_model.getMarkers().add(newMarker);
-			if (_excessMarkes != null) {
-				_excessMarkes.remove(newMarker);
+			if (speed) {
+				for (TransportOverlay transportOverlay : _model.getAllTransportOverlay()) {
+					LatLngBounds bounds = _getBounds(new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng));
+					transportOverlay.groundOverlay.remove();
+					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap()).positionFromBounds(bounds).bearing(transportOverlay.transport.direction));
+				}
+			} else {
+				_model.cloneExcessTransportOverlay();
+				_model.showFavoriteRoutes(Contr.getInstance());
 			}
 		}
 	}
 	
-	private GroundOverlay _getMarker(int id) {
-		Marker findMarker = null;
-		for (Marker marker : _model.getMarkers()) {
-			if (marker.id == id) {
-				findMarker = marker;
+	public void removeExcessTransportOverlay() {
+		if (_model.getExcessTransportOverlay() != null) {
+			for (TransportOverlay transportOverlay : _model.getExcessTransportOverlay()) {
+				transportOverlay.groundOverlay.remove();
+				_model.getAllTransportOverlay().remove(transportOverlay);
+			}
+		}
+	}
+	
+	private TransportOverlay _getTransportOverlayById(int id) {
+		TransportOverlay findTransportOverlay = null;
+		for (TransportOverlay transportOverlay : _model.getAllTransportOverlay()) {
+			if (transportOverlay.transport.id == id) {
+				findTransportOverlay = transportOverlay;
 				break;
 			}
 		}
-		if (findMarker != null) {
-			return findMarker.groundOverlay;
-		}
-		return null;
+		return findTransportOverlay;
+	}
+	
+	private BitmapDescriptor _getBusBitMap() {
+		return BitmapDescriptorFactory.fromResource(R.drawable.bus);
 	}
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
-		BitmapDescriptor bitmapDescr = BitmapDescriptorFactory.fromResource(R.drawable.bus);
 		for (Transport transport : array) {
-			LatLng latlng = new LatLng(transport.Lat, transport.Lng);
-			Point point = _map.getProjection().toScreenLocation(latlng);
-			Point point1 = new Point(point.x + 4, point.y - 6);
-			Point point2 = new Point(point.x - 4, point.y + 7);
-			LatLng latlng1 = _map.getProjection().fromScreenLocation(point1);
-			LatLng latlng2 = _map.getProjection().fromScreenLocation(point2);
-			LatLngBounds bounds = new LatLngBounds(latlng2, latlng1);
-			GroundOverlay groundOverlay = _getMarker(transport.id);
-			if (groundOverlay == null) {
-				groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(bitmapDescr).positionFromBounds(bounds).bearing(transport.direction));
-				_setMarker(transport.id, groundOverlay);
+			LatLngBounds bounds = _getBounds(new LatLng(transport.Lat, transport.Lng));
+			TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
+			if (transportOverlay == null) {
+				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap()).positionFromBounds(bounds).bearing(transport.direction));
+				transportOverlay = new TransportOverlay();
+				transportOverlay.transport = transport;
+				transportOverlay.groundOverlay = groundOverlay;
+				_model.getAllTransportOverlay().add(transportOverlay);
 			} else {
-				groundOverlay.setPositionFromBounds(bounds);
-				groundOverlay.setBearing(transport.direction);
+				transportOverlay.groundOverlay.remove();
+				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap()).positionFromBounds(bounds).bearing(transport.direction));
+				if (_model.getExcessTransportOverlay() != null) {
+					_model.getExcessTransportOverlay().remove(transportOverlay);
+				}
 			}
 		}
 	}

@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ru.slavabulgakov.busesspb.Model.Transport;
-
+import ru.slavabulgakov.busesspb.Model.Route;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -27,15 +26,15 @@ public class SelectRouteActivity extends BaseActivity {
 	private ProgressBar _progressBar;
 	private Button _doneButton;
 	
-	class Adapter extends ArrayAdapter<Transport> {
+	class Adapter extends ArrayAdapter<Route> {
 		private Filter _filter;
-		private List<Transport> _filtredList = Collections.synchronizedList(new ArrayList<Model.Transport>());
+		private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Model.Route>());
 		
 		public Adapter() {
-			super(SelectRouteActivity.this, R.layout.listitem_selectroute, _model.getAll());
+			super(SelectRouteActivity.this, R.layout.listitem_selectroute, _model.getAllRoutes());
 			_filter = new Filter() {
 				
-				ArrayList<Transport> _data = new ArrayList<Model.Transport>();
+				ArrayList<Route> _data = new ArrayList<Model.Route>();
 				
 				@Override
 				protected void publishResults(CharSequence constraint, FilterResults results) {
@@ -43,9 +42,9 @@ public class SelectRouteActivity extends BaseActivity {
 						_filtredList.clear();
 						if (results != null && results.count > 0) {
 							@SuppressWarnings("unchecked")
-							ArrayList<Transport>objects = (ArrayList<Transport>)results.values;
-							for (Transport transport : objects) {
-								_filtredList.add(transport);
+							ArrayList<Route>objects = (ArrayList<Route>)results.values;
+							for (Route route : objects) {
+								_filtredList.add(route);
 							}
 							notifyDataSetChanged();
 						}
@@ -58,9 +57,9 @@ public class SelectRouteActivity extends BaseActivity {
 					FilterResults filterResults = new FilterResults();
 					if (constraint != null) {
 						synchronized (this) {
-							for (Transport transport : _model.getAll()) {
-								if (constraint.length() == 0 || transport.routeNumber.contains(constraint)) {
-									_data.add(transport);
+							for (Route route : _model.getAllRoutes()) {
+								if (constraint.length() == 0 || route.routeNumber.contains(constraint)) {
+									_data.add(route);
 								}
 							}
 						}
@@ -74,6 +73,15 @@ public class SelectRouteActivity extends BaseActivity {
 			};
 		}
 		
+		
+		
+		@Override
+		public Route getItem(int position) {
+			return _filtredList.get(position);
+		}
+
+
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null) {
@@ -93,7 +101,6 @@ public class SelectRouteActivity extends BaseActivity {
 		public Filter getFilter() {
 			return _filter;
 		}
-		
 	}
  
 	@Override
@@ -107,7 +114,7 @@ public class SelectRouteActivity extends BaseActivity {
 		_editText.addTextChangedListener(Contr.getInstance());
 		
 		_listView = (ListView)findViewById(R.id.selectRouteListView);
-		if (_model.getAll().size() == 0) {
+		if (_model.getAllRoutes().size() == 0) {
 			_progressBar.setVisibility(View.VISIBLE);
 			_listView.setVisibility(View.INVISIBLE);
 			_editText.setEnabled(false);
@@ -121,9 +128,10 @@ public class SelectRouteActivity extends BaseActivity {
 		_doneButton.setOnClickListener(Contr.getInstance());
 		
 		LinearLayout ll = (LinearLayout)findViewById(R.id.selectRouteTickets);
-		for (Transport transport : _model.getFavorite()) {
+		for (Route route : _model.getFavorite()) {
 			Ticket ticket = new Ticket(this);
-			ticket.setTransport(transport);
+			ticket.setRoute(route);
+			ticket.setOnRemoveListener(Contr.getInstance());
 			ll.addView(ticket);
 		}
 	}

@@ -1,6 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
-import ru.slavabulgakov.busesspb.Model.Transport;
+import ru.slavabulgakov.busesspb.Model.Route;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -20,7 +20,7 @@ public class Ticket extends LinearLayout {
 	
 	Button _closeButton;
 	TextView _roueNumber;
-	Transport _transport;
+	Route _route;
 	OnRemoveListener _onRemoveListener;
 	
 	private void _ticket(Context context, AttributeSet attrs) {
@@ -59,13 +59,13 @@ public class Ticket extends LinearLayout {
 		_ticket(context, attrs);
 	}
 	
-	public void setTransport(Transport transport) {
-		_transport = transport;
-		_roueNumber.setText(_transport.routeNumber);
+	public void setRoute(Route route) {
+		_route = route;
+		_roueNumber.setText(_route.routeNumber);
 	}
 	
-	public Transport getTransport() {
-		return _transport;
+	public Route getRoute() {
+		return _route;
 	}
 	
 	public void setOnRemoveListener(OnRemoveListener listener) {

@@ -2,6 +2,7 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
+import ru.slavabulgakov.busesspb.Model.Route;
 import ru.slavabulgakov.busesspb.Model.Transport;
 import ru.slavabulgakov.busesspb.SelectRouteActivity.Adapter;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
@@ -47,6 +48,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onClick(View v) {
+		
 		switch (v.getId()) {
 		case R.id.mainButton:
 			_currentActivity.startActivity(new Intent(_currentActivity, SelectRouteActivity.class));
@@ -54,6 +56,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		
 		case R.id.selectRouteDone:
 			_model.saveFavorite();
+			_model.getAllTransportOverlay().clear();
 			_currentActivity.finish();
 			break;
 			
@@ -66,19 +69,19 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onCameraChange(CameraPosition arg0) {
 		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateTransport(true);
 		}
 	}
 
 	@Override
-	public void onRouteLoadComplete(ArrayList<Transport> array) {
+	public void onTransportListOfRouteLoadComplete(ArrayList<Transport> array) {
 		if (_currentActivity.getClass() == MainActivity.class) {
 			((MainActivity)_currentActivity).showTransportListOnMap(array);
 		}
 	}
 
 	@Override
-	public void onRouteKindsLoadComplete(ArrayList<Transport> array) {
+	public void onRouteKindsLoadComplete(ArrayList<Route> array) {
 		if (_currentActivity.getClass() == SelectRouteActivity.class) {
 			((SelectRouteActivity)_currentActivity).showTransportList();
 		}
@@ -138,23 +141,23 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 		LinearLayout ll = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
 		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-		Transport transport = ((Adapter)listView.getAdapter()).getItem(position);
+		Route route = ((Adapter)listView.getAdapter()).getItem(position);
 		Ticket ticket = new Ticket(_currentActivity, null);
-		ticket.setTransport(transport);
+		ticket.setRoute(route);
 		ticket.setOnRemoveListener(this);
 		ll.addView(ticket);
-		_model.getFavorite().add(transport);
+		_model.getFavorite().add(route);
 	}
 
 	@Override
 	public void onRemove(Ticket ticket) {
-		_model.getFavorite().remove(ticket.getTransport());
+		_model.getFavorite().remove(ticket.getRoute());
 	}
 
 	@Override
 	public void onAllRoutesLoadComplete() {
 		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).removeExcessMarkers();
+			((MainActivity)_currentActivity).removeExcessTransportOverlay();
 		}
 	}
 }

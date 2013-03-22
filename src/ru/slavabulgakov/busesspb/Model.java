@@ -35,15 +35,27 @@ import android.graphics.BitmapFactory;
 public class Model extends Application {
 	
 	private ArrayList<ParserWebPageTask> _parsers;
-	private ArrayList<Transport> _favorite;
-	private ArrayList<Transport> _all;
+	private ArrayList<Route> _favoriteRoutes;
+	private ArrayList<Route> _allRoutes;
 	private OnLoadCompleteListener _listener;
 	
 	public interface OnLoadCompleteListener {
 		void onAllRoutesLoadComplete();
-		void onRouteLoadComplete(ArrayList<Transport> array);
-		void onRouteKindsLoadComplete(ArrayList<Transport> array);
+		void onTransportListOfRouteLoadComplete(ArrayList<Transport> array);
+		void onRouteKindsLoadComplete(ArrayList<Route> array);
 		void onImgLoadComplete(Bitmap img);
+	}
+	
+	class Route {
+		Integer id;
+		Integer cost;
+		String routeNumber;
+		Transport creatTransport() {
+			Transport transport = new Transport();
+			transport.routeNumber = this.routeNumber;
+			transport.cost = this.cost;
+			return transport;
+		}
 	}
 	
 	class Transport {
@@ -53,35 +65,24 @@ public class Model extends Application {
 		Double Lng;
 		Double Lat;
 		float direction;
-		
-		Transport copy() {
-			Transport transport = new Transport();
-			transport.cost = this.cost;
-			transport.id = this.id;
-			transport.Lat = this.Lat;
-			transport.Lng = this.Lng;
-			transport.routeNumber = this.routeNumber;
-			transport.direction = this.direction;
-			return transport;
-		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private ArrayList<Transport> _loadFromFile(String fileName) {
-		ArrayList<Transport> transportList = null;
+	private ArrayList<Route> _loadFromFile(String fileName) {
+		ArrayList<Route> transportList = null;
 		String ser = SerializeObject.ReadSettings(this, "myobject.dat");
 		if (ser != null && !ser.equalsIgnoreCase("")) {
 		    Object obj = SerializeObject.stringToObject(ser);
 		    // Then cast it to your object and 
 		    if (obj instanceof ArrayList) {
 		        // Do something
-		    	transportList = (ArrayList<Transport>)obj;
+		    	transportList = (ArrayList<Route>)obj;
 		    }
 		}
 		return transportList;
 	}
 	
-	private void _saveToFile(ArrayList<Transport> transportList, String fileName) {
+	private void _saveToFile(ArrayList<Route> transportList, String fileName) {
 		String ser = SerializeObject.objectToString(transportList);
 		if (ser != null && !ser.equalsIgnoreCase("")) {
 		    SerializeObject.WriteSettings(this, ser, "myobject.dat");
@@ -90,27 +91,27 @@ public class Model extends Application {
 		}
 	}
 	
-	public ArrayList<Transport> getFavorite() {
-		if (_favorite == null) {
-			_favorite = _loadFromFile("favoriteTransportList.ser");
-			_favorite = new ArrayList<Model.Transport>();
+	public ArrayList<Route> getFavorite() {
+		if (_favoriteRoutes == null) {
+			_favoriteRoutes = _loadFromFile("favoriteTransportList.ser");
+			_favoriteRoutes = new ArrayList<Model.Route>();
 		}
-		return _favorite;
+		return _favoriteRoutes;
 	}
 	
 	public void saveFavorite() {
-		_saveToFile(_favorite, "favoriteTransportList.ser");
+		_saveToFile(_favoriteRoutes, "favoriteTransportList.ser");
 	}
 	
-	public ArrayList<Transport> getAll() {
-		if (_all == null) {
-			_all = new ArrayList<Model.Transport>();
+	public ArrayList<Route> getAllRoutes() {
+		if (_allRoutes == null) {
+			_allRoutes = new ArrayList<Model.Route>();
 		}
-		return _all;
+		return _allRoutes;
 	}
 	
-	public void setAll(ArrayList<Transport> all) {
-		_all = all;
+	public void setAll(ArrayList<Route> all) {
+		_allRoutes = all;
 	}
 	
 	public void changeListener(OnLoadCompleteListener listener) {
@@ -119,15 +120,15 @@ public class Model extends Application {
 	
 	public void loadDataForAllRoutes(OnLoadCompleteListener listener) {
 		_listener = listener;
-		ArrayList<Transport> transportList = getFavorite();
-		if (transportList.size() == 0) {
-			transportList = getAll();
+		ArrayList<Route> routeList = getFavorite();
+		if (routeList.size() == 0) {
+			routeList = getAllRoutes();
 		}
 		IRequest req = new IRequest() {
 			
 			boolean _canceled;
 			int _step = 0;
-			ArrayList<Transport> _array;
+			ArrayList<Route> _array;
 			
 			@Override
 			public void setCanceled() {
@@ -172,16 +173,16 @@ public class Model extends Application {
 			        JSONObject response = new JSONObject(responseBody);
 			        
 			        JSONArray aaData = response.getJSONArray("aaData");
-			        _array = new ArrayList<Model.Transport>();
+			        _array = new ArrayList<Model.Route>();
 			        for (int i = 0; i < aaData.length(); i++) {
 						JSONArray data = aaData.getJSONArray(i);
-						Transport transport = new Transport();
-						transport.id = data.getInt(0);
-						transport.routeNumber = data.getString(2);
+						Route route = new Route();
+						route.id = data.getInt(0);
+						route.routeNumber = data.getString(2);
 						if (!data.getString(7).equals("null")) {
-							transport.cost = data.getInt(7);
+							route.cost = data.getInt(7);
 						}
-						_array.add(transport);
+						_array.add(route);
 					}
 			        
 				} catch (UnsupportedEncodingException e) {
@@ -226,12 +227,12 @@ public class Model extends Application {
 	private int _countLoadingFavoriteRoutes = 0;
 	public void showFavoriteRoutes(OnLoadCompleteListener listener) {
 		_countLoadingFavoriteRoutes =+ getFavorite().size();
-		for (Transport transport : getFavorite()) {
-			_loadDataForRoute(transport, listener);
+		for (Route route : getFavorite()) {
+			_loadDataForRoute(route, listener);
 		}
 	}
 	
-	private void _loadDataForRoute(final Transport transport, final OnLoadCompleteListener listener) {
+	private void _loadDataForRoute(final Route route, final OnLoadCompleteListener listener) {
 		IRequest req = new IRequest() {
 			
 			boolean _canceled;
@@ -247,7 +248,7 @@ public class Model extends Application {
 			public void nextExecute() {
 				URL url;
 				try {
-					url = new URL("http://transport.orgp.spb.ru/Portal/transport/map/routeVehicle?ROUTE=" + transport.id.toString() + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.4202592596411705&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
+					url = new URL("http://transport.orgp.spb.ru/Portal/transport/map/routeVehicle?ROUTE=" + route.id.toString() + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.4202592596411705&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
 					URLConnection conn = url.openConnection();
 					BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 					String line = "";
@@ -267,12 +268,12 @@ public class Model extends Application {
 					_array = new ArrayList<Transport>();
 					for (int i = 0; i < ja.length(); i++) {
 						JSONArray coordinates = ja.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates");
-						Transport transportCopy = transport.copy();
-						transportCopy.Lat = m.deg(coordinates.getDouble(1), AxisType.LAT);
-						transportCopy.Lng = m.deg(coordinates.getDouble(0), AxisType.LNG);
-						transportCopy.direction = (float)ja.getJSONObject(i).getJSONObject("properties").getDouble("direction");
-						transportCopy.id = ja.getJSONObject(i).getInt("id");
-						_array.add(transportCopy);
+						Transport transport = route.creatTransport();
+						transport.Lat = m.deg(coordinates.getDouble(1), AxisType.LAT);
+						transport.Lng = m.deg(coordinates.getDouble(0), AxisType.LNG);
+						transport.direction = (float)ja.getJSONObject(i).getJSONObject("properties").getDouble("direction");
+						transport.id = ja.getJSONObject(i).getInt("id");
+						_array.add(transport);
 						if (_canceled) {
 							throw new LoadTaskException();
 						}
@@ -297,7 +298,7 @@ public class Model extends Application {
 					listener.onAllRoutesLoadComplete();
 				}
 				_parsers.remove(this);
-				listener.onRouteLoadComplete(_array);
+				listener.onTransportListOfRouteLoadComplete(_array);
 			}
 		};
 		ParserWebPageTask parser = new ParserWebPageTask(req);
@@ -359,16 +360,29 @@ public class Model extends Application {
 		}
 	}
 	
-	class Marker {
-		int id;
+	static class TransportOverlay {
+		Transport transport;
 		GroundOverlay groundOverlay;
 	}
-	private ArrayList<Marker> _markers;
 	
-	public ArrayList<Marker> getMarkers() {
-		if (_markers == null) {
-			_markers = new ArrayList<Model.Marker>();
+	private ArrayList<TransportOverlay> _allTransportOverlay;
+	private ArrayList<TransportOverlay> _excessTransportOverlay;
+	
+	public ArrayList<TransportOverlay> getAllTransportOverlay() {
+		if (_allTransportOverlay == null) {
+			_allTransportOverlay = new ArrayList<Model.TransportOverlay>();
 		}
-		return _markers;
+		return _allTransportOverlay;
+	}
+	
+	public ArrayList<TransportOverlay> getExcessTransportOverlay() {
+		return _excessTransportOverlay;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void cloneExcessTransportOverlay() {
+		if (_allTransportOverlay != null) {
+			_excessTransportOverlay = (ArrayList<TransportOverlay>) _allTransportOverlay.clone();
+		}
 	}
 }
