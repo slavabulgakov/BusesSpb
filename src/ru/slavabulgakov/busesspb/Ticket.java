@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ public class Ticket extends LinearLayout {
 		void onRemove(Ticket ticket);
 	}
 	
+	ImageView _icon;
 	Button _closeButton;
 	TextView _roueNumber;
 	Route _route;
@@ -33,10 +35,13 @@ public class Ticket extends LinearLayout {
 		
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.ticket, this, true);
-		_roueNumber = (TextView)getChildAt(0);
+		
+		_icon = (ImageView)getChildAt(0);
+		
+		_roueNumber = (TextView)getChildAt(1);
 		_roueNumber.setText(routeNumber);
 		
-		_closeButton = (Button)getChildAt(1);
+		_closeButton = (Button)getChildAt(2);
 		_closeButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -59,9 +64,31 @@ public class Ticket extends LinearLayout {
 		_ticket(context, attrs);
 	}
 	
+	private void _updateIcon() {
+		int resId = -1;
+		switch (_route.kind) {
+		case Bus:
+			resId = R.drawable.bus;
+			break;
+			
+		case Trolley:
+			resId = R.drawable.trolley;
+			break;
+			
+		case Tram:
+			resId = R.drawable.tram;
+			break;
+
+		default:
+			break;
+		}
+		_icon.setImageResource(resId);
+	}
+	
 	public void setRoute(Route route) {
 		_route = route;
 		_roueNumber.setText(_route.routeNumber);
+		_updateIcon();
 	}
 	
 	public Route getRoute() {
