@@ -197,7 +197,7 @@ public class MainActivity extends BaseActivity {
 	
 	private float _getWidth() {
 		float zoom = _map.getCameraPosition().zoom;
-		float ret = (float)(11.0 / (zoom - 10.0) * 900.0 - 899.6); 
+		float ret = (float)((900.0 - .4) / (10.0 - 21.0) * ((double)zoom - 21.0) + .4); 
 		return ret;
 	}
 
