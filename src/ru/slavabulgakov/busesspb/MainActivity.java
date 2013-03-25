@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.osmdroid.ResourceProxy.bitmap;
-
 import ru.slavabulgakov.busesspb.Model.Transport;
 import ru.slavabulgakov.busesspb.Model.TransportKind;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
@@ -14,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.GroundOverlay;
@@ -22,18 +21,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.jhlabs.map.proj.ProjectionFactory;
 
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PorterDuffXfermode;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -52,7 +50,7 @@ public class MainActivity extends BaseActivity {
         _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
         _map.moveCamera(center);
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(21);
         _map.animateCamera(zoom);
         _map.setMyLocationEnabled(true);
         _map.setOnCameraChangeListener(Contr.getInstance());
@@ -102,11 +100,21 @@ public class MainActivity extends BaseActivity {
 	
 	private LatLngBounds _getBounds(LatLng latlng) {
 		Point point = _map.getProjection().toScreenLocation(latlng);
-		Point point1 = new Point(point.x + 4, point.y - 6);
-		Point point2 = new Point(point.x - 4, point.y + 7);
-		LatLng latlng1 = _map.getProjection().fromScreenLocation(point1);
-		LatLng latlng2 = _map.getProjection().fromScreenLocation(point2);
-		LatLngBounds bounds = new LatLngBounds(latlng2, latlng1);
+		double cosa = Math.cos(_map.getCameraPosition().bearing * Math.PI / 180.0);
+		double sina = Math.sin(_map.getCameraPosition().bearing * Math.PI / 180.0);
+		Point point21 = new Point(6, -10);
+		Point point22 = new Point(-6, 10);
+		Point point1 = new Point((int)Math.round((double)point21.x * cosa - (double)point21.y * sina), (int)Math.round((double)point21.x * sina + (double)point21.y * cosa));
+		Point point2 = new Point((int)Math.round((double)point22.x * cosa - (double)point22.y * sina), (int)Math.round((double)point22.x * sina + (double)point22.y * cosa));
+		LatLng latlng1 = _map.getProjection().fromScreenLocation(new Point(point.x + point1.x, point.y + point1.y));
+		LatLng latlng2 = _map.getProjection().fromScreenLocation(new Point(point.x + point2.x, point.y + point2.y));
+		LatLngBounds bounds;
+		try {
+			bounds = new LatLngBounds(latlng2, latlng1);
+		} catch (IllegalArgumentException e) {
+			bounds = new LatLngBounds(latlng1, latlng2);
+		}
+		
 		return bounds;
 	}
 
@@ -123,7 +131,7 @@ public class MainActivity extends BaseActivity {
 					LatLng position = new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng);
 					LatLngBounds bounds = _getBounds(position);
 					transportOverlay.groundOverlay.remove();
-					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).positionFromBounds(bounds).bearing(transportOverlay.transport.direction));
+					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transportOverlay.transport.direction));//positionFromBounds(bounds).
 					transportOverlay.marker.remove();
 					transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe"));//.icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber))
 				}
@@ -186,6 +194,12 @@ public class MainActivity extends BaseActivity {
 		canvas.drawText(routeNumber, 10, 10, paint);
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
 	}
+	
+	private float _getWidth() {
+		float zoom = _map.getCameraPosition().zoom;
+		float ret = (float)(11.0 / (zoom - 10.0) * 900.0 - 899.6); 
+		return ret;
+	}
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
 		for (Transport transport : array) {
@@ -193,7 +207,7 @@ public class MainActivity extends BaseActivity {
 			LatLngBounds bounds = _getBounds(position);
 			TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
 			if (transportOverlay == null) {
-				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).positionFromBounds(bounds).bearing(transport.direction));
+				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
 				Marker marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe"));//.icon(_getRouteNumberBitMap(transport.routeNumber))
 				transportOverlay = new TransportOverlay();
 				transportOverlay.transport = transport;
@@ -203,7 +217,7 @@ public class MainActivity extends BaseActivity {
 			} else {
 				transportOverlay.groundOverlay.remove();
 				transportOverlay.marker.remove();
-				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).positionFromBounds(bounds).bearing(transport.direction));
+				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transport.direction));
 				transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe"));//.icon(_getRouteNumberBitMap(transport.routeNumber))
 				if (_model.getExcessTransportOverlay() != null) {
 					_model.getExcessTransportOverlay().remove(transportOverlay);

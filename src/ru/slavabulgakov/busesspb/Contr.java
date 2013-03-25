@@ -67,9 +67,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@SuppressLint("NewApi")
 	@Override
-	public void onCameraChange(CameraPosition arg0) {
+	public void onCameraChange(CameraPosition cameraPosition) {
 		if (_currentActivity.getClass() == MainActivity.class) {
 			((MainActivity)_currentActivity).updateTransport(true);
+			System.out.println(cameraPosition.zoom);
 		}
 	}
 
