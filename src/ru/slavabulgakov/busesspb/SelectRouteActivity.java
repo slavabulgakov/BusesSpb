@@ -147,16 +147,33 @@ public class SelectRouteActivity extends BaseActivity {
 		_doneButton = (Button)findViewById(R.id.selectRouteDone);
 		_doneButton.setOnClickListener(Contr.getInstance());
 		
-		LinearLayout ll = (LinearLayout)findViewById(R.id.selectRouteTickets);
+		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
 		for (Route route : _model.getFavorite()) {
 			Ticket ticket = new Ticket(this);
 			ticket.setRoute(route);
 			ticket.setOnRemoveListener(Contr.getInstance());
-			ll.addView(ticket);
+			ticketsLayout.addView(ticket);
 		}
+		putCloseAllButtonToTicketsLayout();
 	}
 	
-	
+	public void putCloseAllButtonToTicketsLayout() {
+		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
+		if (_model.getFavorite().size() > 1) {
+			if (ticketsLayout.getChildAt(0).getClass() != Button.class) {
+				Button closeAllBtn = new Button(this);
+				closeAllBtn.setOnClickListener(Contr.getInstance());
+				closeAllBtn.setText("X");
+				ticketsLayout.addView(closeAllBtn, 0);
+			}
+		} else {
+			if (ticketsLayout.getChildCount() > 0) {
+				if (ticketsLayout.getChildAt(0).getClass() == Button.class) {
+					ticketsLayout.removeViewAt(0);
+				}
+			}
+		}
+	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

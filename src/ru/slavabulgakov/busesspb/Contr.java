@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -63,6 +64,14 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		default:
 			break;
 		}
+		
+		if (_currentActivity.getClass() == SelectRouteActivity.class && v.getClass() == Button.class) {
+			if (((Button)v).getText().equals("X")) {
+				LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+				_model.getFavorite().clear();
+				ticketsLayout.removeAllViews();
+			}
+		}
 	}
 
 	@SuppressLint("NewApi")
@@ -99,14 +108,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void afterTextChanged(Editable s) {
 		String text = s.toString();
-//		String filterString = "";
-//		if (text.length() != 0) {
-//			char lastChar = text.charAt(text.length() - 1);
-//			if (lastChar != ',') {
-//				String[] textBlocks = text.split(","); 
-//				filterString = textBlocks[textBlocks.length - 1]; 
-//			}
-//		}
 		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
 		if (listView.getAdapter() != null) {
 			((Adapter)listView.getAdapter()).getFilter().filter(text);
@@ -122,43 +123,26 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//		EditText editText = (EditText)_currentActivity.findViewById(R.id.selectRouteText);
-//		String text = editText.getText().toString();
-//		if (text.length() != 0) {
-//			char lastChar = text.charAt(text.length() - 1);
-//			if (lastChar != ',') {
-//				int startRemoveIndex = 0;
-//				if (text.contains(",")) {
-//					for (int i = 0; i < text.length(); i++) {
-//						if (text.charAt(i) == ',') {
-//							startRemoveIndex = i + 1;
-//						}
-//					}
-//				}
-//				text = text.substring(0, startRemoveIndex);
-//			}
-//		}
-//		editText.setText(text + cellText + ",");
-
-		LinearLayout ll = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
-		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-		Route route = ((Adapter)listView.getAdapter()).getItem(position);
-		Ticket ticket = new Ticket(_currentActivity, null);
-		ticket.setRoute(route);
-		ticket.setOnRemoveListener(this);
-		ll.addView(ticket);
-		_model.getFavorite().add(route);
+		if (_currentActivity.getClass() == SelectRouteActivity.class) {
+			LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+			ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
+			Route route = ((Adapter)listView.getAdapter()).getItem(position);
+			Ticket ticket = new Ticket(_currentActivity, null);
+			ticket.setRoute(route);
+			ticket.setOnRemoveListener(this);
+			ticketsLayout.addView(ticket);
+			_model.getFavorite().add(route);
+			((SelectRouteActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
+		}
 	}
 
 	@Override
 	public void onRemove(Ticket ticket) {
 		_model.getFavorite().remove(ticket.getRoute());
+		((SelectRouteActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 	}
 
 	@Override
 	public void onAllRoutesLoadComplete() {
-		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).removeExcessTransportOverlay();
-		}
 	}
 }

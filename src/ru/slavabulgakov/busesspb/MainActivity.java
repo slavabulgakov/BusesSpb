@@ -14,6 +14,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,7 +30,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.PointF;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -59,25 +59,35 @@ public class MainActivity extends BaseActivity {
     
     @Override
 	protected void onResume() {
-	if (_model.getAllTransportOverlay().size() == 0) {
+    	if (_model.getFavorite().size() == 0) {
+			_map.getUiSettings().setRotateGesturesEnabled(false);
+			CameraPosition camPos = _map.getCameraPosition();
+			if (camPos.bearing != 0) {
+				_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
+			}
+		} else {
+			_map.getUiSettings().setRotateGesturesEnabled(true);
+		}
+    	
+    	if (_model.getAllTransportOverlay().size() == 0) {
 			_map.clear();
 		} else {
 			updateTransport(true);
 		}
-	_timer = new Timer();
-	_timer.schedule(new TimerTask() {
+    	_timer = new Timer();
+    	_timer.schedule(new TimerTask() {
 
-			@Override
-			public void run() {
-				MainActivity.this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					MainActivity.this.runOnUiThread(new Runnable() {
 
-					@Override
-					public void run() {
-						updateTransport(false);
-					}
-				});
-			}
-		}, 0, 15000);
+						@Override
+						public void run() {
+							updateTransport(false);
+						}
+					});
+				}
+			}, 0, 5000);
 		super.onResume();
 	}
 
@@ -129,17 +139,7 @@ public class MainActivity extends BaseActivity {
 					transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe").icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber)));
 				}
 			} else {
-				_model.cloneExcessTransportOverlay();
 				_model.showFavoriteRoutes(Contr.getInstance());
-			}
-		}
-	}
-	
-	public void removeExcessTransportOverlay() {
-		if (_model.getExcessTransportOverlay() != null) {
-			for (TransportOverlay transportOverlay : _model.getExcessTransportOverlay()) {
-				transportOverlay.groundOverlay.remove();
-				_model.getAllTransportOverlay().remove(transportOverlay);
 			}
 		}
 	}
@@ -177,20 +177,21 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private BitmapDescriptor _getRouteNumberBitMap(String routeNumber) {
-		Bitmap bitmap = Bitmap.createBitmap(20, 20, Config.ARGB_8888);
+		Bitmap bitmap = Bitmap.createBitmap(40, 30, Config.ARGB_8888);
 		Canvas canvas = new Canvas(bitmap);
 		Resources resources = getResources();
 		float scale = resources.getDisplayMetrics().density;
 		
-		Paint paintGreen = new Paint(Paint.ANTI_ALIAS_FLAG);
-		paintGreen.setColor(Color.GREEN);
-		canvas.drawRect(0, 0, 20, 20, paintGreen);
+//		Paint paintGreen = new Paint(Paint.ANTI_ALIAS_FLAG);
+//		paintGreen.setColor(Color.GREEN);
+//		canvas.drawRect(0, 0, 40, 30, paintGreen);
 		
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		paint.setTextAlign(Align.LEFT);
-		paint.setColor(Color.RED);
-		paint.setTextSize((int) (14 * scale));
-		canvas.drawText(routeNumber, 0, 15, paint);
+		paint.setTextAlign(Align.CENTER);
+		paint.setColor(Color.BLACK);
+		paint.setTextSize((int) (11 * scale));
+		paint.setShadowLayer(4, 2, 2, Color.WHITE);
+		canvas.drawText(routeNumber, 20, 15, paint);
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
 	}
 	
@@ -217,32 +218,18 @@ public class MainActivity extends BaseActivity {
 				transportOverlay.marker.remove();
 				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transport.direction));
 				transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe").icon(_getRouteNumberBitMap(transport.routeNumber)));
-				if (_model.getExcessTransportOverlay() != null) {
-					_model.getExcessTransportOverlay().remove(transportOverlay);
-				}
 			}
 		}
 	}
 	
-	private LatLng _rotate(double angle, LatLng point) {
-		double rad = Math.PI / 180.0 * angle;
-		double newX = point.latitude * Math.cos(rad) - point.longitude * Math.sin(rad);
-		double newY = point.latitude * Math.sin(rad) + point.longitude * Math.cos(rad);
-		return new LatLng(newX, newY);
-	}
-
 	public void showTransportImgOnMap(Bitmap img) {
 		if (img != null) {
 			_map.clear();
 			BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
 	        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-	        double bearing = _map.getCameraPosition().bearing;
-	        LatLng point1 = _rotate(-bearing, bounds.northeast);
-	        LatLng point2 = _rotate(-bearing, bounds.southwest);
-	        float width = _distFrom(new LatLng(point1.latitude, point1.longitude), new LatLng(point1.latitude, point2.longitude));
 	        _map.addGroundOverlay(new GroundOverlayOptions()
 	            .image(image)
-	            .position(_map.getCameraPosition().target, width));
+	            .positionFromBounds(bounds));
 		}
 	}
 }

@@ -386,23 +386,11 @@ public class Model extends Application {
 	}
 	
 	private ArrayList<TransportOverlay> _allTransportOverlay;
-	private ArrayList<TransportOverlay> _excessTransportOverlay;
 	
 	public ArrayList<TransportOverlay> getAllTransportOverlay() {
 		if (_allTransportOverlay == null) {
 			_allTransportOverlay = new ArrayList<Model.TransportOverlay>();
 		}
 		return _allTransportOverlay;
-	}
-	
-	public ArrayList<TransportOverlay> getExcessTransportOverlay() {
-		return _excessTransportOverlay;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void cloneExcessTransportOverlay() {
-		if (_allTransportOverlay != null) {
-			_excessTransportOverlay = (ArrayList<TransportOverlay>) _allTransportOverlay.clone();
-		}
 	}
 }
