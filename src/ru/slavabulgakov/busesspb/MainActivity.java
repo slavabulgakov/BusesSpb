@@ -29,6 +29,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.graphics.PointF;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -222,13 +223,23 @@ public class MainActivity extends BaseActivity {
 			}
 		}
 	}
+	
+	private LatLng _rotate(double angle, LatLng point) {
+		double rad = Math.PI / 180.0 * angle;
+		double newX = point.latitude * Math.cos(rad) - point.longitude * Math.sin(rad);
+		double newY = point.latitude * Math.sin(rad) + point.longitude * Math.cos(rad);
+		return new LatLng(newX, newY);
+	}
 
 	public void showTransportImgOnMap(Bitmap img) {
 		if (img != null) {
 			_map.clear();
 			BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
 	        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-	        float width = _distFrom(new LatLng(bounds.northeast.latitude, bounds.northeast.longitude), new LatLng(bounds.northeast.latitude, bounds.southwest.longitude));
+	        double bearing = _map.getCameraPosition().bearing;
+	        LatLng point1 = _rotate(-bearing, bounds.northeast);
+	        LatLng point2 = _rotate(-bearing, bounds.southwest);
+	        float width = _distFrom(new LatLng(point1.latitude, point1.longitude), new LatLng(point1.latitude, point2.longitude));
 	        _map.addGroundOverlay(new GroundOverlayOptions()
 	            .image(image)
 	            .position(_map.getCameraPosition().target, width));
