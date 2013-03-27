@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ru.slavabulgakov.busesspb.Model.Route;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,13 +28,13 @@ public class SelectRouteActivity extends BaseActivity {
 	
 	class Adapter extends ArrayAdapter<Route> {
 		private Filter _filter;
-		private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Model.Route>());
+		private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Route>());
 		
 		public Adapter() {
 			super(SelectRouteActivity.this, R.layout.listitem_selectroute, _model.getAllRoutes());
 			_filter = new Filter() {
 				
-				ArrayList<Route> _data = new ArrayList<Model.Route>();
+				ArrayList<Route> _data = new ArrayList<Route>();
 				
 				@Override
 				protected void publishResults(CharSequence constraint, FilterResults results) {

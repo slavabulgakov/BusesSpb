@@ -2,8 +2,6 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
-import ru.slavabulgakov.busesspb.Model.Route;
-import ru.slavabulgakov.busesspb.Model.Transport;
 import ru.slavabulgakov.busesspb.SelectRouteActivity.Adapter;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 

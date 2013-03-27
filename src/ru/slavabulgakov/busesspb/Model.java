@@ -1,9 +1,14 @@
 package ru.slavabulgakov.busesspb;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,8 +35,43 @@ import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+enum TransportKind {
+	Bus,
+	Trolley,
+	Tram,
+}
+
+class Transport {
+	Integer id;
+	Integer cost;
+	String routeNumber;
+	Double Lng;
+	Double Lat;
+	float direction;
+	TransportKind kind;
+}
+
+class Route implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	Integer id;
+	Integer cost;
+	String routeNumber;
+	TransportKind kind;
+	Transport creatTransport() {
+		Transport transport = new Transport();
+		transport.routeNumber = this.routeNumber;
+		transport.cost = this.cost;
+		transport.kind = this.kind;
+		return transport;
+	}
+}
 
 public class Model extends Application {
 	
@@ -47,64 +87,55 @@ public class Model extends Application {
 		void onImgLoadComplete(Bitmap img);
 	}
 	
-	enum TransportKind {
-		Bus,
-		Trolley,
-		Tram,
-	}
-	
-	class Route {
-		Integer id;
-		Integer cost;
-		String routeNumber;
-		TransportKind kind;
-		Transport creatTransport() {
-			Transport transport = new Transport();
-			transport.routeNumber = this.routeNumber;
-			transport.cost = this.cost;
-			transport.kind = this.kind;
-			return transport;
-		}
-	}
-	
-	class Transport {
-		Integer id;
-		Integer cost;
-		String routeNumber;
-		Double Lng;
-		Double Lat;
-		float direction;
-		TransportKind kind;
-	}
-	
 	@SuppressWarnings("unchecked")
 	private ArrayList<Route> _loadFromFile(String fileName) {
-		ArrayList<Route> transportList = null;
-		String ser = SerializeObject.ReadSettings(this, "myobject.dat");
-		if (ser != null && !ser.equalsIgnoreCase("")) {
-		    Object obj = SerializeObject.stringToObject(ser);
-		    // Then cast it to your object and 
-		    if (obj instanceof ArrayList) {
-		        // Do something
-		    	transportList = (ArrayList<Route>)obj;
-		    }
+		ObjectInputStream in = null;
+		try {
+			in = new ObjectInputStream(openFileInput(fileName));
+			try {
+				return (ArrayList<Route>)in.readObject();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		} catch (Exception e) {
+			if (!(e instanceof FileNotFoundException)) {
+				
+			}
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e2) {
+					// TODO: handle exception
+				}
+			}
 		}
-		return transportList;
+		return new ArrayList<Route>();
 	}
 	
 	private void _saveToFile(ArrayList<Route> transportList, String fileName) {
-		String ser = SerializeObject.objectToString(transportList);
-		if (ser != null && !ser.equalsIgnoreCase("")) {
-		    SerializeObject.WriteSettings(this, ser, "myobject.dat");
-		} else {
-		    SerializeObject.WriteSettings(this, "", "myobject.dat");
+		ObjectOutputStream out = null;
+		try {
+			FileOutputStream fout = openFileOutput(fileName, 0);
+			out = new ObjectOutputStream(fout);
+			out.writeObject(transportList);
+			fout.getFD().sync();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+			}
 		}
 	}
 	
 	public ArrayList<Route> getFavorite() {
 		if (_favoriteRoutes == null) {
 			_favoriteRoutes = _loadFromFile("favoriteTransportList.ser");
-			_favoriteRoutes = new ArrayList<Model.Route>();
 		}
 		return _favoriteRoutes;
 	}
@@ -115,7 +146,7 @@ public class Model extends Application {
 	
 	public ArrayList<Route> getAllRoutes() {
 		if (_allRoutes == null) {
-			_allRoutes = new ArrayList<Model.Route>();
+			_allRoutes = new ArrayList<Route>();
 		}
 		return _allRoutes;
 	}
@@ -183,7 +214,7 @@ public class Model extends Application {
 			        JSONObject response = new JSONObject(responseBody);
 			        
 			        JSONArray aaData = response.getJSONArray("aaData");
-			        _array = new ArrayList<Model.Route>();
+			        _array = new ArrayList<Route>();
 			        for (int i = 0; i < aaData.length(); i++) {
 						JSONArray data = aaData.getJSONArray(i);
 						Route route = new Route();
@@ -233,14 +264,17 @@ public class Model extends Application {
 			}
 		};
 		
-		if (_parsers == null) {
-			_parsers = new ArrayList<ParserWebPageTask>();
-		} else {
-			_parsers.clear();
-		}
+		_getParsers().clear();
 		
 		ParserWebPageTask parser = new ParserWebPageTask(req);
 		parser.execute((Void)null);
+	}
+	
+	private ArrayList<ParserWebPageTask> _getParsers() {
+		if (_parsers == null) {
+			_parsers = new ArrayList<ParserWebPageTask>();
+		}
+		return _parsers;
 	}
 	
 	private int _countLoadingFavoriteRoutes = 0;
@@ -322,7 +356,7 @@ public class Model extends Application {
 		};
 		ParserWebPageTask parser = new ParserWebPageTask(req);
 		parser.execute((Void)null);
-		_parsers.add(parser);
+		_getParsers().add(parser);
 	}
 	
 	public void loadImg(LatLngBounds bounds, final int width, final int height, final OnLoadCompleteListener listener) {
@@ -374,7 +408,7 @@ public class Model extends Application {
 	}
 	
 	public void cancel() {
-		for (ParserWebPageTask parser : _parsers) {
+		for (ParserWebPageTask parser : _getParsers()) {
 			parser.cancel(true);
 		}
 	}

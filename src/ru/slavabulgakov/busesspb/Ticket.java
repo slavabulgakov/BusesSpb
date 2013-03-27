@@ -1,6 +1,5 @@
 package ru.slavabulgakov.busesspb;
 
-import ru.slavabulgakov.busesspb.Model.Route;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;

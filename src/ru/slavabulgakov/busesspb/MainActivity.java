@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ru.slavabulgakov.busesspb.Model.Transport;
-import ru.slavabulgakov.busesspb.Model.TransportKind;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
 
 import com.google.android.gms.maps.CameraUpdate;
