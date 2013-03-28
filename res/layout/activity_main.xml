@@ -1,16 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     	android:id="@+id/mainFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-        
-        <fragment
-        	android:id="@+id/map"
-        	android:layout_width="match_parent"
-        	android:layout_height="match_parent"
-        	class="com.google.android.gms.maps.MapFragment"/>
 
-        
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/selectRouteText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/selectRouteTickets"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ProgressBar
+                android:id="@+id/selectRouteProgressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center" />
+
+            <ListView
+                android:id="@+id/selectRouteListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </ListView>
+        </FrameLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/mainMapLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:background="@color/red" >
+
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.MapFragment" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -54,7 +101,8 @@
                     </LinearLayout>
                 </HorizontalScrollView>
             </RelativeLayout>
-
         </RelativeLayout>
+
+    </RelativeLayout>
         
-</FrameLayout>
+</RelativeLayout>

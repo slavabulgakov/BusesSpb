@@ -2,7 +2,6 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
-import ru.slavabulgakov.busesspb.SelectRouteActivity.Adapter;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -90,8 +89,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onRouteKindsLoadComplete(ArrayList<Route> array) {
-		if (_currentActivity.getClass() == SelectRouteActivity.class) {
-			((SelectRouteActivity)_currentActivity).showTransportList();
+		if (_currentActivity.getClass() == MainActivity.class) {
+			((MainActivity)_currentActivity).showTransportList();
 		}
 	}
 

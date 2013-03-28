@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,6 +21,115 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+class Adapter extends ArrayAdapter<Route> {
+	private Filter _filter;
+	private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Route>());
+	Context _context;
+	Model _model;
+	
+	public Adapter(Context context, Model model) {
+		super(context, R.layout.listitem_selectroute, model.getAllRoutes());
+		_context = context;
+		_model = model;
+		_filter = new Filter() {
+			
+			ArrayList<Route> _data = new ArrayList<Route>();
+			
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+				synchronized (this) {
+					_filtredList.clear();
+					if (results != null && results.count > 0) {
+						@SuppressWarnings("unchecked")
+						ArrayList<Route>objects = (ArrayList<Route>)results.values;
+						for (Route route : objects) {
+							_filtredList.add(route);
+						}
+						notifyDataSetChanged();
+					}
+				}
+			}
+			
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				_data.clear();
+				FilterResults filterResults = new FilterResults();
+				if (constraint != null) {
+					synchronized (this) {
+						for (Route route : _model.getAllRoutes()) {
+							if (constraint.length() == 0 || route.routeNumber.contains(constraint)) {
+								_data.add(route);
+							}
+						}
+					}
+				}
+				synchronized (this) {
+					filterResults.values = _data;
+					filterResults.count = _data.size();
+				}
+				return filterResults;
+			}
+		};
+	}
+	
+	
+	
+	@Override
+	public Route getItem(int position) {
+		return _filtredList.get(position);
+	}
+
+
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			LayoutInflater inflater = ((Activity)_context).getLayoutInflater();
+			convertView = inflater.inflate(R.layout.listitem_selectroute, parent, false);
+		}
+		((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_filtredList.get(position).routeNumber);
+		int resId = -1;
+		switch (_filtredList.get(position).kind) {
+		case Bus:
+			resId = R.drawable.bus;
+			break;
+			
+		case Trolley:
+			resId = R.drawable.trolley;
+			break;
+			
+		case Tram:
+			resId = R.drawable.tram;
+			break;
+
+		default:
+			break;
+		}
+		((ImageView)convertView.findViewById(R.id.listItemSelectRouteKind)).setImageResource(resId);
+		
+		Integer cost = _filtredList.get(position).cost;
+		TextView costTextView = (TextView)convertView.findViewById(R.id.listItemSelectRouteCost);
+		if (cost == null) {
+			costTextView.setVisibility(View.GONE);
+		} else {
+			costTextView.setText(cost.toString());
+			costTextView.setVisibility(View.VISIBLE);
+		}
+		
+		return convertView;
+	}
+
+	@Override
+	public int getCount() {
+		return _filtredList.size();
+	}
+
+	@Override
+	public Filter getFilter() {
+		return _filter;
+	}
+}
+
 public class SelectRouteActivity extends BaseActivity {
 	
 	private ListView _listView;
@@ -26,111 +137,6 @@ public class SelectRouteActivity extends BaseActivity {
 	private ProgressBar _progressBar;
 	private Button _doneButton;
 	
-	class Adapter extends ArrayAdapter<Route> {
-		private Filter _filter;
-		private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Route>());
-		
-		public Adapter() {
-			super(SelectRouteActivity.this, R.layout.listitem_selectroute, _model.getAllRoutes());
-			_filter = new Filter() {
-				
-				ArrayList<Route> _data = new ArrayList<Route>();
-				
-				@Override
-				protected void publishResults(CharSequence constraint, FilterResults results) {
-					synchronized (this) {
-						_filtredList.clear();
-						if (results != null && results.count > 0) {
-							@SuppressWarnings("unchecked")
-							ArrayList<Route>objects = (ArrayList<Route>)results.values;
-							for (Route route : objects) {
-								_filtredList.add(route);
-							}
-							notifyDataSetChanged();
-						}
-					}
-				}
-				
-				@Override
-				protected FilterResults performFiltering(CharSequence constraint) {
-					_data.clear();
-					FilterResults filterResults = new FilterResults();
-					if (constraint != null) {
-						synchronized (this) {
-							for (Route route : _model.getAllRoutes()) {
-								if (constraint.length() == 0 || route.routeNumber.contains(constraint)) {
-									_data.add(route);
-								}
-							}
-						}
-					}
-					synchronized (this) {
-						filterResults.values = _data;
-						filterResults.count = _data.size();
-					}
-					return filterResults;
-				}
-			};
-		}
-		
-		
-		
-		@Override
-		public Route getItem(int position) {
-			return _filtredList.get(position);
-		}
-
-
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				LayoutInflater inflater = SelectRouteActivity.this.getLayoutInflater();
-				convertView = inflater.inflate(R.layout.listitem_selectroute, parent, false);
-			}
-			((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_filtredList.get(position).routeNumber);
-			int resId = -1;
-			switch (_filtredList.get(position).kind) {
-			case Bus:
-				resId = R.drawable.bus;
-				break;
-				
-			case Trolley:
-				resId = R.drawable.trolley;
-				break;
-				
-			case Tram:
-				resId = R.drawable.tram;
-				break;
-
-			default:
-				break;
-			}
-			((ImageView)convertView.findViewById(R.id.listItemSelectRouteKind)).setImageResource(resId);
-			
-			Integer cost = _filtredList.get(position).cost;
-			TextView costTextView = (TextView)convertView.findViewById(R.id.listItemSelectRouteCost);
-			if (cost == null) {
-				costTextView.setVisibility(View.GONE);
-			} else {
-				costTextView.setText(cost.toString());
-				costTextView.setVisibility(View.VISIBLE);
-			}
-			
-			return convertView;
-		}
-
-		@Override
-		public int getCount() {
-			return _filtredList.size();
-		}
-
-		@Override
-		public Filter getFilter() {
-			return _filter;
-		}
-	}
- 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -148,7 +154,7 @@ public class SelectRouteActivity extends BaseActivity {
 			_editText.setEnabled(false);
 			_model.loadDataForAllRoutes(Contr.getInstance());
 		} else {
-			showTransportList();
+//			showTransportList();
 		}
 		_listView.setOnItemClickListener(Contr.getInstance());
 		
@@ -195,12 +201,12 @@ public class SelectRouteActivity extends BaseActivity {
 
 
 
-	public void showTransportList() {
-		_progressBar.setVisibility(View.INVISIBLE);
-		_listView.setVisibility(View.VISIBLE);
-		_editText.setEnabled(true);
-		Adapter adapter = new Adapter();
-		_listView.setAdapter(adapter);
-		adapter.getFilter().filter(_editText.getText());
-	}
+//	public void showTransportList() {
+//		_progressBar.setVisibility(View.INVISIBLE);
+//		_listView.setVisibility(View.VISIBLE);
+//		_editText.setEnabled(true);
+//		Adapter adapter = new Adapter();
+//		_listView.setAdapter(adapter);
+//		adapter.getFilter().filter(_editText.getText());
+//	}
 }
