@@ -108,6 +108,15 @@ public class SelectRouteActivity extends BaseActivity {
 			}
 			((ImageView)convertView.findViewById(R.id.listItemSelectRouteKind)).setImageResource(resId);
 			
+			Integer cost = _filtredList.get(position).cost;
+			TextView costTextView = (TextView)convertView.findViewById(R.id.listItemSelectRouteCost);
+			if (cost == null) {
+				costTextView.setVisibility(View.GONE);
+			} else {
+				costTextView.setText(cost.toString());
+				costTextView.setVisibility(View.VISIBLE);
+			}
+			
 			return convertView;
 		}
 
@@ -147,11 +156,13 @@ public class SelectRouteActivity extends BaseActivity {
 		_doneButton.setOnClickListener(Contr.getInstance());
 		
 		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
+		Ticket lastTicket = null;
 		for (Route route : _model.getFavorite()) {
 			Ticket ticket = new Ticket(this);
 			ticket.setRoute(route);
 			ticket.setOnRemoveListener(Contr.getInstance());
 			ticketsLayout.addView(ticket);
+			lastTicket = ticket;
 		}
 		putCloseAllButtonToTicketsLayout();
 	}

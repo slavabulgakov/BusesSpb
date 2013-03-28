@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
+
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
@@ -31,6 +33,10 @@ import android.graphics.Paint.Align;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class MainActivity extends BaseActivity {
 	
@@ -51,12 +57,32 @@ public class MainActivity extends BaseActivity {
         _map.setMyLocationEnabled(true);
         _map.setOnCameraChangeListener(Contr.getInstance());
         
-        Button btn = (Button)findViewById(R.id.mainButton);
-        btn.setOnClickListener(Contr.getInstance());
+	    RelativeLayout btn = (RelativeLayout)findViewById(R.id.mainRoutesBtn);
+	    btn.setOnClickListener(Contr.getInstance());
     }
     
     @Override
 	protected void onResume() {
+    	TextView routesBtnText = (TextView)findViewById(R.id.mainRoutesBtnText);
+    	routesBtnText.setText(R.string.routes);
+    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
+    	if (_model.getFavorite().size() > 0) {
+    		routesBtnText.setText(routesBtnText.getText() + ":");
+    		routesBtnScrollView.setVisibility(View.VISIBLE);
+		} else {
+			routesBtnScrollView.setVisibility(View.GONE);
+		}
+    	
+    	LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
+    	ticketsLayout.removeAllViews();
+    	int index = 0;
+		for (Route route : _model.getFavorite()) {
+			TicketCloseLess ticket = new TicketCloseLess(this);
+			ticket.setRoute(route);
+			ticketsLayout.addView(ticket);
+			ticket.setLast(index++ == _model.getFavorite().size() - 1);
+		}
+    	
     	if (_model.getFavorite().size() == 0) {
 			_map.getUiSettings().setRotateGesturesEnabled(false);
 			CameraPosition camPos = _map.getCameraPosition();

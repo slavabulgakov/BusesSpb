@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="50dp" >
 
     <ImageView
         android:id="@+id/listItemSelectRouteKind"
@@ -9,15 +10,25 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:padding="10dp"
         android:src="@drawable/bus" />
 
     <TextView
         android:id="@+id/listItemSelectRouteRouteName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/listItemSelectRouteKind"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:text="123"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/listItemSelectRouteCost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="35"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

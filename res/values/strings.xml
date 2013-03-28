@@ -8,5 +8,8 @@
     <string name="close">Закрыть</string>
     <string name="about">О программе</string>
     <string name="loading">Загрузка</string>
+    <color name="white">#FFFFFF</color>
+    <string name="routes">Маршруты</string>
+    <color name="black">#000000</color>
 
 </resources>

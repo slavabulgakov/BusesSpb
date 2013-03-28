@@ -20,7 +20,7 @@ public class Ticket extends LinearLayout {
 	
 	ImageView _icon;
 	Button _closeButton;
-	TextView _roueNumber;
+	TextView _routeNumber;
 	Route _route;
 	OnRemoveListener _onRemoveListener;
 	
@@ -37,8 +37,8 @@ public class Ticket extends LinearLayout {
 		
 		_icon = (ImageView)getChildAt(0);
 		
-		_roueNumber = (TextView)getChildAt(1);
-		_roueNumber.setText(routeNumber);
+		_routeNumber = (TextView)getChildAt(1);
+		_routeNumber.setText(routeNumber);
 		
 		_closeButton = (Button)getChildAt(2);
 		_closeButton.setOnClickListener(new OnClickListener() {
@@ -86,7 +86,7 @@ public class Ticket extends LinearLayout {
 	
 	public void setRoute(Route route) {
 		_route = route;
-		_roueNumber.setText(_route.routeNumber);
+		_routeNumber.setText(_route.routeNumber);
 		_updateIcon();
 	}
 	

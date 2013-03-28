@@ -2,5 +2,5 @@
 <resources>
     <declare-styleable name="Ticket">
         <attr name="routeNumber" format="string" />
-   </declare-styleable>
+    </declare-styleable>
 </resources>

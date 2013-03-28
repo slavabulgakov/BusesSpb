@@ -49,7 +49,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onClick(View v) {
 		
 		switch (v.getId()) {
-		case R.id.mainButton:
+		case R.id.mainRoutesBtn:
 			_currentActivity.startActivity(new Intent(_currentActivity, SelectRouteActivity.class));
 			break;
 		
