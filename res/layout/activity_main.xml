@@ -13,7 +13,8 @@
             android:id="@+id/selectRouteText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10" />
+            android:ems="10"
+            android:hint="@string/routes_placeholder" />
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView1"

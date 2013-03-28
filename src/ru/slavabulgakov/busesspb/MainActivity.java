@@ -2,11 +2,17 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 import java.util.Timer;
+import java.util.TimerTask;
+
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,23 +30,26 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class MainActivity extends BaseActivity {
 	
 	private GoogleMap _map;
 	private Timer _timer;
 	private Boolean _opened = false;
+	private Boolean _openIsAnimated = false;
 	private ListView _listView;
 	private EditText _editText;
 	private ProgressBar _progressBar;
+	private Boolean _routesListLoading = false;
 
     @SuppressLint("NewApi")
 	@Override
@@ -48,138 +57,173 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-//        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-//        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
-//        _map.moveCamera(center);
-//        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-//        _map.animateCamera(zoom);
-//        _map.setMyLocationEnabled(true);
-//        _map.setOnCameraChangeListener(Contr.getInstance());
+        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
+        _map.moveCamera(center);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+        _map.animateCamera(zoom);
+        _map.setMyLocationEnabled(true);
+        _map.setOnCameraChangeListener(Contr.getInstance());
         
         _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.addTextChangedListener(Contr.getInstance());
 		
+		_settingMap();
+		
 		_listView = (ListView)findViewById(R.id.selectRouteListView);
-		if (_model.getAllRoutes().size() == 0) {
-			_progressBar.setVisibility(View.VISIBLE);
-			_listView.setVisibility(View.INVISIBLE);
-			_editText.setEnabled(false);
-			_model.loadDataForAllRoutes(Contr.getInstance());
-		} else {
-			showTransportList();
-		}
 		_listView.setOnItemClickListener(Contr.getInstance());
         
-        final RelativeLayout mapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
 	    RelativeLayout btn = (RelativeLayout)findViewById(R.id.mainRoutesBtn);
-	    btn.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				TranslateAnimation ta = new TranslateAnimation(0, _opened ? -200 : 200, 0, 0);
-				ta.setDuration(400);
-				ta.setAnimationListener(new AnimationListener() {
-					
-					@Override
-					public void onAnimationStart(Animation animation) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void onAnimationEnd(Animation animation) {
-						RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mapLayout.getLayoutParams());
-						lp.leftMargin = _opened ? 0 : 200;
-						lp.rightMargin = _opened ? 0 : -200;
-						mapLayout.setLayoutParams(lp);
-						mapLayout.setAnimation(null);
-						_opened = !_opened;
-					}
-				});
-				mapLayout.startAnimation(ta);
-			}
-		});
+	    btn.setOnClickListener(Contr.getInstance());
+	    
+	    LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
+		for (Route route : _model.getFavorite()) {
+			Ticket ticket = new Ticket(this);
+			ticket.setRoute(route);
+			ticket.setOnRemoveListener(Contr.getInstance());
+			ticketsLayout.addView(ticket);
+		}
+		putCloseAllButtonToTicketsLayout();
     }
     
-    public void showTransportList() {
-		_progressBar.setVisibility(View.INVISIBLE);
-		_listView.setVisibility(View.VISIBLE);
-		_editText.setEnabled(true);
-		Adapter adapter = new Adapter(this, _model);
-		_listView.setAdapter(adapter);
-		adapter.getFilter().filter(_editText.getText());
-	}
     
     @Override
-	protected void onResume() {
-//    	TextView routesBtnText = (TextView)findViewById(R.id.mainRoutesBtnText);
-//    	routesBtnText.setText(R.string.routes);
-//    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
-//    	if (_model.getFavorite().size() > 0) {
-//    		routesBtnText.setText(routesBtnText.getText() + ":");
-//    		routesBtnScrollView.setVisibility(View.VISIBLE);
-//		} else {
-//			routesBtnScrollView.setVisibility(View.GONE);
-//		}
-//    	
-//    	LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
-//    	ticketsLayout.removeAllViews();
-//    	int index = 0;
-//		for (Route route : _model.getFavorite()) {
-//			TicketCloseLess ticket = new TicketCloseLess(this);
-//			ticket.setRoute(route);
-//			ticketsLayout.addView(ticket);
-//			ticket.setLast(index++ == _model.getFavorite().size() - 1);
-//		}
-//    	
-//    	if (_model.getFavorite().size() == 0) {
-//			_map.getUiSettings().setRotateGesturesEnabled(false);
-//			CameraPosition camPos = _map.getCameraPosition();
-//			if (camPos.bearing != 0) {
-//				_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
-//			}
-//		} else {
-//			_map.getUiSettings().setRotateGesturesEnabled(true);
-//		}
-//    	
-//    	if (_model.getAllTransportOverlay().size() == 0) {
-//			_map.clear();
-//		} else {
-//			updateTransport(true);
-//		}
-//    	_timer = new Timer();
-//    	_timer.schedule(new TimerTask() {
-//
-//				@Override
-//				public void run() {
-//					MainActivity.this.runOnUiThread(new Runnable() {
-//
-//						@Override
-//						public void run() {
-//							updateTransport(false);
-//						}
-//					});
-//				}
-//			}, 0, 5000);
-		super.onResume();
-	}
-
-
-	@Override
 	protected void onPause() {
-		_timer.cancel();
-		_timer = null;
+    	if (_timer != null) {
+    		_timer.cancel();
+    		_timer = null;
+		}
 		super.onPause();
 	}
 
+
+	public void putCloseAllButtonToTicketsLayout() {
+		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
+		if (_model.getFavorite().size() > 1) {
+			if (ticketsLayout.getChildAt(0).getClass() != Button.class) {
+				Button closeAllBtn = new Button(this);
+				closeAllBtn.setOnClickListener(Contr.getInstance());
+				closeAllBtn.setText("X");
+				ticketsLayout.addView(closeAllBtn, 0);
+			}
+		} else {
+			if (ticketsLayout.getChildCount() > 0) {
+				if (ticketsLayout.getChildAt(0).getClass() == Button.class) {
+					ticketsLayout.removeViewAt(0);
+				}
+			}
+		}
+	}
+    
+    private void _settingMap() {
+    	if (_opened) {
+			_timer.cancel();
+			_timer = null;
+		} else {
+			LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
+	    	ticketsLayout.removeAllViews();
+	    	int index = 0;
+			for (Route route : _model.getFavorite()) {
+				TicketCloseLess ticket = new TicketCloseLess(this);
+				ticket.setRoute(route);
+				ticketsLayout.addView(ticket);
+				ticket.setLast(index++ == _model.getFavorite().size() - 1);
+			}
+			
+	    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
+	    	if (_model.getFavorite().size() > 0) {
+	    		routesBtnScrollView.setVisibility(View.VISIBLE);
+			} else {
+				routesBtnScrollView.setVisibility(View.GONE);
+			}
+	    	
+	    	if (_model.getFavorite().size() == 0) {
+				_map.getUiSettings().setRotateGesturesEnabled(false);
+				CameraPosition camPos = _map.getCameraPosition();
+				if (camPos.bearing != 0) {
+					_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
+				}
+			} else {
+				_map.getUiSettings().setRotateGesturesEnabled(true);
+			}
+	    	
+	    	_map.clear();
+	    	
+	    	_timer = new Timer();
+	    	_timer.schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						MainActivity.this.runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								updateTransport(false);
+							}
+						});
+					}
+				}, 0, 5000);
+		}
+	}
+    
+    public void animationDidFinish() {
+    	RelativeLayout mapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
+    	RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mapLayout.getLayoutParams());
+		lp.leftMargin = _opened ? 0 : 200;
+		lp.rightMargin = _opened ? 0 : -200;
+		mapLayout.setLayoutParams(lp);
+		mapLayout.setAnimation(null);
+		_opened = !_opened;
+		_openIsAnimated = false;
+		
+		if (_opened) {
+			if (!_routesListLoading) {
+				if (_model.getAllRoutes().size() == 0) {
+					_progressBar.setVisibility(View.VISIBLE);
+					_listView.setVisibility(View.INVISIBLE);
+					_editText.setEnabled(false);
+					_model.loadDataForAllRoutes(Contr.getInstance());
+					_routesListLoading = true;
+				} else {
+					showTransportList();
+				}
+			} else {
+				_progressBar.setVisibility(View.VISIBLE);
+				_listView.setVisibility(View.INVISIBLE);
+			}
+		} else {
+			_model.saveFavorite();
+		}
+		
+		
+		_settingMap();
+	}
+    
+    public void toggleLeftMenu() {
+    	if (!_openIsAnimated) {
+    		_openIsAnimated = true;
+        	RelativeLayout mapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
+        	TranslateAnimation ta = new TranslateAnimation(0, _opened ? -200 : 200, 0, 0);
+    		ta.setDuration(400);
+    		ta.setAnimationListener(Contr.getInstance());
+    		mapLayout.startAnimation(ta);
+		}
+	}
+    
+    public void showTransportList() {
+    	_routesListLoading = false;
+		_progressBar.setVisibility(View.INVISIBLE);
+		_listView.setVisibility(View.VISIBLE);
+		_editText.setEnabled(true);
+		if (_listView.getAdapter() == null) {
+			Adapter adapter = new Adapter(this, _model);
+			_listView.setAdapter(adapter);
+			adapter.getFilter().filter(_editText.getText());
+		}
+	}
+    
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -35,7 +35,6 @@ import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -55,7 +54,7 @@ class Transport {
 	TransportKind kind;
 }
 
-class Route implements Serializable {
+ class Route implements Serializable {
 	/**
 	 * 
 	 */
@@ -261,6 +260,7 @@ public class Model extends Application {
 			public void finish() {
 				setAll(_array);
 				_listener.onRouteKindsLoadComplete(_array);
+				System.out.println("all routes loading finished");
 			}
 		};
 		
@@ -401,6 +401,7 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				listener.onImgLoadComplete(_img);
+				System.out.println("img loading finished");
 			}
 		};
 		ParserWebPageTask parser = new ParserWebPageTask(req);

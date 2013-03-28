@@ -8,19 +8,20 @@ import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener {
+public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, AnimationListener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -49,20 +50,14 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		
 		switch (v.getId()) {
 		case R.id.mainRoutesBtn:
-			_currentActivity.startActivity(new Intent(_currentActivity, SelectRouteActivity.class));
+			((MainActivity)_currentActivity).toggleLeftMenu();
 			break;
 		
-		case R.id.selectRouteDone:
-			_model.saveFavorite();
-			_model.getAllTransportOverlay().clear();
-			_currentActivity.finish();
-			break;
-			
 		default:
 			break;
 		}
 		
-		if (_currentActivity.getClass() == SelectRouteActivity.class && v.getClass() == Button.class) {
+		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == Button.class) {
 			if (((Button)v).getText().equals("X")) {
 				LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
 				_model.getFavorite().clear();
@@ -120,26 +115,41 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if (_currentActivity.getClass() == SelectRouteActivity.class) {
-			LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
-			ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-			Route route = ((Adapter)listView.getAdapter()).getItem(position);
-			Ticket ticket = new Ticket(_currentActivity, null);
-			ticket.setRoute(route);
-			ticket.setOnRemoveListener(this);
-			ticketsLayout.addView(ticket);
-			_model.getFavorite().add(route);
-			((SelectRouteActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
-		}
+		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
+		Route route = ((Adapter)listView.getAdapter()).getItem(position);
+		Ticket ticket = new Ticket(_currentActivity, null);
+		ticket.setRoute(route);
+		ticket.setOnRemoveListener(this);
+		ticketsLayout.addView(ticket);
+		_model.getFavorite().add(route);
+		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 	}
 
 	@Override
 	public void onRemove(Ticket ticket) {
 		_model.getFavorite().remove(ticket.getRoute());
-		((SelectRouteActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
+		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 	}
 
 	@Override
 	public void onAllRoutesLoadComplete() {
+	}
+
+	@Override
+	public void onAnimationEnd(Animation arg0) {
+		((MainActivity)_currentActivity).animationDidFinish();
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAnimationStart(Animation arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
