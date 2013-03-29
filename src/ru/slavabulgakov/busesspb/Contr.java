@@ -16,6 +16,7 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.AdapterView;
@@ -24,7 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, AnimationListener, OnGestureListener, OnDoubleTapListener {
+public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, AnimationListener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -156,59 +157,4 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		
 	}
 
-	@Override
-	public boolean onDown(MotionEvent arg0) {
-		System.out.println("onDown");
-		return false;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,
-			float arg3) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
-			float arg3) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onDoubleTap(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onDoubleTapEvent(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onSingleTapConfirmed(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

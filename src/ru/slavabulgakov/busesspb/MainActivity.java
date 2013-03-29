@@ -29,6 +29,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,7 +53,6 @@ public class MainActivity extends BaseActivity {
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private Boolean _routesListLoading = false;
-	private GestureDetectorCompat _gesture;
 
     @SuppressLint("NewApi")
 	@Override
@@ -60,20 +60,20 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
-        _map.moveCamera(center);
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-        _map.animateCamera(zoom);
-        _map.setMyLocationEnabled(true);
-        _map.setOnCameraChangeListener(Contr.getInstance());
+//        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+//        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
+//        _map.moveCamera(center);
+//        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+//        _map.animateCamera(zoom);
+//        _map.setMyLocationEnabled(true);
+//        _map.setOnCameraChangeListener(Contr.getInstance());
         
         _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.addTextChangedListener(Contr.getInstance());
 		
-		_settingMap();
+//		_settingMap();
 		
 		_listView = (ListView)findViewById(R.id.selectRouteListView);
 		_listView.setOnItemClickListener(Contr.getInstance());
@@ -90,18 +90,9 @@ public class MainActivity extends BaseActivity {
 		}
 		putCloseAllButtonToTicketsLayout();
 		
-		_gesture = new GestureDetectorCompat(this, Contr.getInstance());
-		_gesture.setOnDoubleTapListener(Contr.getInstance());
+		RelativeLayout mainMapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
     }
     
-    
-    @Override
-	public boolean onTouchEvent(MotionEvent event) {
-		System.out.println("onTouchEvent");
-		return super.onTouchEvent(event);
-	}
-
-
 	@Override
 	protected void onPause() {
     	if (_timer != null) {
@@ -223,6 +214,14 @@ public class MainActivity extends BaseActivity {
     		ta.setAnimationListener(Contr.getInstance());
     		mapLayout.startAnimation(ta);
 		}
+	}
+    
+    public void moveMainViewOn(float dX) {
+//    	RelativeLayout mapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
+//    	RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mapLayout.getLayoutParams());
+//		lp.leftMargin = lp.leftMargin + ;
+//		lp.rightMargin = _opened ? 0 : -200;
+//		mapLayout.setLayoutParams(lp);
 	}
     
     public void showTransportList() {
