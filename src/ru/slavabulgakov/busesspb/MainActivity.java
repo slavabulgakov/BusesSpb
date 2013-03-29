@@ -28,7 +28,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.support.v4.view.GestureDetectorCompat;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -50,6 +52,7 @@ public class MainActivity extends BaseActivity {
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private Boolean _routesListLoading = false;
+	private GestureDetectorCompat _gesture;
 
     @SuppressLint("NewApi")
 	@Override
@@ -86,10 +89,20 @@ public class MainActivity extends BaseActivity {
 			ticketsLayout.addView(ticket);
 		}
 		putCloseAllButtonToTicketsLayout();
+		
+		_gesture = new GestureDetectorCompat(this, Contr.getInstance());
+		_gesture.setOnDoubleTapListener(Contr.getInstance());
     }
     
     
     @Override
+	public boolean onTouchEvent(MotionEvent event) {
+		System.out.println("onTouchEvent");
+		return super.onTouchEvent(event);
+	}
+
+
+	@Override
 	protected void onPause() {
     	if (_timer != null) {
     		_timer.cancel();
