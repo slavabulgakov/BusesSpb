@@ -28,11 +28,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
+import android.graphics.Rect;
 import android.view.Menu;
-import android.view.MotionEvent;
+import android.view.TouchDelegate;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,7 +41,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 public class MainActivity extends BaseActivity {
 	
@@ -60,13 +59,14 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-//        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-//        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
-//        _map.moveCamera(center);
-//        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-//        _map.animateCamera(zoom);
-//        _map.setMyLocationEnabled(true);
-//        _map.setOnCameraChangeListener(Contr.getInstance());
+        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
+        _map.moveCamera(center);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+        _map.animateCamera(zoom);
+        _map.setMyLocationEnabled(true);
+        _map.setOnCameraChangeListener(Contr.getInstance());
+        _map.getUiSettings().setScrollGesturesEnabled(false);
         
         _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
 		
@@ -89,8 +89,6 @@ public class MainActivity extends BaseActivity {
 			ticketsLayout.addView(ticket);
 		}
 		putCloseAllButtonToTicketsLayout();
-		
-		RelativeLayout mainMapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
     }
     
 	@Override
