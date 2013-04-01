@@ -33,7 +33,7 @@
         
         <meta-data
     		android:name="com.google.android.maps.v2.API_KEY"
-    		android:value="AIzaSyBO5dQUOTF2OkfGQ4NJKevfRotGtOXMGOc"/>
+    		android:value="AIzaSyAvPw6r-p0NdpGbRZbJyC3T1oSwc46NNUQ"/>
         
         <activity
             android:name="ru.slavabulgakov.busesspb.MainActivity"

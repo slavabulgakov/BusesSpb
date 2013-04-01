@@ -19,6 +19,9 @@ public class RootView extends RelativeLayout {
 	private Boolean _opened = false;
 	private float _prevX = 0;
 	private float _lastDX = 0;
+	private final int _leftMarginClose = -10;
+	private final int _leftMarginOpen = 190;
+	private final int _rightMarginOpen = -200;
 	public void setOnOpenListener(OnActionListener listener) {
 		_listener = listener;
 	}
@@ -67,11 +70,11 @@ public class RootView extends RelativeLayout {
 		case MotionEvent.ACTION_MOVE:
 			float dX = ev.getRawX() - _prevX;
 			if (_hold) {
-				if (lp.leftMargin + dX > _dpToPx(200)) {
-					lp.leftMargin = _dpToPx(200);
-					lp.rightMargin = _dpToPx(-200);
+				if (lp.leftMargin + dX > _dpToPx(_leftMarginOpen)) {
+					lp.leftMargin = _dpToPx(_leftMarginOpen);
+					lp.rightMargin = _dpToPx(_rightMarginOpen);
 				} else if (lp.leftMargin + dX < 0) {
-					lp.leftMargin = 0;
+					lp.leftMargin = _dpToPx(_leftMarginClose);
 					lp.rightMargin = 0;
 				} else {
 					lp.leftMargin += dX;
@@ -87,13 +90,13 @@ public class RootView extends RelativeLayout {
 		case MotionEvent.ACTION_CANCEL:
 			if (lp.leftMargin <= _dpToPx(10)) {
 				_setOpened(false);
-				lp.leftMargin = 0;
+				lp.leftMargin = _dpToPx(_leftMarginClose);
 				setLayoutParams(lp);
 			} else if (lp.leftMargin > _dpToPx(190) && _opened) {
 				_animateMove(-1);
 			} else if (lp.leftMargin > _dpToPx(190)) {
 				_setOpened(true);
-				lp.leftMargin = _dpToPx(200);
+				lp.leftMargin = _dpToPx(_leftMarginOpen);
 				setLayoutParams(lp);
 			} else {
 				_animateMove(0);
@@ -150,11 +153,11 @@ public class RootView extends RelativeLayout {
 	private void _animateMove(int direction) {
 		final RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)this.getLayoutParams();
 		if (direction > 0) {
-			_scroller.startScroll(lp.leftMargin, 0, _dpToPx(200) - lp.leftMargin, 0);
+			_scroller.startScroll(lp.leftMargin, 0, _dpToPx(_leftMarginOpen) - lp.leftMargin, 0);
 		} else if (direction < 0) {
 			_scroller.startScroll(lp.leftMargin, 0, -lp.leftMargin, 0);
 		} else if (_lastDX > 0) {
-			_scroller.startScroll(lp.leftMargin, 0, _dpToPx(200) - lp.leftMargin, 0);
+			_scroller.startScroll(lp.leftMargin, 0, _dpToPx(_leftMarginOpen) - lp.leftMargin, 0);
 		} else if (_lastDX < 0) {
 			_scroller.startScroll(lp.leftMargin, 0, -lp.leftMargin, 0);
 		}
@@ -165,10 +168,10 @@ public class RootView extends RelativeLayout {
 			public void run() {
 				if (_scroller.isFinished()) {
 					if (lp.leftMargin < 100) {
-						lp.leftMargin = 0;
+						lp.leftMargin = _dpToPx(_leftMarginClose);
 						_setOpened(false);
 					} else {
-						lp.leftMargin = _dpToPx(200);
+						lp.leftMargin = _dpToPx(_leftMarginOpen);
 						_setOpened(true);
 					}
 					setLayoutParams(lp);
@@ -178,11 +181,11 @@ public class RootView extends RelativeLayout {
 				int dX = 0;
 				int currentX = _scroller.getCurrX();
 				dX = currentX - (int)_prevX;
-				if (lp.leftMargin + dX > _dpToPx(200)) {
-					lp.leftMargin = _dpToPx(200);
-					lp.rightMargin = _dpToPx(-200);
+				if (lp.leftMargin + dX > _dpToPx(_leftMarginOpen)) {
+					lp.leftMargin = _dpToPx(_leftMarginOpen);
+					lp.rightMargin = _dpToPx(_rightMarginOpen);
 				} else if (lp.leftMargin + dX < 0) {
-					lp.leftMargin = 0;
+					lp.leftMargin = _dpToPx(_leftMarginClose);
 					lp.rightMargin = 0;
 				} else {
 					lp.leftMargin += dX;
