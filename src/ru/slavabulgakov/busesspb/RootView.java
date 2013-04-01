@@ -10,6 +10,19 @@ import android.widget.Scroller;
 
 public class RootView extends RelativeLayout {
 	
+	interface OnActionListener {
+		void onOpen();
+		void onHold(Boolean hold);
+	}
+	private OnActionListener _listener;
+	private Boolean _hold = false;
+	private Boolean _opened = false;
+	private float _prevX = 0;
+	private float _lastDX = 0;
+	public void setOnOpenListener(OnActionListener listener) {
+		_listener = listener;
+	}
+	
 	private Scroller _scroller;
 	private void _load(Context context, AttributeSet attrs) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -38,23 +51,15 @@ public class RootView extends RelativeLayout {
 		_load(context, attrs);
 	}
 	
-	private int _dpToPx(int dp) {
-		return (int)(getResources().getDisplayMetrics().density * dp);
-	}
-	
-	private Boolean _hold = false;
-	private Boolean _opened = false;
-	private float _prevX = 0;
-	private float _lastDX = 0;
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)this.getLayoutParams();
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			if (ev.getRawX() - lp.leftMargin <= _dpToPx(30)) {
-				_hold = true;
+				_setHolded(true);
 			} else if (ev.getRawX() - lp.leftMargin > _dpToPx(30) && _opened) {
-				_hold = true;
+				_setHolded(true);
 			}
 			_prevX = ev.getRawX();
 			break;
@@ -81,26 +86,30 @@ public class RootView extends RelativeLayout {
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
 			if (lp.leftMargin <= _dpToPx(10)) {
-				_opened = false;
+				_setOpened(false);
 				lp.leftMargin = 0;
 				setLayoutParams(lp);
 			} else if (lp.leftMargin > _dpToPx(190) && _opened) {
-				_animateMove(0);
-			}
-			else if (lp.leftMargin > _dpToPx(190)) {
-				_opened = true;
+				_animateMove(-1);
+			} else if (lp.leftMargin > _dpToPx(190)) {
+				_setOpened(true);
 				lp.leftMargin = _dpToPx(200);
 				setLayoutParams(lp);
 			} else {
 				_animateMove(0);
 			}
-			_hold = false;
+			_setHolded(false);
 			break;
 
 		default:
 			break;
 		}
 		return super.onInterceptTouchEvent(ev); 
+	}
+	
+	public void _setHolded(Boolean holded) {
+		_hold = holded;
+		_listener.onHold(holded);
 	}
 	
 	public void open() {
@@ -127,6 +136,17 @@ public class RootView extends RelativeLayout {
 		return _opened;
 	}
 	
+	private int _dpToPx(int dp) {
+		return (int)(getResources().getDisplayMetrics().density * dp);
+	}
+
+	private void _setOpened(Boolean opened) {
+		_opened = opened;
+		if (_listener != null) {
+			_listener.onOpen();
+		}
+	}
+
 	private void _animateMove(int direction) {
 		final RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)this.getLayoutParams();
 		if (direction > 0) {
@@ -146,10 +166,10 @@ public class RootView extends RelativeLayout {
 				if (_scroller.isFinished()) {
 					if (lp.leftMargin < 100) {
 						lp.leftMargin = 0;
-						_opened = false;
+						_setOpened(false);
 					} else {
 						lp.leftMargin = _dpToPx(200);
-						_opened = true;
+						_setOpened(true);
 					}
 					setLayoutParams(lp);
 					return;

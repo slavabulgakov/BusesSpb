@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -28,12 +29,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.Rect;
 import android.view.Menu;
-import android.view.TouchDelegate;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -46,18 +44,20 @@ public class MainActivity extends BaseActivity {
 	
 	private GoogleMap _map;
 	private Timer _timer;
-	private Boolean _opened = false;
-	private Boolean _openIsAnimated = false;
 	private ListView _listView;
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private Boolean _routesListLoading = false;
+	private RootView _rootView;
 
     @SuppressLint("NewApi")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        _rootView = (RootView)findViewById(R.id.mainMapLayout);
+		_rootView.setOnOpenListener(Contr.getInstance());
         
         _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
@@ -66,14 +66,13 @@ public class MainActivity extends BaseActivity {
         _map.animateCamera(zoom);
         _map.setMyLocationEnabled(true);
         _map.setOnCameraChangeListener(Contr.getInstance());
-        _map.getUiSettings().setScrollGesturesEnabled(false);
         
         _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.addTextChangedListener(Contr.getInstance());
 		
-//		_settingMap();
+		_settingMap();
 		
 		_listView = (ListView)findViewById(R.id.selectRouteListView);
 		_listView.setOnItemClickListener(Contr.getInstance());
@@ -120,7 +119,7 @@ public class MainActivity extends BaseActivity {
 	}
     
     private void _settingMap() {
-    	if (_opened) {
+    	if (_rootView.isOpen()) {
 			_timer.cancel();
 			_timer = null;
 		} else {
@@ -170,17 +169,12 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
+    public void enableMapGestures(Boolean enable) {
+		_map.getUiSettings().setAllGesturesEnabled(enable);
+	}
+    
     public void animationDidFinish() {
-    	RelativeLayout mapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
-    	RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mapLayout.getLayoutParams());
-		lp.leftMargin = _opened ? 0 : 200;
-		lp.rightMargin = _opened ? 0 : -200;
-		mapLayout.setLayoutParams(lp);
-		mapLayout.setAnimation(null);
-		_opened = !_opened;
-		_openIsAnimated = false;
-		
-		if (_opened) {
+		if (_rootView.isOpen()) {
 			if (!_routesListLoading) {
 				if (_model.getAllRoutes().size() == 0) {
 					_progressBar.setVisibility(View.VISIBLE);
@@ -196,6 +190,8 @@ public class MainActivity extends BaseActivity {
 				_listView.setVisibility(View.INVISIBLE);
 			}
 		} else {
+			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
 			_model.saveFavorite();
 		}
 		
@@ -204,22 +200,7 @@ public class MainActivity extends BaseActivity {
 	}
     
     public void toggleLeftMenu() {
-    	if (!_openIsAnimated) {
-    		_openIsAnimated = true;
-        	RelativeLayout mapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
-        	TranslateAnimation ta = new TranslateAnimation(0, _opened ? -200 : 200, 0, 0);
-    		ta.setDuration(400);
-    		ta.setAnimationListener(Contr.getInstance());
-    		mapLayout.startAnimation(ta);
-		}
-	}
-    
-    public void moveMainViewOn(float dX) {
-//    	RelativeLayout mapLayout = (RelativeLayout)findViewById(R.id.mainMapLayout);
-//    	RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mapLayout.getLayoutParams());
-//		lp.leftMargin = lp.leftMargin + ;
-//		lp.rightMargin = _opened ? 0 : -200;
-//		mapLayout.setLayoutParams(lp);
+    	_rootView.toggle();
 	}
     
     public void showTransportList() {

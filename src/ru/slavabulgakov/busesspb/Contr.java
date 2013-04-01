@@ -2,6 +2,7 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
+import ru.slavabulgakov.busesspb.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -13,15 +14,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, AnimationListener {
+public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -137,20 +136,12 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public void onAnimationEnd(Animation arg0) {
+	public void onOpen() {
 		((MainActivity)_currentActivity).animationDidFinish();
 	}
 
 	@Override
-	public void onAnimationRepeat(Animation arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onHold(Boolean hold) {
+		((MainActivity)_currentActivity).enableMapGestures(!hold);
 	}
-
-	@Override
-	public void onAnimationStart(Animation arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
