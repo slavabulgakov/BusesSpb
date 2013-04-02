@@ -47,7 +47,6 @@ public class MainActivity extends BaseActivity {
 	private ListView _listView;
 	private EditText _editText;
 	private ProgressBar _progressBar;
-	private Boolean _routesListLoading = false;
 	private RootView _rootView;
 
     @SuppressLint("NewApi")
@@ -161,7 +160,7 @@ public class MainActivity extends BaseActivity {
 
 							@Override
 							public void run() {
-								updateTransport(false);
+								updateTransport();
 							}
 						});
 					}
@@ -175,19 +174,13 @@ public class MainActivity extends BaseActivity {
     
     public void animationDidFinish() {
 		if (_rootView.isOpen()) {
-			if (!_routesListLoading) {
-				if (_model.getAllRoutes().size() == 0) {
-					_progressBar.setVisibility(View.VISIBLE);
-					_listView.setVisibility(View.INVISIBLE);
-					_editText.setEnabled(false);
-					_model.loadDataForAllRoutes(Contr.getInstance());
-					_routesListLoading = true;
-				} else {
-					showTransportList();
-				}
-			} else {
+			if (_model.getAllRoutes().size() == 0) {
 				_progressBar.setVisibility(View.VISIBLE);
 				_listView.setVisibility(View.INVISIBLE);
+				_editText.setEnabled(false);
+				_model.loadDataForAllRoutes(Contr.getInstance());
+			} else {
+				showTransportList();
 			}
 		} else {
 			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -204,7 +197,6 @@ public class MainActivity extends BaseActivity {
 	}
     
     public void showTransportList() {
-    	_routesListLoading = false;
 		_progressBar.setVisibility(View.INVISIBLE);
 		_listView.setVisibility(View.VISIBLE);
 		_editText.setEnabled(true);
@@ -239,24 +231,14 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	@SuppressLint("NewApi")
-	public void updateTransport(Boolean speed) {
+	public void updateTransport() {
     	if (_model.getFavorite().size() == 0) {
     		View mainFrame = findViewById(R.id.mainFrame);
     		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
     		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
             _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
 		} else {
-			if (speed) {
-				for (TransportOverlay transportOverlay : _model.getAllTransportOverlay()) {
-					LatLng position = new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng);
-					transportOverlay.groundOverlay.remove();
-					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transportOverlay.transport.direction));//positionFromBounds(bounds).
-					transportOverlay.marker.remove();
-					transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).snippet("123").title("qwe").icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber)));
-				}
-			} else {
-				_model.showFavoriteRoutes(Contr.getInstance());
-			}
+			_model.showFavoriteRoutes(Contr.getInstance());
 		}
 	}
 	

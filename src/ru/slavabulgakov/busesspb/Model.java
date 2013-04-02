@@ -46,6 +46,7 @@ enum TransportKind {
 
 class Transport {
 	Integer id;
+	Integer routeId;
 	Integer cost;
 	String routeNumber;
 	Double Lng;
@@ -68,6 +69,7 @@ class Transport {
 		transport.routeNumber = this.routeNumber;
 		transport.cost = this.cost;
 		transport.kind = this.kind;
+		transport.routeId = this.id;
 		return transport;
 	}
 }
@@ -287,7 +289,7 @@ public class Model extends Application {
 	}
 	
 	private void _loadDataForRoute(final Route route, final OnLoadCompleteListener listener) {
-		final int requestId = 1;
+		final int requestId = route.id;
 		IRequest req = new IRequest() {
 			
 			boolean _canceled;
