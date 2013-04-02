@@ -164,15 +164,14 @@ public class Model extends Application {
 		if (routeList.size() == 0) {
 			routeList = getAllRoutes();
 		}
+		final int requestId = 3;
 		IRequest req = new IRequest() {
 			
-			boolean _canceled;
 			int _step = 0;
 			ArrayList<Route> _array;
 			
 			@Override
 			public void setCanceled() {
-				_canceled = true;
 			}
 			
 			@Override
@@ -260,14 +259,16 @@ public class Model extends Application {
 			public void finish() {
 				setAll(_array);
 				_listener.onRouteKindsLoadComplete(_array);
-				System.out.println("all routes loading finished");
+				_getParsers().remove(this);
+			}
+
+			@Override
+			public int getRequestId() {
+				return requestId;
 			}
 		};
 		
-		_getParsers().clear();
-		
-		ParserWebPageTask parser = new ParserWebPageTask(req);
-		parser.execute((Void)null);
+		_startParserWithId(req, requestId);
 	}
 	
 	private ArrayList<ParserWebPageTask> _getParsers() {
@@ -286,6 +287,7 @@ public class Model extends Application {
 	}
 	
 	private void _loadDataForRoute(final Route route, final OnLoadCompleteListener listener) {
+		final int requestId = 1;
 		IRequest req = new IRequest() {
 			
 			boolean _canceled;
@@ -350,13 +352,32 @@ public class Model extends Application {
 				if (_countLoadingFavoriteRoutes == 0) {
 					listener.onAllRoutesLoadComplete();
 				}
-				_parsers.remove(this);
+				_getParsers().remove(this);
 				listener.onTransportListOfRouteLoadComplete(_array);
 			}
+
+			@Override
+			public int getRequestId() {
+				return requestId;
+			}
 		};
-		ParserWebPageTask parser = new ParserWebPageTask(req);
-		parser.execute((Void)null);
-		_getParsers().add(parser);
+		
+		_startParserWithId(req, requestId);
+	}
+	
+	private void _startParserWithId(IRequest req, int id) {
+		boolean exist = false;
+		for (ParserWebPageTask parser : _getParsers()) {
+			if (parser.getRequestId() == id) {
+				exist = true;
+				break;
+			}
+		}
+		if (!exist) {
+			ParserWebPageTask parser = new ParserWebPageTask(req);
+			parser.execute((Void)null);
+			_getParsers().add(parser);
+		}
 	}
 	
 	public void loadImg(LatLngBounds bounds, final int width, final int height, final OnLoadCompleteListener listener) {
@@ -366,15 +387,15 @@ public class Model extends Application {
 		final double right_lon = m.mer(bounds.northeast.longitude, AxisType.LNG);
 		final double right_lat = m.mer(bounds.northeast.latitude, AxisType.LAT);
 		
+		final int requestId = 2;
+		
 		IRequest req = new IRequest() {
 			
-			boolean _canceled;
 			int _step = 0;
 			Bitmap _img;
 			
 			@Override
 			public void setCanceled() {
-				_canceled = true;
 			}
 			
 			@Override
@@ -401,11 +422,16 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				listener.onImgLoadComplete(_img);
-				System.out.println("img loading finished");
+				_getParsers().remove(this);
+			}
+
+			@Override
+			public int getRequestId() {
+				return requestId;
 			}
 		};
-		ParserWebPageTask parser = new ParserWebPageTask(req);
-		parser.execute((Void)null);
+		
+		_startParserWithId(req, requestId);
 	}
 	
 	public void cancel() {

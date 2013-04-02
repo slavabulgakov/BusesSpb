@@ -8,12 +8,17 @@ public class ParserWebPageTask extends AsyncTask<Void, Void, Void> {
 	private IRequest _request;
 	private boolean _canceled;
 	
+	public int getRequestId() {
+		return _request.getRequestId();
+	}
+	
 	public ParserWebPageTask(IRequest request) {
 		super();
 		_request = request;
 	}
 	
 	public interface IRequest {
+		public int getRequestId();
 		public boolean needExecute();
 		public void nextExecute();
 		public void setCanceled();
