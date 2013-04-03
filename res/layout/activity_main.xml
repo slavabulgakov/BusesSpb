@@ -19,6 +19,37 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/routes_placeholder" />
+        
+        <LinearLayout
+                android:id="@+id/menuKindBtns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp" >
+
+                <ImageButton
+                    android:id="@+id/menuBusFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/filter_btn"
+                    android:src="@android:drawable/btn_star" />
+
+                <ImageButton
+                    android:id="@+id/menuTrolleyFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/filter_btn"
+                    android:src="@android:drawable/btn_star" />
+
+                <ImageButton
+                    android:id="@+id/menuTramFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/filter_btn"
+                    android:src="@android:drawable/btn_star" />
+
+            </LinearLayout>
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView1"

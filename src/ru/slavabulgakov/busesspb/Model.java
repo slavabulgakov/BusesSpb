@@ -414,7 +414,32 @@ public class Model extends Application {
 			@Override
 			public void nextExecute() {
 				try {
-					String filters = "vehicle_bus%2Cvehicle_ship%2Cvehicle_tram%2Cvehicle_trolley";
+					String filters = "";
+					if (!isEnabledFilter(BUS_FILTER) && !isEnabledFilter(TROLLEY_FILTER) && !isEnabledFilter(TRAM_FILTER)) {
+						filters = "vehicle_bus%2Cvehicle_ship%2Cvehicle_tram%2Cvehicle_trolley";
+					} else {
+						boolean more = false;
+						if (isEnabledFilter(BUS_FILTER)) {
+							filters = "vehicle_bus";
+							more = true;
+						}
+						if (isEnabledFilter(TROLLEY_FILTER)) {
+							if (more) {
+								filters += "%2C";
+							}
+							more = true;
+							filters += "vehicle_trolley"; 
+						}
+						if (isEnabledFilter(TRAM_FILTER)) {
+							if (more) {
+								filters += "%2C";
+							}
+							more = true;
+							filters += "vehicle_tram"; 
+						}
+						filters += "%2Cvehicle_ship";
+					}
+					
 					String src = "http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&LAYERS=" + filters + "&WHEELCHAIRONLY=false&SRS=EPSG%3A900913&BBOX=" + Double.toString(left_lon) + "," + Double.toString(left_lat) + "," + Double.toString(right_lon) + "," + Double.toString(right_lat) + "&WIDTH=" + Integer.toString(width) + "&HEIGHT=" + Integer.toString(height);
 		            URL url = new URL(src);
 		            HttpURLConnection connection = (HttpURLConnection) url.openConnection();

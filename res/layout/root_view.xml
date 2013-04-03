@@ -66,19 +66,23 @@
                     android:id="@+id/busFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/red"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/filter_btn"
                     android:src="@android:drawable/btn_star" />
 
                 <ImageButton
                     android:id="@+id/trolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/filter_btn"
                     android:src="@android:drawable/btn_star" />
 
                 <ImageButton
                     android:id="@+id/tramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/filter_btn"
                     android:src="@android:drawable/btn_star" />
 
             </LinearLayout>

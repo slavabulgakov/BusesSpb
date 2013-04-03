@@ -55,16 +55,19 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		case R.id.busFilter:
 			_model.setFilter(Model.BUS_FILTER);
 			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
 		case R.id.trolleyFilter:
 			_model.setFilter(Model.TROLLEY_FILTER);
 			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
 		case R.id.tramFilter:
 			_model.setFilter(Model.TRAM_FILTER);
 			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 		
 		default:

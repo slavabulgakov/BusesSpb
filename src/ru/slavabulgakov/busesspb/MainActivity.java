@@ -49,6 +49,9 @@ public class MainActivity extends BaseActivity {
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private RootView _rootView;
+	private ImageButton _busFilter;
+	private ImageButton _trolleyFilter;
+	private ImageButton _tramFilter;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -90,14 +93,28 @@ public class MainActivity extends BaseActivity {
 		putCloseAllButtonToTicketsLayout();
 		
 		
-		ImageButton busFilter = (ImageButton)findViewById(R.id.busFilter);
-		busFilter.setOnClickListener(Contr.getInstance());
+		_busFilter = (ImageButton)findViewById(R.id.busFilter);
+		_busFilter.setOnClickListener(Contr.getInstance());
 		
-		ImageButton trolleyFilter = (ImageButton)findViewById(R.id.trolleyFilter);
-		trolleyFilter.setOnClickListener(Contr.getInstance());
+		_trolleyFilter = (ImageButton)findViewById(R.id.trolleyFilter);
+		_trolleyFilter.setOnClickListener(Contr.getInstance());
 		
-		ImageButton tramFilter = (ImageButton)findViewById(R.id.tramFilter);
-		tramFilter.setOnClickListener(Contr.getInstance());
+		_tramFilter = (ImageButton)findViewById(R.id.tramFilter);
+		_tramFilter.setOnClickListener(Contr.getInstance());
+		
+		updateFilterButtons();
+    }
+    
+    public void updateFilterButtons() {
+    	LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
+    	if (_model.getFavorite().size() > 0) {
+			kindBtns.setVisibility(View.INVISIBLE);
+		} else {
+			kindBtns.setVisibility(View.VISIBLE);
+		}
+    	_busFilter.setSelected(_model.isEnabledFilter(Model.BUS_FILTER));
+    	_tramFilter.setSelected(_model.isEnabledFilter(Model.TRAM_FILTER));
+    	_trolleyFilter.setSelected(_model.isEnabledFilter(Model.TROLLEY_FILTER));
     }
     
 	@Override
@@ -186,7 +203,25 @@ public class MainActivity extends BaseActivity {
 	}
     
     public void enableMapGestures(Boolean enable) {
-		_map.getUiSettings().setAllGesturesEnabled(enable);
+    	if (enable) {
+    		Timer timer = new Timer();
+        	timer.schedule(new TimerTask() {
+    			
+    			@Override
+    			public void run() {
+    				runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							_map.getUiSettings().setAllGesturesEnabled(true);
+						}
+					});
+    				
+    			}
+    		}, 200);
+		} else {
+			_map.getUiSettings().setAllGesturesEnabled(enable);
+		}
 	}
     
     public void animationDidFinish() {
@@ -205,8 +240,8 @@ public class MainActivity extends BaseActivity {
 			_model.saveFavorite();
 		}
 		
-		
 		_settingMap();
+		updateFilterButtons();
 	}
     
     public void toggleLeftMenu() {
