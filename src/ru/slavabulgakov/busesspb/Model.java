@@ -76,6 +76,17 @@ class Transport {
 
 public class Model extends Application {
 	
+	public static final int BUS_FILTER = 1;
+	public static final int TROLLEY_FILTER = 2;
+	public static final int TRAM_FILTER = 4;
+	public int _filter = 0;
+	public void setFilter(int filter) {
+		_filter ^= filter;
+	}
+	public boolean isEnabledFilter(int filter) {
+		return (_filter & filter) > 0;
+	}
+	
 	private ArrayList<ParserWebPageTask> _parsers;
 	private ArrayList<Route> _favoriteRoutes;
 	private ArrayList<Route> _allRoutes;
@@ -261,7 +272,7 @@ public class Model extends Application {
 			public void finish() {
 				setAll(_array);
 				_listener.onRouteKindsLoadComplete(_array);
-				_getParsers().remove(this);
+				_removeParserById(requestId);
 			}
 
 			@Override
@@ -354,7 +365,7 @@ public class Model extends Application {
 				if (_countLoadingFavoriteRoutes == 0) {
 					listener.onAllRoutesLoadComplete();
 				}
-				_getParsers().remove(this);
+				_removeParserById(requestId);
 				listener.onTransportListOfRouteLoadComplete(_array);
 			}
 
@@ -424,7 +435,7 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				listener.onImgLoadComplete(_img);
-				_getParsers().remove(this);
+				_removeParserById(requestId);
 			}
 
 			@Override
@@ -434,6 +445,21 @@ public class Model extends Application {
 		};
 		
 		_startParserWithId(req, requestId);
+	}
+	
+	private void _removeParserById(int id) {
+		int i = 0;
+		boolean exist = false;
+		for (ParserWebPageTask parser : _getParsers()) {
+			if (parser.getRequestId() == id) {
+				exist = true;
+				break;
+			}
+			i++;
+		}
+		if (exist) {
+			_getParsers().remove(i);
+		}
 	}
 	
 	public void cancel() {

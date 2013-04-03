@@ -13,6 +13,9 @@
         <EditText
             android:id="@+id/selectRouteText"
             android:layout_width="match_parent"
+            android:background="@drawable/text_view"
+            android:layout_margin="10dp"
+            android:padding="5dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/routes_placeholder" />
@@ -36,7 +39,8 @@
 
             <ProgressBar
                 android:id="@+id/selectRouteProgressBar"
-                style="?android:attr/progressBarStyleLarge"
+                style="?android:attr/progressBarStyle"
+                android:layout_margin="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center" />
@@ -44,7 +48,11 @@
             <ListView
                 android:id="@+id/selectRouteListView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:divider="#474747"
+                android:dividerHeight="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" >
             </ListView>
         </FrameLayout>
     </LinearLayout>

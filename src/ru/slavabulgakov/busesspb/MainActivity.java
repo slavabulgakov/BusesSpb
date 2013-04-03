@@ -35,6 +35,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -48,7 +49,7 @@ public class MainActivity extends BaseActivity {
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private RootView _rootView;
-
+	
     @SuppressLint("NewApi")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,16 @@ public class MainActivity extends BaseActivity {
 			ticketsLayout.addView(ticket);
 		}
 		putCloseAllButtonToTicketsLayout();
+		
+		
+		ImageButton busFilter = (ImageButton)findViewById(R.id.busFilter);
+		busFilter.setOnClickListener(Contr.getInstance());
+		
+		ImageButton trolleyFilter = (ImageButton)findViewById(R.id.trolleyFilter);
+		trolleyFilter.setOnClickListener(Contr.getInstance());
+		
+		ImageButton tramFilter = (ImageButton)findViewById(R.id.tramFilter);
+		tramFilter.setOnClickListener(Contr.getInstance());
     }
     
 	@Override
@@ -119,8 +130,10 @@ public class MainActivity extends BaseActivity {
     
     private void _settingMap() {
     	if (_rootView.isOpen()) {
-			_timer.cancel();
-			_timer = null;
+    		if (_timer != null) {
+    			_timer.cancel();
+    			_timer = null;
+			}
 		} else {
 			LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
 	    	ticketsLayout.removeAllViews();
@@ -151,6 +164,10 @@ public class MainActivity extends BaseActivity {
 	    	
 	    	_map.clear();
 	    	
+	    	if (_timer != null) {
+    			_timer.cancel();
+    			_timer = null;
+			}
 	    	_timer = new Timer();
 	    	_timer.schedule(new TimerTask() {
 

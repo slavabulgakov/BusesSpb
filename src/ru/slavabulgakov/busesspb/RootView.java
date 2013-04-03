@@ -1,10 +1,11 @@
 package ru.slavabulgakov.busesspb;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.animation.Interpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
@@ -19,9 +20,9 @@ public class RootView extends RelativeLayout {
 	private Boolean _opened = false;
 	private float _prevX = 0;
 	private float _lastDX = 0;
-	private final int _leftMarginClose = -10;
-	private final int _leftMarginOpen = 190;
-	private final int _rightMarginOpen = -200;
+	private final int _shadowWidth = 10;
+	private final int _xClose = -_shadowWidth;
+	private final int _xOpen = 190;
 	public void setOnOpenListener(OnActionListener listener) {
 		_listener = listener;
 	}
@@ -30,13 +31,13 @@ public class RootView extends RelativeLayout {
 	private void _load(Context context, AttributeSet attrs) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.root_view, this, true);
-		_scroller = new Scroller(getContext(), new Interpolator() {
+		_scroller = new Scroller(getContext(), new DecelerateInterpolator(3)); // new Interpolator() {
 			
-			@Override
-			public float getInterpolation(float input) {
-				return (float)Math.pow(input - 1, 5) + 1;
-			}
-		});
+//			@Override
+//			public float getInterpolation(float input) {
+//				return (float)Math.pow(input - 1, 5) + 1;
+//			}
+//		});
 	}
 
 	public RootView(Context context) {
@@ -54,14 +55,14 @@ public class RootView extends RelativeLayout {
 		_load(context, attrs);
 	}
 	
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)this.getLayoutParams();
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			if (ev.getRawX() - lp.leftMargin <= _dpToPx(30)) {
+			if (ev.getRawX() - getX() <= _dpToPx(30)) {
 				_setHolded(true);
-			} else if (ev.getRawX() - lp.leftMargin > _dpToPx(30) && _opened) {
+			} else if (ev.getRawX() - getX() > _dpToPx(30) && _opened) {
 				_setHolded(true);
 			}
 			_prevX = ev.getRawX();
@@ -70,34 +71,28 @@ public class RootView extends RelativeLayout {
 		case MotionEvent.ACTION_MOVE:
 			float dX = ev.getRawX() - _prevX;
 			if (_hold) {
-				if (lp.leftMargin + dX > _dpToPx(_leftMarginOpen)) {
-					lp.leftMargin = _dpToPx(_leftMarginOpen);
-					lp.rightMargin = _dpToPx(_rightMarginOpen);
-				} else if (lp.leftMargin + dX < 0) {
-					lp.leftMargin = _dpToPx(_leftMarginClose);
-					lp.rightMargin = 0;
+				if (getX() + dX > _dpToPx(_xOpen)) {
+					setX(_dpToPx(_xOpen));
+				} else if (getX() + dX < 0) {
+					setX(_dpToPx(_xClose));
 				} else {
-					lp.leftMargin += dX;
-					lp.rightMargin -= dX;
+					setX(getX() + dX);
 					_lastDX = dX;
 					_prevX = ev.getRawX();
 				}
-				setLayoutParams(lp);
 			}
 			break;
 			
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
-			if (lp.leftMargin <= _dpToPx(10)) {
+			if (getX() <= _dpToPx(10)) {
 				_setOpened(false);
-				lp.leftMargin = _dpToPx(_leftMarginClose);
-				setLayoutParams(lp);
-			} else if (lp.leftMargin > _dpToPx(190) && _opened) {
+				setX(_dpToPx(_xClose));
+			} else if (getX() > _dpToPx(190) && _opened) {
 				_animateMove(-1);
-			} else if (lp.leftMargin > _dpToPx(190)) {
+			} else if (getX() > _dpToPx(190)) {
 				_setOpened(true);
-				lp.leftMargin = _dpToPx(_leftMarginOpen);
-				setLayoutParams(lp);
+				setX(_dpToPx(_xOpen));
 			} else {
 				_animateMove(0);
 			}
@@ -109,6 +104,7 @@ public class RootView extends RelativeLayout {
 		}
 		return super.onInterceptTouchEvent(ev); 
 	}
+	
 	
 	public void _setHolded(Boolean holded) {
 		_hold = holded;
@@ -150,52 +146,44 @@ public class RootView extends RelativeLayout {
 		}
 	}
 
+	@SuppressLint("NewApi")
 	private void _animateMove(int direction) {
-		final RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)this.getLayoutParams();
 		if (direction > 0) {
-			_scroller.startScroll(lp.leftMargin, 0, _dpToPx(_leftMarginOpen) - lp.leftMargin, 0);
+			_scroller.startScroll((int)getX(), 0, _dpToPx(_xOpen) - (int)getX(), 0);
 		} else if (direction < 0) {
-			_scroller.startScroll(lp.leftMargin, 0, -lp.leftMargin, 0);
+			_scroller.startScroll((int)getX(), 0, -_shadowWidth - (int)getX(), 0);
 		} else if (_lastDX > 0) {
-			_scroller.startScroll(lp.leftMargin, 0, _dpToPx(_leftMarginOpen) - lp.leftMargin, 0);
+			_scroller.startScroll((int)getX(), 0, _dpToPx(_xOpen) - (int)getX(), 0);
 		} else if (_lastDX < 0) {
-			_scroller.startScroll(lp.leftMargin, 0, -lp.leftMargin, 0);
+			_scroller.startScroll((int)getX(), 0, -_shadowWidth - (int)getX(), 0);
 		}
 		
 		post(new Runnable() {
 			
+			@SuppressLint("NewApi")
 			@Override
 			public void run() {
 				if (_scroller.isFinished()) {
-					if (lp.leftMargin < 100) {
-						lp.leftMargin = _dpToPx(_leftMarginClose);
+					if ((int)getX() < 100) {
 						_setOpened(false);
 					} else {
-						lp.leftMargin = _dpToPx(_leftMarginOpen);
 						_setOpened(true);
 					}
-					setLayoutParams(lp);
 					return;
 				}
 				Boolean more = _scroller.computeScrollOffset();
-				int dX = 0;
 				int currentX = _scroller.getCurrX();
-				dX = currentX - (int)_prevX;
-				if (lp.leftMargin + dX > _dpToPx(_leftMarginOpen)) {
-					lp.leftMargin = _dpToPx(_leftMarginOpen);
-					lp.rightMargin = _dpToPx(_rightMarginOpen);
-				} else if (lp.leftMargin + dX < 0) {
-					lp.leftMargin = _dpToPx(_leftMarginClose);
-					lp.rightMargin = 0;
+				if (currentX > _dpToPx(_xOpen)) {
+					setX(_dpToPx(_xOpen));
+				} else if (currentX < 0) {
+					setX(_xClose);
 				} else {
-					lp.leftMargin += dX;
-					lp.rightMargin -= dX;
+					setX(currentX);
 					_prevX = currentX;
 				}
-				setLayoutParams(lp);
 				
 				if (more) {
-					postDelayed(this, 16);
+					post(this);
 				}
 			}
 		});

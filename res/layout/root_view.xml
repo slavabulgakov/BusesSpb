@@ -53,6 +53,36 @@
                     </LinearLayout>
                 </HorizontalScrollView>
             </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/kindBtns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/mainRoutesBtn"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/mainRoutesBtn" >
+
+                <ImageButton
+                    android:id="@+id/busFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/red"
+                    android:src="@android:drawable/btn_star" />
+
+                <ImageButton
+                    android:id="@+id/trolleyFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/btn_star" />
+
+                <ImageButton
+                    android:id="@+id/tramFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/btn_star" />
+
+            </LinearLayout>
+
         </RelativeLayout>
 
         
