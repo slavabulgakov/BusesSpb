@@ -12,8 +12,8 @@
     <string name="routes">Маршруты</string>
     <color name="black">#000000</color>
     <color name="red">#ff0000</color>
-    <color name="blue">#33b5e57F</color>
-    <color name="trans">#00000000</color>
+    <color name="blue">#7F33b5e5</color>
+    <color name="trans">#99ffffff</color>
     <string name="routes_placeholder">Введите маршрут</string>
     <color name="menubg">#ebe6dc</color>
 

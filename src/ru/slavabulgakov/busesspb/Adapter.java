@@ -15,54 +15,63 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 class Adapter extends ArrayAdapter<Route> {
-	private Filter _filter;
+	private MyFilter _filter;
 	private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Route>());
 	Context _context;
 	Model _model;
+	
+	class MyFilter extends Filter {
+
+		ArrayList<Route> _data = new ArrayList<Route>();
+		CharSequence _constraint;
+		
+		@Override
+		protected void publishResults(CharSequence constraint, FilterResults results) {
+			synchronized (this) {
+				_filtredList.clear();
+				if (results != null && results.count > 0) {
+					@SuppressWarnings("unchecked")
+					ArrayList<Route>objects = (ArrayList<Route>)results.values;
+					for (Route route : objects) {
+						_filtredList.add(route);
+					}
+					notifyDataSetChanged();
+				}
+			}
+		}
+		
+		@Override
+		protected FilterResults performFiltering(CharSequence constraint) {
+			_constraint = constraint;
+			_data.clear();
+			FilterResults filterResults = new FilterResults();
+			if (constraint != null) {
+				synchronized (this) {
+					for (Route route : _model.getAllRoutes()) {
+						if ((constraint.length() == 0 || route.routeNumber.contains(constraint)) && _model.isEnabledFilterMenu(route.kind)) {
+							_data.add(route);
+						}
+					}
+				}
+			}
+			synchronized (this) {
+				filterResults.values = _data;
+				filterResults.count = _data.size();
+			}
+			return filterResults;
+		}
+		
+		public void filterByKind() {
+			filter(_constraint);
+		}
+		
+	}
 	
 	public Adapter(Context context, Model model) {
 		super(context, R.layout.listitem_selectroute, model.getAllRoutes());
 		_context = context;
 		_model = model;
-		_filter = new Filter() {
-			
-			ArrayList<Route> _data = new ArrayList<Route>();
-			
-			@Override
-			protected void publishResults(CharSequence constraint, FilterResults results) {
-				synchronized (this) {
-					_filtredList.clear();
-					if (results != null && results.count > 0) {
-						@SuppressWarnings("unchecked")
-						ArrayList<Route>objects = (ArrayList<Route>)results.values;
-						for (Route route : objects) {
-							_filtredList.add(route);
-						}
-						notifyDataSetChanged();
-					}
-				}
-			}
-			
-			@Override
-			protected FilterResults performFiltering(CharSequence constraint) {
-				_data.clear();
-				FilterResults filterResults = new FilterResults();
-				if (constraint != null) {
-					synchronized (this) {
-						for (Route route : _model.getAllRoutes()) {
-							if (constraint.length() == 0 || route.routeNumber.contains(constraint)) {
-								_data.add(route);
-							}
-						}
-					}
-				}
-				synchronized (this) {
-					filterResults.values = _data;
-					filterResults.count = _data.size();
-				}
-				return filterResults;
-			}
-		};
+		_filter = new MyFilter();
 	}
 	
 	
@@ -118,7 +127,7 @@ class Adapter extends ArrayAdapter<Route> {
 	}
 
 	@Override
-	public Filter getFilter() {
+	public MyFilter getFilter() {
 		return _filter;
 	}
 }

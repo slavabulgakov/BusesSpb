@@ -22,32 +22,33 @@
         
         <LinearLayout
                 android:id="@+id/menuKindBtns"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="10dp" >
 
                 <ImageButton
                     android:id="@+id/menuBusFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@android:drawable/btn_star" />
+                    android:src="@drawable/bus_40_40" />
 
                 <ImageButton
                     android:id="@+id/menuTrolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@android:drawable/btn_star" />
+                    android:src="@drawable/trolley_40_40" />
 
                 <ImageButton
                     android:id="@+id/menuTramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/filter_btn"
-                    android:src="@android:drawable/btn_star" />
+                    android:src="@drawable/tram_40_40" />
 
             </LinearLayout>
 

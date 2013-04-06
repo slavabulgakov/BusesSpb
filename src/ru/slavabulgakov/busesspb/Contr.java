@@ -46,27 +46,45 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onClick(View v) {
-		
+		ListView listView = (ListView)_currentActivity.findViewById(R.id.selectRouteListView);
 		switch (v.getId()) {
 		case R.id.mainRoutesBtn:
 			((MainActivity)_currentActivity).toggleLeftMenu();
 			break;
 			
 		case R.id.busFilter:
-			_model.setFilter(Model.BUS_FILTER);
+			_model.setFilter(TransportKind.Bus);
 			((MainActivity)_currentActivity).updateTransport();
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
 		case R.id.trolleyFilter:
-			_model.setFilter(Model.TROLLEY_FILTER);
+			_model.setFilter(TransportKind.Trolley);
 			((MainActivity)_currentActivity).updateTransport();
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
 		case R.id.tramFilter:
-			_model.setFilter(Model.TRAM_FILTER);
+			_model.setFilter(TransportKind.Tram);
 			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateFilterButtons();
+			break;
+			
+		case R.id.menuBusFilter:
+			_model.setFilterMenu(TransportKind.Bus);
+			((Adapter)listView.getAdapter()).getFilter().filterByKind();
+			((MainActivity)_currentActivity).updateFilterButtons();
+			break;
+			
+		case R.id.menuTrolleyFilter:
+			_model.setFilterMenu(TransportKind.Trolley);
+			((Adapter)listView.getAdapter()).getFilter().filterByKind();
+			((MainActivity)_currentActivity).updateFilterButtons();
+			break;
+			
+		case R.id.menuTramFilter:
+			_model.setFilterMenu(TransportKind.Tram);
+			((Adapter)listView.getAdapter()).getFilter().filterByKind();
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 		

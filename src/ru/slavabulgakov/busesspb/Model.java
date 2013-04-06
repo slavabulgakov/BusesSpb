@@ -76,16 +76,49 @@ class Transport {
 
 public class Model extends Application {
 	
-	public static final int BUS_FILTER = 1;
-	public static final int TROLLEY_FILTER = 2;
-	public static final int TRAM_FILTER = 4;
+	private static final int BUS_FILTER = 1;
+	private static final int TROLLEY_FILTER = 2;
+	private static final int TRAM_FILTER = 4;
+	
+	private int _enumKindToSimpleKind(TransportKind kind) {
+		switch (kind) {
+		case Bus:
+			return Model.BUS_FILTER;
+			
+		case Trolley:
+			return Model.TROLLEY_FILTER;
+			
+		case Tram:
+			return Model.TRAM_FILTER;
+
+		default:
+			break;
+		}
+		
+		return 0;
+	}
+	
 	public int _filter = 0;
-	public void setFilter(int filter) {
+	public void setFilter(TransportKind kind) {
+		int filter = _enumKindToSimpleKind(kind);
 		_filter ^= filter;
 	}
-	public boolean isEnabledFilter(int filter) {
-		return (_filter & filter) > 0;
+	public boolean isEnabledFilter(TransportKind kind) {
+		int filter = _enumKindToSimpleKind(kind);
+		return (_filter & filter) > 0 || _filterMenu == 0;
 	}
+	
+	public int _filterMenu = 0;
+	public void setFilterMenu(TransportKind kind) {
+		int filter = _enumKindToSimpleKind(kind);
+		_filterMenu ^= filter;
+	}
+	public boolean isEnabledFilterMenu(TransportKind kind) {
+		int filter = _enumKindToSimpleKind(kind);
+		return (_filterMenu & filter) > 0 || _filterMenu == 0;
+	}
+	
+	
 	
 	private ArrayList<ParserWebPageTask> _parsers;
 	private ArrayList<Route> _favoriteRoutes;
@@ -415,22 +448,22 @@ public class Model extends Application {
 			public void nextExecute() {
 				try {
 					String filters = "";
-					if (!isEnabledFilter(BUS_FILTER) && !isEnabledFilter(TROLLEY_FILTER) && !isEnabledFilter(TRAM_FILTER)) {
+					if (!isEnabledFilter(TransportKind.Bus) && !isEnabledFilter(TransportKind.Trolley) && !isEnabledFilter(TransportKind.Tram)) {
 						filters = "vehicle_bus%2Cvehicle_ship%2Cvehicle_tram%2Cvehicle_trolley";
 					} else {
 						boolean more = false;
-						if (isEnabledFilter(BUS_FILTER)) {
+						if (isEnabledFilter(TransportKind.Bus)) {
 							filters = "vehicle_bus";
 							more = true;
 						}
-						if (isEnabledFilter(TROLLEY_FILTER)) {
+						if (isEnabledFilter(TransportKind.Trolley)) {
 							if (more) {
 								filters += "%2C";
 							}
 							more = true;
 							filters += "vehicle_trolley"; 
 						}
-						if (isEnabledFilter(TRAM_FILTER)) {
+						if (isEnabledFilter(TransportKind.Tram)) {
 							if (more) {
 								filters += "%2C";
 							}
