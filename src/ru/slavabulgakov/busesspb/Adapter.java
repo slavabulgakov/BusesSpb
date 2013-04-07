@@ -113,11 +113,12 @@ class Adapter extends ArrayAdapter<Route> {
 		TextView costTextView = (TextView)convertView.findViewById(R.id.listItemSelectRouteCost);
 		ImageView currency = (ImageView)convertView.findViewById(R.id.currency);
 		if (cost == null) {
-			costTextView.setVisibility(View.GONE);
-			currency.setVisibility(View.GONE);
+			costTextView.setVisibility(View.INVISIBLE);
+			currency.setVisibility(View.INVISIBLE);
 		} else {
 			costTextView.setText(cost.toString());
 			costTextView.setVisibility(View.VISIBLE);
+			currency.setVisibility(View.VISIBLE);
 		}
 		
 		return convertView;
