@@ -7,6 +7,7 @@ import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -15,7 +16,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.AdapterView.OnItemClickListener;
@@ -107,10 +107,12 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		}
 		
 		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == ImageButton.class) {
-			if (((ImageButton)v).getTag().equals("closeAllBtn")) {
-				LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
-				_model.getFavorite().clear();
-				ticketsLayout.removeAllViews();
+			if (v.getTag() != null) {
+				if (v.getTag().equals("closeAllBtn")) {
+					LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+					_model.getFavorite().clear();
+					ticketsLayout.removeAllViews();
+				}
 			}
 		}
 	}
@@ -186,8 +188,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public void onOpen() {
-		((MainActivity)_currentActivity).animationDidFinish();
+	public void onMenuChangeState(boolean isOpen) {
+		((MainActivity)_currentActivity).menuChangeState(isOpen);
 	}
 
 	@Override

@@ -44,7 +44,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
-                    android:paddingRight="10dp"
                     android:paddingTop="3dp"
                     android:src="@drawable/menu_icon" />
 
@@ -77,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
-                    android:background="@drawable/buttons_bg"
+                    android:background="@drawable/filter_btn"
                     android:src="@drawable/bus_30_30" />
 
                 <ImageButton
@@ -85,14 +84,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
-                    android:background="@drawable/buttons_bg"
+                    android:background="@drawable/filter_btn"
                     android:src="@drawable/trolley_30_30" />
 
                 <ImageButton
                     android:id="@+id/tramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/buttons_bg"
+                    android:background="@drawable/filter_btn"
                     android:src="@drawable/tram_30_30" />
 
             </LinearLayout>

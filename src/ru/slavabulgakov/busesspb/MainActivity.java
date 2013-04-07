@@ -34,10 +34,10 @@ import android.graphics.Paint.Align;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -60,6 +60,7 @@ public class MainActivity extends BaseActivity {
         
         _rootView = (RootView)findViewById(R.id.mainMapLayout);
 		_rootView.setOnOpenListener(Contr.getInstance());
+		_rootView.setModel(_model);
         
         _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
@@ -76,8 +77,6 @@ public class MainActivity extends BaseActivity {
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.addTextChangedListener(Contr.getInstance());
 		
-		_settingMap();
-		
 		_listView = (ListView)findViewById(R.id.selectRouteListView);
 		_listView.setOnItemClickListener(Contr.getInstance());
         
@@ -93,6 +92,7 @@ public class MainActivity extends BaseActivity {
 		}
 		putCloseAllButtonToTicketsLayout();
 		updateFilterButtons();
+		_updateControls();
 		
 		((ImageButton)findViewById(R.id.location)).setOnClickListener(Contr.getInstance());
 		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Contr.getInstance());
@@ -129,8 +129,8 @@ public class MainActivity extends BaseActivity {
 			kindBtns.setVisibility(View.VISIBLE);
 		}
     	busFilter.setSelected(_model.isEnabledFilter(TransportKind.Bus));
-    	tramFilter.setSelected(_model.isEnabledFilter(TransportKind.Trolley));
-    	trolleyFilter.setSelected(_model.isEnabledFilter(TransportKind.Tram));
+    	trolleyFilter.setSelected(_model.isEnabledFilter(TransportKind.Trolley));
+    	tramFilter.setSelected(_model.isEnabledFilter(TransportKind.Tram));
     	
     	
     	
@@ -178,63 +178,6 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
-    private void _settingMap() {
-    	if (_rootView.isOpen()) {
-    		if (_timer != null) {
-    			_timer.cancel();
-    			_timer = null;
-			}
-		} else {
-			LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
-	    	ticketsLayout.removeAllViews();
-	    	int index = 0;
-			for (Route route : _model.getFavorite()) {
-				TicketCloseLess ticket = new TicketCloseLess(this);
-				ticket.setRoute(route);
-				ticketsLayout.addView(ticket);
-				ticket.setLast(index++ == _model.getFavorite().size() - 1);
-			}
-			
-	    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
-	    	if (_model.getFavorite().size() > 0) {
-	    		routesBtnScrollView.setVisibility(View.VISIBLE);
-			} else {
-				routesBtnScrollView.setVisibility(View.GONE);
-			}
-	    	
-	    	if (_model.getFavorite().size() == 0) {
-				_map.getUiSettings().setRotateGesturesEnabled(false);
-				CameraPosition camPos = _map.getCameraPosition();
-				if (camPos.bearing != 0) {
-					_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
-				}
-			} else {
-				_map.getUiSettings().setRotateGesturesEnabled(true);
-			}
-	    	
-	    	_map.clear();
-	    	
-	    	if (_timer != null) {
-    			_timer.cancel();
-    			_timer = null;
-			}
-	    	_timer = new Timer();
-	    	_timer.schedule(new TimerTask() {
-
-					@Override
-					public void run() {
-						MainActivity.this.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								updateTransport();
-							}
-						});
-					}
-				}, 0, 5000);
-		}
-	}
-    
     public void enableMapGestures(Boolean enable) {
     	if (enable) {
     		Timer timer = new Timer();
@@ -257,24 +200,116 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
-    public void animationDidFinish() {
-		if (_rootView.isOpen()) {
-			if (_model.getAllRoutes().size() == 0) {
-				_progressBar.setVisibility(View.VISIBLE);
-				_listView.setVisibility(View.INVISIBLE);
-				_editText.setEnabled(false);
-				_model.loadDataForAllRoutes(Contr.getInstance());
-			} else {
-				showTransportList();
+    private void _updateControls() {
+    	{// обновление контента меню
+    		if (_model.menuIsOpened()) {
+    			if (_model.getAllRoutes().size() == 0) {
+    				_progressBar.setVisibility(View.VISIBLE);
+    				_listView.setVisibility(View.INVISIBLE);
+    				_editText.setEnabled(false);
+    				_model.loadDataForAllRoutes(Contr.getInstance());
+    			} else {
+    				showTransportList();
+    			}
+    		}
+    	}
+    	
+    	
+    	
+    	
+    	{// обновление таймера
+			if (_timer != null) {
+    			_timer.cancel();
+    			_timer = null;
 			}
-		} else {
-			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
-			_model.saveFavorite();
+			if (!_model.menuIsOpened()) {
+				_timer = new Timer();
+		    	_timer.schedule(new TimerTask() {
+
+						@Override
+						public void run() {
+							MainActivity.this.runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									updateTransport();
+								}
+							});
+						}
+					}, 0, 5000);
+			}
+		}
+    	
+    	
+    	
+    	
+    	{// обновление тикетов выбранных маршрутов
+    		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
+	    	ticketsLayout.removeAllViews();
+	    	int index = 0;
+			for (Route route : _model.getFavorite()) {
+				TicketCloseLess ticket = new TicketCloseLess(this);
+				ticket.setRoute(route);
+				ticketsLayout.addView(ticket);
+				ticket.setLast(index++ == _model.getFavorite().size() - 1);
+			}
+			
+	    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
+	    	if (_model.getFavorite().size() > 0) {
+	    		((ImageView)findViewById(R.id.menuIcon)).setPadding(5, 3, 10, 0);
+	    		routesBtnScrollView.setVisibility(View.VISIBLE);
+			} else {
+				((ImageView)findViewById(R.id.menuIcon)).setPadding(2, 2, 0, 0);
+				routesBtnScrollView.setVisibility(View.GONE);
+			}
+		}
+	}
+    
+    public void menuChangeState(boolean isOpen) {
+		
+		_updateControls();
+		updateFilterButtons();
+		
+		
+		
+		
+		{// отключение клавиатуры
+			if (!isOpen) {
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
+				_model.saveFavorite();
+			}
 		}
 		
-		_settingMap();
-		updateFilterButtons();
+		
+		
+		
+		
+		{// отключение/включение вертелки карты
+			if (!isOpen) {
+				if (_model.getFavorite().size() == 0) {
+					_map.getUiSettings().setRotateGesturesEnabled(false);
+					CameraPosition camPos = _map.getCameraPosition();
+					if (camPos.bearing != 0) {
+						_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
+					}
+				} else {
+					_map.getUiSettings().setRotateGesturesEnabled(true);
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		{// очистка карты
+			if (!isOpen) {
+				_map.clear();
+			}
+		}
+		
+		
 	}
     
     public void toggleLeftMenu() {

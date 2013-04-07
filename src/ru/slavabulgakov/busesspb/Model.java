@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -80,6 +81,8 @@ public class Model extends Application {
 	private static final int TROLLEY_FILTER = 2;
 	private static final int TRAM_FILTER = 4;
 	
+	private static final String STORAGE_NAME = "busesspb";
+	
 	private int _enumKindToSimpleKind(TransportKind kind) {
 		switch (kind) {
 		case Bus:
@@ -98,24 +101,35 @@ public class Model extends Application {
 		return 0;
 	}
 	
-	public int _filter = 0;
-	public void setFilter(TransportKind kind) {
-		int filter = _enumKindToSimpleKind(kind);
-		_filter ^= filter;
-	}
-	public boolean isEnabledFilter(TransportKind kind) {
-		int filter = _enumKindToSimpleKind(kind);
-		return (_filter & filter) > 0 || _filterMenu == 0;
+	private void _setFilterToStorage(TransportKind kind, String name) {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		int filter = settings.getInt(name, 0);
+		int f = _enumKindToSimpleKind(kind);
+		filter ^= f;
+		editor.putInt(name, filter);
+		editor.commit();
 	}
 	
-	public int _filterMenu = 0;
+	private boolean _isEnabledFilterFromStorage(TransportKind kind, String name) {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		int filter = settings.getInt(name, 0);
+		int f = _enumKindToSimpleKind(kind);
+		return (filter & f) > 0 || filter == 0;
+	}
+	
+	public void setFilter(TransportKind kind) {
+		_setFilterToStorage(kind, "map_filter");
+	}
+	public boolean isEnabledFilter(TransportKind kind) {
+		return _isEnabledFilterFromStorage(kind, "map_filter");
+	}
+	
 	public void setFilterMenu(TransportKind kind) {
-		int filter = _enumKindToSimpleKind(kind);
-		_filterMenu ^= filter;
+		_setFilterToStorage(kind, "menu_filter");
 	}
 	public boolean isEnabledFilterMenu(TransportKind kind) {
-		int filter = _enumKindToSimpleKind(kind);
-		return (_filterMenu & filter) > 0 || _filterMenu == 0;
+		return _isEnabledFilterFromStorage(kind, "menu_filter");
 	}
 	
 	
@@ -540,5 +554,13 @@ public class Model extends Application {
 			_allTransportOverlay = new ArrayList<Model.TransportOverlay>();
 		}
 		return _allTransportOverlay;
+	}
+	
+	private boolean _menuIsOpened = false;
+	public void setMenuOpened(boolean opened) {
+		_menuIsOpened = opened;
+	}
+	public boolean menuIsOpened() {
+		return _menuIsOpened;
 	}
 }

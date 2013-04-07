@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginRight="20dp"
-                    android:background="@drawable/buttons_bg"
+                    android:background="@drawable/filter_btn"
                     android:src="@drawable/bus_30_30" />
 
                 <ImageButton
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginRight="20dp"
-                    android:background="@drawable/buttons_bg"
+                    android:background="@drawable/filter_btn"
                     android:src="@drawable/trolley_30_30" />
 
                 <ImageButton
@@ -53,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:background="@drawable/buttons_bg"
+                    android:background="@drawable/filter_btn"
                     android:src="@drawable/tram_30_30" />
 
             </RelativeLayout>
@@ -102,7 +102,7 @@
         android:id="@+id/mainMapLayout"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="-10dp" >
+        android:layout_marginRight="-10dp" >
 
     </ru.slavabulgakov.busesspb.RootView>
     

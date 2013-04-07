@@ -12,12 +12,11 @@ import android.widget.Scroller;
 public class RootView extends RelativeLayout {
 	
 	interface OnActionListener {
-		void onOpen();
+		void onMenuChangeState(boolean isOpen);
 		void onHold(Boolean hold);
 	}
 	private OnActionListener _listener;
 	private Boolean _hold = false;
-	private Boolean _opened = false;
 	private float _prevX = 0;
 	private float _lastDX = 0;
 	private final int _shadowWidth = 10;
@@ -25,21 +24,27 @@ public class RootView extends RelativeLayout {
 	private final int _touchWidth = 30;
 	private final int _xClose = -_shadowWidth;
 	private final int _xOpen = _menuWidth - _shadowWidth;
+	private Model _model;
 	public void setOnOpenListener(OnActionListener listener) {
 		_listener = listener;
 	}
 	
 	private Scroller _scroller;
+	@SuppressLint("NewApi")
 	private void _load(Context context, AttributeSet attrs) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.root_view, this, true);
-		_scroller = new Scroller(getContext(), new DecelerateInterpolator(3)); // new Interpolator() {
-			
-//			@Override
-//			public float getInterpolation(float input) {
-//				return (float)Math.pow(input - 1, 5) + 1;
-//			}
-//		});
+		_scroller = new Scroller(getContext(), new DecelerateInterpolator(3));
+	}
+	
+	@SuppressLint("NewApi")
+	public void setModel(Model model) {
+		_model = model;
+		if (_model.menuIsOpened()) {
+			setX(_dpToPx(_xOpen));
+		} else {
+			setX(_dpToPx(_xClose));
+		}
 	}
 
 	public RootView(Context context) {
@@ -64,7 +69,7 @@ public class RootView extends RelativeLayout {
 		case MotionEvent.ACTION_DOWN:
 			if (ev.getRawX() - getX() <= _dpToPx(_touchWidth)) {
 				_setHolded(true);
-			} else if (ev.getRawX() - getX() > _dpToPx(_touchWidth) && _opened) {
+			} else if (ev.getRawX() - getX() > _dpToPx(_touchWidth) && _model.menuIsOpened()) {
 				_setHolded(true);
 			}
 			_prevX = ev.getRawX();
@@ -90,7 +95,7 @@ public class RootView extends RelativeLayout {
 			if (getX() <= _dpToPx(_shadowWidth)) {
 				_setOpened(false);
 				setX(_dpToPx(_xClose));
-			} else if (getX() > _dpToPx(_xOpen) && _opened) {
+			} else if (getX() > _dpToPx(_xOpen) && _model.menuIsOpened()) {
 				_animateMove(-1);
 			} else if (getX() > _dpToPx(_xOpen)) {
 				_setOpened(true);
@@ -114,27 +119,23 @@ public class RootView extends RelativeLayout {
 	}
 	
 	public void open() {
-		if (!_opened) {
+		if (!_model.menuIsOpened()) {
 			_animateMove(1);
 		}
 	}
 	
 	public void close() {
-		if (_opened) {
+		if (_model.menuIsOpened()) {
 			_animateMove(-1);
 		}
 	}
 	
 	public void toggle() {
-		if (_opened) {
+		if (_model.menuIsOpened()) {
 			_animateMove(-1);
 		} else {
 			_animateMove(1);
 		}
-	}
-	
-	public Boolean isOpen() {
-		return _opened;
 	}
 	
 	private int _dpToPx(int dp) {
@@ -142,9 +143,9 @@ public class RootView extends RelativeLayout {
 	}
 
 	private void _setOpened(Boolean opened) {
-		_opened = opened;
+		_model.setMenuOpened(opened);
 		if (_listener != null) {
-			_listener.onOpen();
+			_listener.onMenuChangeState(_model.menuIsOpened());
 		}
 	}
 
@@ -179,7 +180,7 @@ public class RootView extends RelativeLayout {
 				if (currentX > _dpToPx(_xOpen)) {
 					setX(_dpToPx(_xOpen));
 				} else if (currentX < 0) {
-					setX(_xClose);
+					setX(_dpToPx(_xClose));
 				} else {
 					setX(currentX);
 					_prevX = currentX;
