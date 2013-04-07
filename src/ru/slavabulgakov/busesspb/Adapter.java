@@ -93,15 +93,15 @@ class Adapter extends ArrayAdapter<Route> {
 		int resId = -1;
 		switch (_filtredList.get(position).kind) {
 		case Bus:
-			resId = R.drawable.bus_30_30;
+			resId = R.drawable.bus_30_30_colored;
 			break;
 			
 		case Trolley:
-			resId = R.drawable.trolley_30_30;
+			resId = R.drawable.trolley_30_30_colored;
 			break;
 			
 		case Tram:
-			resId = R.drawable.tram_30_30;
+			resId = R.drawable.tram_30_30_colored;
 			break;
 
 		default:

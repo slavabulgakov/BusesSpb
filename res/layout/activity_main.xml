@@ -37,7 +37,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/bus_30_30" />
+                    android:src="@drawable/bus_30_30_colored" />
 
                 <ImageButton
                     android:id="@+id/menuTrolleyFilter"
@@ -46,7 +46,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/trolley_30_30" />
+                    android:src="@drawable/trolley_30_30_colored" />
 
                 <ImageButton
                     android:id="@+id/menuTramFilter"
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/tram_30_30" />
+                    android:src="@drawable/tram_30_30_colored" />
 
             </RelativeLayout>
 
