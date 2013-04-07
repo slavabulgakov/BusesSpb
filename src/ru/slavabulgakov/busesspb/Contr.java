@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -44,6 +45,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		_model = (Model)_currentActivity.getApplicationContext();
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public void onClick(View v) {
 		ListView listView = (ListView)_currentActivity.findViewById(R.id.selectRouteListView);
@@ -87,13 +89,25 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			((Adapter)listView.getAdapter()).getFilter().filterByKind();
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
+			
+		case R.id.location:
+			((MainActivity)_currentActivity).moveCameraToMyLocation();
+			break;
+			
+		case R.id.plus:
+			((MainActivity)_currentActivity).zoomCameraTo(1);
+			break;
+			
+		case R.id.minus:
+			((MainActivity)_currentActivity).zoomCameraTo(-1);
+			break;
 		
 		default:
 			break;
 		}
 		
-		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == Button.class) {
-			if (((Button)v).getText().equals("X")) {
+		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == ImageButton.class) {
+			if (((ImageButton)v).getTag().equals("closeAllBtn")) {
 				LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
 				_model.getFavorite().clear();
 				ticketsLayout.removeAllViews();

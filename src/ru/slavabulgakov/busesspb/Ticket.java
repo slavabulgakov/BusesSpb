@@ -7,7 +7,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,8 +20,9 @@ public class Ticket extends LinearLayout {
 		void onRemove(Ticket ticket);
 	}
 	
+	LinearLayout _linearLayout;
 	ImageView _icon;
-	Button _closeButton;
+	ImageButton _closeButton;
 	TextView _routeNumber;
 	Route _route;
 	OnRemoveListener _onRemoveListener;
@@ -29,18 +32,17 @@ public class Ticket extends LinearLayout {
 		String routeNumber = a.getString(R.styleable.Ticket_routeNumber);
 		a.recycle();
 		
-		setOrientation(LinearLayout.HORIZONTAL);
-		setGravity(Gravity.CENTER_VERTICAL);
-		
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.ticket, this, true);
 		
-		_icon = (ImageView)getChildAt(0);
+		_linearLayout = (LinearLayout)getChildAt(0);
 		
-		_routeNumber = (TextView)getChildAt(1);
+		_icon = (ImageView)_linearLayout.getChildAt(0);
+		
+		_routeNumber = (TextView)_linearLayout.getChildAt(1);
 		_routeNumber.setText(routeNumber);
 		
-		_closeButton = (Button)getChildAt(2);
+		_closeButton = (ImageButton)_linearLayout.getChildAt(2);
 		_closeButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -67,15 +69,15 @@ public class Ticket extends LinearLayout {
 		int resId = -1;
 		switch (_route.kind) {
 		case Bus:
-			resId = R.drawable.bus;
+			resId = R.drawable.bus_30_30;
 			break;
 			
 		case Trolley:
-			resId = R.drawable.trolley;
+			resId = R.drawable.trolley_30_30;
 			break;
 			
 		case Tram:
-			resId = R.drawable.tram;
+			resId = R.drawable.tram_30_30;
 			break;
 
 		default:

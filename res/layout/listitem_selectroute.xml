@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:padding="10dp"
-        android:src="@drawable/bus" />
+        android:src="@drawable/bus_30_30" />
 
     <TextView
         android:id="@+id/listItemSelectRouteRouteName"
@@ -21,14 +21,26 @@
         android:layout_toRightOf="@+id/listItemSelectRouteKind"
         android:text="123"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <ImageView
+        android:id="@+id/currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="18dp"
+        android:src="@drawable/rub" />
 
     <TextView
         android:id="@+id/listItemSelectRouteCost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:padding="10dp"
+        android:layout_toLeftOf="@+id/currency"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="3dp"
+        android:paddingTop="10dp"
         android:text="35"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

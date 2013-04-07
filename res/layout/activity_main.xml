@@ -5,55 +5,62 @@
         android:layout_height="match_parent" >
 
     <LinearLayout
-        android:layout_width="200dp"
+        android:layout_width="250dp"
         android:layout_height="match_parent"
-        android:background="@drawable/bg"
+        android:background="@color/menu_bg"
         android:orientation="vertical" >
 
         <EditText
             android:id="@+id/selectRouteText"
             android:layout_width="match_parent"
-            android:background="@drawable/text_view"
-            android:layout_margin="10dp"
-            android:padding="5dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/text_view"
             android:ems="10"
-            android:hint="@string/routes_placeholder" />
+            android:hint="@string/routes_placeholder"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp" />
         
-        <LinearLayout
-                android:id="@+id/menuKindBtns"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp" >
+        <RelativeLayout
+            android:id="@+id/menuKindBtns"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center" >
 
                 <ImageButton
                     android:id="@+id/menuBusFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
                     android:layout_marginRight="20dp"
-                    android:background="@drawable/filter_btn"
-                    android:src="@drawable/bus_40_40" />
+                    android:background="@drawable/buttons_bg"
+                    android:src="@drawable/bus_30_30" />
 
                 <ImageButton
                     android:id="@+id/menuTrolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginRight="20dp"
-                    android:background="@drawable/filter_btn"
-                    android:src="@drawable/trolley_40_40" />
+                    android:background="@drawable/buttons_bg"
+                    android:src="@drawable/trolley_30_30" />
 
                 <ImageButton
                     android:id="@+id/menuTramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/filter_btn"
-                    android:src="@drawable/tram_40_40" />
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/buttons_bg"
+                    android:src="@drawable/tram_30_30" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView1"
+            android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 

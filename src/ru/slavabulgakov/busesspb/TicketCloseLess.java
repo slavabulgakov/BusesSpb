@@ -17,8 +17,10 @@ public class TicketCloseLess extends Ticket {
 	}
 	
 	private void _ticket(Context context, AttributeSet attrs) {
+		_routeNumber.setPadding(0, 0, 0, 0);
+		_icon.setPadding(0, 0, 0, 0);
+		_linearLayout.setBackgroundColor(Color.TRANSPARENT);
 		_closeButton.setVisibility(GONE);
-		_routeNumber.setTextColor(Color.BLACK);
 	}
 
 	public void setLast(Boolean last) {

@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import android.location.Location;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -66,6 +68,8 @@ public class MainActivity extends BaseActivity {
         _map.animateCamera(zoom);
         _map.setMyLocationEnabled(true);
         _map.setOnCameraChangeListener(Contr.getInstance());
+        _map.getUiSettings().setMyLocationButtonEnabled(false);
+        _map.getUiSettings().setZoomControlsEnabled(false);
         
         _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
 		
@@ -89,7 +93,24 @@ public class MainActivity extends BaseActivity {
 		}
 		putCloseAllButtonToTicketsLayout();
 		updateFilterButtons();
+		
+		((ImageButton)findViewById(R.id.location)).setOnClickListener(Contr.getInstance());
+		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Contr.getInstance());
+		((ImageButton)findViewById(R.id.minus)).setOnClickListener(Contr.getInstance());
     }
+    
+    public void moveCameraToMyLocation() {
+		Location location = _map.getMyLocation();
+		if (location != null) {
+			_map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+		}
+	}
+    
+    public void zoomCameraTo(float zoom) {
+    	CameraPosition camPos = _map.getCameraPosition();
+    	CameraUpdate camUp = CameraUpdateFactory.zoomTo(camPos.zoom + zoom);
+        _map.animateCamera(camUp);
+	}
     
     public void updateFilterButtons() {
     	ImageButton busFilter = (ImageButton)findViewById(R.id.busFilter);
@@ -140,15 +161,17 @@ public class MainActivity extends BaseActivity {
 	public void putCloseAllButtonToTicketsLayout() {
 		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
 		if (_model.getFavorite().size() > 1) {
-			if (ticketsLayout.getChildAt(0).getClass() != Button.class) {
-				Button closeAllBtn = new Button(this);
+			if (ticketsLayout.getChildAt(0).getClass() != ImageButton.class) {
+				ImageButton closeAllBtn = new ImageButton(this);
 				closeAllBtn.setOnClickListener(Contr.getInstance());
-				closeAllBtn.setText("X");
+				closeAllBtn.setImageResource(R.drawable.close);
+				closeAllBtn.setBackgroundResource(R.drawable.buttons_bg);
+				closeAllBtn.setTag("closeAllBtn");
 				ticketsLayout.addView(closeAllBtn, 0);
 			}
 		} else {
 			if (ticketsLayout.getChildCount() > 0) {
-				if (ticketsLayout.getChildAt(0).getClass() == Button.class) {
+				if (ticketsLayout.getChildAt(0).getClass() == ImageButton.class) {
 					ticketsLayout.removeViewAt(0);
 				}
 			}

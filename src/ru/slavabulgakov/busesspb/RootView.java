@@ -21,8 +21,10 @@ public class RootView extends RelativeLayout {
 	private float _prevX = 0;
 	private float _lastDX = 0;
 	private final int _shadowWidth = 10;
+	private final int _menuWidth = 250;
+	private final int _touchWidth = 30;
 	private final int _xClose = -_shadowWidth;
-	private final int _xOpen = 190;
+	private final int _xOpen = _menuWidth - _shadowWidth;
 	public void setOnOpenListener(OnActionListener listener) {
 		_listener = listener;
 	}
@@ -60,9 +62,9 @@ public class RootView extends RelativeLayout {
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			if (ev.getRawX() - getX() <= _dpToPx(30)) {
+			if (ev.getRawX() - getX() <= _dpToPx(_touchWidth)) {
 				_setHolded(true);
-			} else if (ev.getRawX() - getX() > _dpToPx(30) && _opened) {
+			} else if (ev.getRawX() - getX() > _dpToPx(_touchWidth) && _opened) {
 				_setHolded(true);
 			}
 			_prevX = ev.getRawX();
@@ -85,12 +87,12 @@ public class RootView extends RelativeLayout {
 			
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
-			if (getX() <= _dpToPx(10)) {
+			if (getX() <= _dpToPx(_shadowWidth)) {
 				_setOpened(false);
 				setX(_dpToPx(_xClose));
-			} else if (getX() > _dpToPx(190) && _opened) {
+			} else if (getX() > _dpToPx(_xOpen) && _opened) {
 				_animateMove(-1);
-			} else if (getX() > _dpToPx(190)) {
+			} else if (getX() > _dpToPx(_xOpen)) {
 				_setOpened(true);
 				setX(_dpToPx(_xOpen));
 			} else {
@@ -164,6 +166,7 @@ public class RootView extends RelativeLayout {
 			@Override
 			public void run() {
 				if (_scroller.isFinished()) {
+					_scroller.forceFinished(true);
 					if ((int)getX() < 100) {
 						_setOpened(false);
 					} else {

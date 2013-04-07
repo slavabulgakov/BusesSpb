@@ -93,15 +93,15 @@ class Adapter extends ArrayAdapter<Route> {
 		int resId = -1;
 		switch (_filtredList.get(position).kind) {
 		case Bus:
-			resId = R.drawable.bus;
+			resId = R.drawable.bus_30_30;
 			break;
 			
 		case Trolley:
-			resId = R.drawable.trolley;
+			resId = R.drawable.trolley_30_30;
 			break;
 			
 		case Tram:
-			resId = R.drawable.tram;
+			resId = R.drawable.tram_30_30;
 			break;
 
 		default:
@@ -111,8 +111,10 @@ class Adapter extends ArrayAdapter<Route> {
 		
 		Integer cost = _filtredList.get(position).cost;
 		TextView costTextView = (TextView)convertView.findViewById(R.id.listItemSelectRouteCost);
+		ImageView currency = (ImageView)convertView.findViewById(R.id.currency);
 		if (cost == null) {
 			costTextView.setVisibility(View.GONE);
+			currency.setVisibility(View.GONE);
 		} else {
 			costTextView.setText(cost.toString());
 			costTextView.setVisibility(View.VISIBLE);

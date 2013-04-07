@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:background="@drawable/buttons_bg" >
     
     <ImageView
-        android:id="@+id/menu_shadow"
+        android:id="@+id/ticketIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:src="@drawable/bus" />
+        android:src="@drawable/bus_30_30" />
 
     <TextView
         android:id="@+id/mainRoutesBtnText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
         android:text="226"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/button1"
+    <ImageButton
+        android:id="@+id/imageButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:text="X" />
+        android:background="@color/trans"
+        android:paddingLeft="5dp"
+        android:paddingTop="2dp"
+        android:src="@drawable/close" />
 
-</merge>
+</LinearLayout>

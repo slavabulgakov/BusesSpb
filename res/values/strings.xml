@@ -13,8 +13,8 @@
     <color name="black">#000000</color>
     <color name="red">#ff0000</color>
     <color name="blue">#7F33b5e5</color>
-    <color name="trans">#99ffffff</color>
+    <color name="trans">#00ffffff</color>
+    <color name="menu_bg">#151515</color>
     <string name="routes_placeholder">Введите маршрут</string>
-    <color name="menubg">#ebe6dc</color>
 
 </resources>
