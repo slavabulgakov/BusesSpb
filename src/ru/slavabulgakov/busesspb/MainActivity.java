@@ -51,6 +51,12 @@ public class MainActivity extends BaseActivity {
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private RootView _rootView;
+	private ImageButton _busFilter;
+	private ImageButton _trolleyFilter;
+	private ImageButton _tramFilter;
+	private ImageButton _menuBusFilter;
+	private ImageButton _menuTrolleyFilter;
+	private ImageButton _menuTramFilter;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -91,12 +97,32 @@ public class MainActivity extends BaseActivity {
 			ticketsLayout.addView(ticket);
 		}
 		putCloseAllButtonToTicketsLayout();
-		updateFilterButtons();
 		_updateControls();
 		
 		((ImageButton)findViewById(R.id.location)).setOnClickListener(Contr.getInstance());
 		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Contr.getInstance());
 		((ImageButton)findViewById(R.id.minus)).setOnClickListener(Contr.getInstance());
+		
+		
+		
+		_busFilter = (ImageButton)findViewById(R.id.busFilter);
+		_busFilter.setOnClickListener(Contr.getInstance());
+		
+		_trolleyFilter = (ImageButton)findViewById(R.id.trolleyFilter);
+		_trolleyFilter.setOnClickListener(Contr.getInstance());
+		
+		_tramFilter = (ImageButton)findViewById(R.id.tramFilter);
+		_tramFilter.setOnClickListener(Contr.getInstance());
+		
+		_menuBusFilter = (ImageButton)findViewById(R.id.menuBusFilter);
+    	_menuBusFilter.setOnClickListener(Contr.getInstance());
+    	
+    	_menuTrolleyFilter = (ImageButton)findViewById(R.id.menuTrolleyFilter);
+		_menuTrolleyFilter.setOnClickListener(Contr.getInstance());
+		
+		_menuTramFilter = (ImageButton)findViewById(R.id.menuTramFilter);
+		_menuTramFilter.setOnClickListener(Contr.getInstance());
+		updateFilterButtons();
     }
     
     public void moveCameraToMyLocation() {
@@ -113,39 +139,19 @@ public class MainActivity extends BaseActivity {
 	}
     
     public void updateFilterButtons() {
-    	ImageButton busFilter = (ImageButton)findViewById(R.id.busFilter);
-		busFilter.setOnClickListener(Contr.getInstance());
-		
-		ImageButton trolleyFilter = (ImageButton)findViewById(R.id.trolleyFilter);
-		trolleyFilter.setOnClickListener(Contr.getInstance());
-		
-		ImageButton tramFilter = (ImageButton)findViewById(R.id.tramFilter);
-		tramFilter.setOnClickListener(Contr.getInstance());
-		
     	LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
     	if (_model.getFavorite().size() > 0) {
 			kindBtns.setVisibility(View.INVISIBLE);
 		} else {
 			kindBtns.setVisibility(View.VISIBLE);
 		}
-    	busFilter.setSelected(_model.isEnabledFilter(TransportKind.Bus));
-    	trolleyFilter.setSelected(_model.isEnabledFilter(TransportKind.Trolley));
-    	tramFilter.setSelected(_model.isEnabledFilter(TransportKind.Tram));
-    	
-    	
-    	
-    	ImageButton menuBusFilter = (ImageButton)findViewById(R.id.menuBusFilter);
-    	menuBusFilter.setOnClickListener(Contr.getInstance());
-    	
-    	ImageButton menuTrolleyFilter = (ImageButton)findViewById(R.id.menuTrolleyFilter);
-		menuTrolleyFilter.setOnClickListener(Contr.getInstance());
+    	_busFilter.setSelected(_model.isEnabledFilter(TransportKind.Bus));
+    	_trolleyFilter.setSelected(_model.isEnabledFilter(TransportKind.Trolley));
+    	_tramFilter.setSelected(_model.isEnabledFilter(TransportKind.Tram));
 		
-		ImageButton menuTramFilter = (ImageButton)findViewById(R.id.menuTramFilter);
-		menuTramFilter.setOnClickListener(Contr.getInstance());
-		
-		menuBusFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Bus));
-		menuTrolleyFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Trolley));
-		menuTramFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Tram));
+		_menuBusFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Bus));
+		_menuTrolleyFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Trolley));
+		_menuTramFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Tram));
     }
     
 	@Override
@@ -207,6 +213,9 @@ public class MainActivity extends BaseActivity {
     				_progressBar.setVisibility(View.VISIBLE);
     				_listView.setVisibility(View.INVISIBLE);
     				_editText.setEnabled(false);
+    				_busFilter.setEnabled(false);
+    				_trolleyFilter.setEnabled(false);
+    				_tramFilter.setEnabled(false);
     				_model.loadDataForAllRoutes(Contr.getInstance());
     			} else {
     				showTransportList();
@@ -320,6 +329,9 @@ public class MainActivity extends BaseActivity {
 		_progressBar.setVisibility(View.INVISIBLE);
 		_listView.setVisibility(View.VISIBLE);
 		_editText.setEnabled(true);
+		_busFilter.setEnabled(true);
+		_trolleyFilter.setEnabled(true);
+		_tramFilter.setEnabled(true);
 		if (_listView.getAdapter() == null) {
 			Adapter adapter = new Adapter(this, _model);
 			_listView.setAdapter(adapter);

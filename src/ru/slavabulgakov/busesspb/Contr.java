@@ -72,24 +72,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
-		case R.id.menuBusFilter:
-			_model.setFilterMenu(TransportKind.Bus);
-			((Adapter)listView.getAdapter()).getFilter().filterByKind();
-			((MainActivity)_currentActivity).updateFilterButtons();
-			break;
-			
-		case R.id.menuTrolleyFilter:
-			_model.setFilterMenu(TransportKind.Trolley);
-			((Adapter)listView.getAdapter()).getFilter().filterByKind();
-			((MainActivity)_currentActivity).updateFilterButtons();
-			break;
-			
-		case R.id.menuTramFilter:
-			_model.setFilterMenu(TransportKind.Tram);
-			((Adapter)listView.getAdapter()).getFilter().filterByKind();
-			((MainActivity)_currentActivity).updateFilterButtons();
-			break;
-			
 		case R.id.location:
 			((MainActivity)_currentActivity).moveCameraToMyLocation();
 			break;
@@ -104,6 +86,31 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		
 		default:
 			break;
+		}
+		
+		if (listView.getAdapter() != null) {
+			switch (v.getId()) {
+			case R.id.menuBusFilter:
+				_model.setFilterMenu(TransportKind.Bus);
+				((Adapter)listView.getAdapter()).getFilter().filterByKind();
+				((MainActivity)_currentActivity).updateFilterButtons();
+				break;
+				
+			case R.id.menuTrolleyFilter:
+				_model.setFilterMenu(TransportKind.Trolley);
+				((Adapter)listView.getAdapter()).getFilter().filterByKind();
+				((MainActivity)_currentActivity).updateFilterButtons();
+				break;
+				
+			case R.id.menuTramFilter:
+				_model.setFilterMenu(TransportKind.Tram);
+				((Adapter)listView.getAdapter()).getFilter().filterByKind();
+				((MainActivity)_currentActivity).updateFilterButtons();
+				break;
+
+			default:
+				break;
+			}
 		}
 		
 		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == ImageButton.class) {
