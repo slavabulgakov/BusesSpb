@@ -4,12 +4,25 @@
     android:layout_height="match_parent" >
 
             <ImageView android:id="@+id/menu_shadow" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:scaleType="fitXY" android:src="@drawable/shadow" />
-            <fragment
-                android:id="@+id/map"
-                android:layout_width="fill_parent"
+
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toRightOf="@id/menu_shadow"
-                class="com.google.android.gms.maps.MapFragment" />
+                android:layout_toRightOf="@id/menu_shadow" >
+
+                <fragment
+                    android:id="@+id/map"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    class="com.google.android.gms.maps.MapFragment" />
+
+                <View
+                    android:id="@+id/view1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trans" />
+
+            </FrameLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
