@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -35,9 +36,12 @@ import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 enum TransportKind {
 	Bus,
@@ -53,6 +57,7 @@ class Transport {
 	Double Lng;
 	Double Lat;
 	float direction;
+	int velocity;
 	TransportKind kind;
 }
 
@@ -138,12 +143,13 @@ public class Model extends Application {
 	private ArrayList<Route> _favoriteRoutes;
 	private ArrayList<Route> _allRoutes;
 	private OnLoadCompleteListener _listener;
+	private Date _lastNetErrorDate;
 	
 	public interface OnLoadCompleteListener {
-		void onAllRoutesLoadComplete();
 		void onTransportListOfRouteLoadComplete(ArrayList<Transport> array);
 		void onRouteKindsLoadComplete(ArrayList<Route> array);
 		void onImgLoadComplete(Bitmap img);
+		void onInternetAccessDeny();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -317,8 +323,10 @@ public class Model extends Application {
 			
 			@Override
 			public void finish() {
-				setAll(_array);
-				_listener.onRouteKindsLoadComplete(_array);
+				if (isOnline()) {
+					setAll(_array);
+					_listener.onRouteKindsLoadComplete(_array);
+				}
 				_removeParserById(requestId);
 			}
 
@@ -338,15 +346,14 @@ public class Model extends Application {
 		return _parsers;
 	}
 	
-	private int _countLoadingFavoriteRoutes = 0;
 	public void showFavoriteRoutes(OnLoadCompleteListener listener) {
-		_countLoadingFavoriteRoutes =+ getFavorite().size();
 		for (Route route : getFavorite()) {
 			_loadDataForRoute(route, listener);
 		}
 	}
 	
 	private void _loadDataForRoute(final Route route, final OnLoadCompleteListener listener) {
+		_listener = listener;
 		final int requestId = route.id;
 		IRequest req = new IRequest() {
 			
@@ -387,6 +394,7 @@ public class Model extends Application {
 						transport.Lat = m.deg(coordinates.getDouble(1), AxisType.LAT);
 						transport.Lng = m.deg(coordinates.getDouble(0), AxisType.LNG);
 						transport.direction = (float)ja.getJSONObject(i).getJSONObject("properties").getDouble("direction");
+						transport.velocity = (int)ja.getJSONObject(i).getJSONObject("properties").getDouble("velocity");
 						transport.id = ja.getJSONObject(i).getInt("id");
 						_array.add(transport);
 						if (_canceled) {
@@ -408,12 +416,10 @@ public class Model extends Application {
 			
 			@Override
 			public void finish() {
-				_countLoadingFavoriteRoutes--;
-				if (_countLoadingFavoriteRoutes == 0) {
-					listener.onAllRoutesLoadComplete();
+				if (isOnline()) {
+					listener.onTransportListOfRouteLoadComplete(_array);
 				}
 				_removeParserById(requestId);
-				listener.onTransportListOfRouteLoadComplete(_array);
 			}
 
 			@Override
@@ -441,6 +447,7 @@ public class Model extends Application {
 	}
 	
 	public void loadImg(LatLngBounds bounds, final int width, final int height, final OnLoadCompleteListener listener) {
+		_listener = listener;
 		Mercator m = new Mercator();
 		final double left_lon = m.mer(bounds.southwest.longitude, AxisType.LNG);
 		final double left_lat = m.mer(bounds.southwest.latitude, AxisType.LAT);
@@ -494,10 +501,10 @@ public class Model extends Application {
 		            connection.connect();
 		            InputStream input = connection.getInputStream();
 		            _img = BitmapFactory.decodeStream(input);
-		            _step++;
 		        } catch (IOException e) {
 		            e.printStackTrace();
 		        }
+				_step++;
 			}
 			
 			@Override
@@ -507,7 +514,9 @@ public class Model extends Application {
 			
 			@Override
 			public void finish() {
-				listener.onImgLoadComplete(_img);
+				if (isOnline()) {
+					listener.onImgLoadComplete(_img);
+				}
 				_removeParserById(requestId);
 			}
 
@@ -562,5 +571,27 @@ public class Model extends Application {
 	}
 	public boolean menuIsOpened() {
 		return _menuIsOpened;
+	}
+	
+	public boolean isOnline() {
+		boolean online = true;
+	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    online = netInfo != null && netInfo.isConnectedOrConnecting();
+	    
+	    if (!online) {
+	    	Date now = new Date();
+			if (_lastNetErrorDate != null) {
+				if (now.getTime() - _lastNetErrorDate.getTime() > 2000) {
+					_lastNetErrorDate = now;
+					_listener.onInternetAccessDeny();
+				}
+			} else {
+				_lastNetErrorDate = now;
+				_listener.onInternetAccessDeny();
+			}
+		}
+	    
+	    return online;
 	}
 }

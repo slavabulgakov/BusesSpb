@@ -143,8 +143,8 @@ public class RootView extends RelativeLayout {
 	}
 
 	private void _setOpened(Boolean opened) {
-		_model.setMenuOpened(opened);
-		if (_listener != null) {
+		if (_listener != null && opened != _model.menuIsOpened()) {
+			_model.setMenuOpened(opened);
 			_listener.onMenuChangeState(_model.menuIsOpened());
 		}
 	}

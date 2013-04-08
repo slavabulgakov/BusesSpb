@@ -16,5 +16,6 @@
     <color name="trans">#00ffffff</color>
     <color name="menu_bg">#151515</color>
     <string name="routes_placeholder">Введите маршрут</string>
+    <string name="internet_access_deny">Проблемы с сетью. Проверьте соединение.</string>
 
 </resources>

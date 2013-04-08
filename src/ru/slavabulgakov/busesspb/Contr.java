@@ -1,6 +1,7 @@
 package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
+
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
@@ -18,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -179,7 +181,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		Ticket ticket = new Ticket(_currentActivity, null);
 		ticket.setRoute(route);
 		ticket.setOnRemoveListener(this);
-		ticketsLayout.addView(ticket);
+		if (_model.getFavorite().size() > 1) {
+			ticketsLayout.addView(ticket, 1);
+		} else {
+			ticketsLayout.addView(ticket);
+		}
 		_model.getFavorite().add(route);
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 	}
@@ -191,10 +197,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public void onAllRoutesLoadComplete() {
-	}
-
-	@Override
 	public void onMenuChangeState(boolean isOpen) {
 		((MainActivity)_currentActivity).menuChangeState(isOpen);
 	}
@@ -202,5 +204,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onHold(Boolean hold) {
 		((MainActivity)_currentActivity).enableMapGestures(!hold);
+	}
+
+	@Override
+	public void onInternetAccessDeny() {
+		Toast.makeText(_currentActivity, R.string.internet_access_deny, Toast.LENGTH_LONG).show();
 	}
 }
