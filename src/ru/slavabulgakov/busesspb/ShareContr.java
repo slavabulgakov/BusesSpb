@@ -5,7 +5,6 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.RequestToken;
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import com.facebook.android.Facebook;
 
@@ -64,7 +63,7 @@ public class ShareContr {
 	
 	/////////
 	// VK ===
-	private VkApp _vkApp;
+//	private VkApp _vkApp;
 	public void sendMess2VK() {
 //		if (_vkApp == null) {
 //			Model app = (Model)_context.getApplicationContext();
@@ -95,9 +94,9 @@ public class ShareContr {
 	private Facebook _facebook;
 	
 	public Facebook getFacebook() {
-		if (_facebook == null) {
-			_facebook = new Facebook("407111749305322");
-		}
+//		if (_facebook == null) {
+//			_facebook = new Facebook("407111749305322");
+//		}
 		return _facebook;
 	}
 	

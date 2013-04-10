@@ -594,4 +594,12 @@ public class Model extends Application {
 	    
 	    return online;
 	}
+
+	private boolean _fbIsLoggedInPressed;
+	public boolean fbIsLoggedInPressed() {
+		return _fbIsLoggedInPressed;
+	}
+	public void setfbLoggedInPressed(boolean l) {
+		_fbIsLoggedInPressed = l;
+	}
 }

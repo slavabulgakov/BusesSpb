@@ -2,26 +2,18 @@ package ru.slavabulgakov.busesspb;
 
 import ru.slavabulgakov.busesspb.ShareContr.IShareView;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.TypedArray;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class ShareView extends LinearLayout implements IShareView {
-	private ImageButton _vkImgBtn;
-	private ImageButton _twImgBtn;
+//	private ImageButton _vkImgBtn;
+//	private ImageButton _twImgBtn;
 	private Context _context;
 	private HorizontalScrollView _scrollView;
 	
@@ -142,7 +134,7 @@ public class ShareView extends LinearLayout implements IShareView {
 	
 	//////////////
 	// Twitter ===
-	private Boolean _enterPinDialogIsShowed = false;
+//	private Boolean _enterPinDialogIsShowed = false;
 	private void showEnterPinDialog(final ShareContr share) {
 //		if (_enterPinDialogIsShowed) {
 //			return;
@@ -178,7 +170,7 @@ public class ShareView extends LinearLayout implements IShareView {
 		
     }
 	
-	private Boolean _getPinDialogIsShowed = false;
+//	private Boolean _getPinDialogIsShowed = false;
 	private void showGetPinDialog(final ShareContr share, final String url) {
 //		if (_getPinDialogIsShowed) {
 //			return;
@@ -239,13 +231,13 @@ public class ShareView extends LinearLayout implements IShareView {
 		showGetPinDialog(share, url);
 	}
 	
-	private OnClickListener _twOnClickListener = new OnClickListener() {
-		
-		public void onClick(View v) {
-//			MyApplication app = (MyApplication)_context.getApplicationContext();
-//			app.getShare().sendMess2TW();
-		}
-	};
+//	private OnClickListener _twOnClickListener = new OnClickListener() {
+//		
+//		public void onClick(View v) {
+////			MyApplication app = (MyApplication)_context.getApplicationContext();
+////			app.getShare().sendMess2TW();
+//		}
+//	};
 	//============
 	//////////////
 	

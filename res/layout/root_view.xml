@@ -93,25 +93,25 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/filter_btn"
                     android:src="@drawable/tram_30_30_colored" />
-
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/location"
+                android:id="@+id/about"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/mainRoutesBtn"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/buttons_bg"
                 android:src="@drawable/location" />
 
             <LinearLayout
+                android:id="@+id/linearLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/location"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@+id/about"
                 android:background="@drawable/buttons_bg"
                 android:orientation="vertical" >
 

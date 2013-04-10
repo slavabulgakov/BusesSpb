@@ -112,9 +112,9 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			break;
 			
 		case R.id.shareFBImageButton:
-//			ShareContr.getInstance().sendMess2FB();
+			((AboutActivity)_currentActivity).publishStory();
 			break;
-		
+			
 		default:
 			break;
 		}

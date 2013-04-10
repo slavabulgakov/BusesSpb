@@ -30,8 +30,8 @@
     <string name="share_error_title">Ошибка отправки сообщения</string>
     <string name="share_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
     <string name="share_error_message_duplicate">При загрузке данных произошла ошибка. Возможно схожее сообщение уже опубликовано.</string>
-    <string name="share_message_title">Приложение Автобусы СПб!</string>
-    <string name="share_message">Я установил Автобусы СПб! Удобный доступ к положению автобусов, троллейбусов и трамваев на карте Питера в реальном времени. https://play.google.com/store/apps/details?id=ru.slavabulgakov.busesspb</string>
+    <string name="share_message_title">Android-приложение Автобусы СПб!</string>
+    <string name="share_message">Я установил Автобусы СПб! Удобный доступ к положению автобусов, троллейбусов и трамваев на карте Питера в реальном времени на вашем Android-устройстве. https://play.google.com/store/apps/details?id=ru.slavabulgakov.busesspb</string>
     <string name="share_message_twitter">Я установил Автобусы СПб! Расписание положение транспорта Питера на моем телефоне. https://play.google.com/store/apps/details?id=ru.slavabulgakov.busesspb</string>
     <string name="share_cancel_title">Сообщение не опубликовано</string>
     <string name="share_cancel_message">При публикации сообщение произошла ошибка. Проверьте ваше подключение к сети.</string>
