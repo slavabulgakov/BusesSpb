@@ -106,5 +106,11 @@
 
     </ru.slavabulgakov.busesspb.RootView>
     
-        
+    <com.google.ads.AdView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/admob_publisher_id"
+        ads:loadAdOnCreate="true"/>
+    
 </RelativeLayout>

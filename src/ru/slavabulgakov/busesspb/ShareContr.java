@@ -1,8 +1,5 @@
 package ru.slavabulgakov.busesspb;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -10,14 +7,9 @@ import twitter4j.auth.RequestToken;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
-import com.facebook.android.Facebook.DialogListener;
 
-public class Share {
+public class ShareContr {
 	public interface IShareView {
 		public void onVKError();
 		public void onVKSendSuccess();
@@ -28,12 +20,26 @@ public class Share {
 		public void onFBSendSuccess();
 		public void onFBInvalidKey(String mess);
 		
-		public void onTwitterGetPin(Share share, String url);
-		public void onTwitterEnterPin(Share share);
+		public void onTwitterGetPin(ShareContr share, String url);
+		public void onTwitterEnterPin(ShareContr share);
 		public void onTwitterSuccesUpdating();
 		public void onTwitterErrorUpdating();
 		public void onTwitterErrorDuplicateUpdating();
 	}
+	
+	private static volatile ShareContr _instance;
+	public static ShareContr getInstance() {
+    	ShareContr localInstance = _instance;
+    	if (localInstance == null) {
+    		synchronized (Contr.class) {
+    			localInstance = _instance;
+    			if (localInstance == null) {
+    				_instance = localInstance = new ShareContr();
+    			}
+    		}
+    	}
+    	return localInstance;
+    }
 	
 	private enum State {
 		NOTHING,
@@ -42,13 +48,11 @@ public class Share {
 	};
 	
 	private IShareView _shareView;
-	private Context _context;
 	private State _state;
 	
 	
-	public Share(Context context) {
+	public ShareContr() {
 		super();
-		this._context = context;
 		_state = State.NOTHING;
 	}
 	

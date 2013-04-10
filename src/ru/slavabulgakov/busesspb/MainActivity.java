@@ -123,6 +123,8 @@ public class MainActivity extends BaseActivity {
 		_menuTramFilter = (ImageButton)findViewById(R.id.menuTramFilter);
 		_menuTramFilter.setOnClickListener(Contr.getInstance());
 		updateFilterButtons();
+		
+		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
     }
     
     public void moveCameraToMyLocation() {

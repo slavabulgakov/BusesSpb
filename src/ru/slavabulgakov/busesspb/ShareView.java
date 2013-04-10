@@ -1,6 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
-import ru.slavabulgakov.busesspb.Share.IShareView;
+import ru.slavabulgakov.busesspb.ShareContr.IShareView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,22 +22,18 @@ import android.widget.Toast;
 public class ShareView extends LinearLayout implements IShareView {
 	private ImageButton _vkImgBtn;
 	private ImageButton _twImgBtn;
-	private ImageButton _emailImgBtn;
-	private ImageButton _fbImgBtn;
-//	private LinearLayout _layout;
 	private Context _context;
 	private HorizontalScrollView _scrollView;
 	
 	private void init(Context context, AttributeSet attrs) {
 		_context = context;
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Ticket, 0, 0);
-		String routeNumber = a.getString(R.styleable.Ticket_routeNumber);
-		a.recycle();
-//		((Activity)getContext()).getLayoutInflater().inflate(R.layout.share, this, true);
 		
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.share, this, true);
 
+		((ImageButton)findViewById(R.id.shareEmailImageButton)).setOnClickListener(Contr.getInstance());
+		((ImageButton)findViewById(R.id.shareFBImageButton)).setOnClickListener(Contr.getInstance());
+		
 		setUpViews();
 		setAttrs(attrs);
 	}
@@ -136,16 +132,6 @@ public class ShareView extends LinearLayout implements IShareView {
 //		Toast.makeText(_context, R.string.share_cancel_title, Toast.LENGTH_LONG).show();
 	}
 	
-	private OnClickListener _fbOnClickListener = new OnClickListener() {
-		
-		public void onClick(View arg0) {
-			
-//			MyApplication app = (MyApplication)_context.getApplicationContext();
-//			app.getShare().sendMess2FB((Activity)_context);
-			
-		}
-	};
-	
 	public void onFBInvalidKey(String mess) {
 		showAlertDialog("Invalid key", mess, android.R.drawable.ic_dialog_alert);
 	};
@@ -157,7 +143,7 @@ public class ShareView extends LinearLayout implements IShareView {
 	//////////////
 	// Twitter ===
 	private Boolean _enterPinDialogIsShowed = false;
-	private void showEnterPinDialog(final Share share) {
+	private void showEnterPinDialog(final ShareContr share) {
 //		if (_enterPinDialogIsShowed) {
 //			return;
 //		}
@@ -193,7 +179,7 @@ public class ShareView extends LinearLayout implements IShareView {
     }
 	
 	private Boolean _getPinDialogIsShowed = false;
-	private void showGetPinDialog(final Share share, final String url) {
+	private void showGetPinDialog(final ShareContr share, final String url) {
 //		if (_getPinDialogIsShowed) {
 //			return;
 //		}
@@ -228,7 +214,7 @@ public class ShareView extends LinearLayout implements IShareView {
     }
 	
 	@Override
-	public void onTwitterEnterPin(Share share) {
+	public void onTwitterEnterPin(ShareContr share) {
     	showEnterPinDialog(share);
 	}
 	
@@ -249,7 +235,7 @@ public class ShareView extends LinearLayout implements IShareView {
 	
 		
 	@Override
-	public void onTwitterGetPin(Share share, String url) {
+	public void onTwitterGetPin(ShareContr share, String url) {
 		showGetPinDialog(share, url);
 	}
 	
@@ -267,37 +253,15 @@ public class ShareView extends LinearLayout implements IShareView {
 	
 	
 	
-	/////////////
-	// e-mail ===
-	private OnClickListener _emailOnClickListener = new OnClickListener() {
-		
-		public void onClick(View v) {
-//			final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-//			emailIntent.setType("plain/text");
-//			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, _context.getString(R.string.share_message_title));
-//			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, _context.getString(R.string.share_message));
-//			_context.startActivity(Intent.createChooser(emailIntent, _context.getString(R.string.send_with)));
-		}
-	};
-	//===========
-	/////////////
-	
-	
-	
-	
-	
-	
 	private void setUpViews() {
 //		_scrollView = (HorizontalScrollView)findViewById(R.id.shareScrollView);
 //		
-//		_emailImgBtn = (ImageButton)findViewById(R.id.shareEmailImageButton);
-//		_emailImgBtn.setOnClickListener(_emailOnClickListener);
+		
 //		
 //		_vkImgBtn = (ImageButton)findViewById(R.id.shareVKImageButton);
 //		_vkImgBtn.setOnClickListener(_vkOnClickListener);
 //		
-//		_fbImgBtn = (ImageButton)findViewById(R.id.shareFBImageButton);
-//		_fbImgBtn.setOnClickListener(_fbOnClickListener);
+		
 //		
 //		_twImgBtn = (ImageButton)findViewById(R.id.shareTwitterImageButton);
 //		_twImgBtn.setOnClickListener(_twOnClickListener);

@@ -132,11 +132,16 @@
                     android:background="@color/trans"
                     android:padding="2dp"
                     android:src="@drawable/minus" />
-
             </LinearLayout>
 
+            <ImageButton
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/linearLayout1"
+                android:layout_alignLeft="@+id/mainRoutesBtn"
+                android:background="@drawable/buttons_bg"
+                android:src="@drawable/location" />
         </RelativeLayout>
-
-        
 
 </RelativeLayout>
