@@ -1,13 +1,14 @@
 package ru.slavabulgakov.busesspb;
 
 import ru.slavabulgakov.busesspb.VkApp.*;
+import ru.slavabulgakov.busesspb.ParserWebPageTask;
+import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.RequestToken;
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import com.facebook.android.Facebook;
 
 public class ShareModel {
@@ -155,81 +156,118 @@ public class ShareModel {
 	}
 	
 	public void sendMess2TW() {
-//		if (_twitter == null) {
-			_twitter = new TwitterFactory().getInstance();
-//		}
-		
-		_twitter.setOAuthConsumer("vRDIaZxcogXoBnAupH1nyQ", "JscEmBVLpwW55XejFKI65qmeJwmU7x7zpJH0i0w14o");
-	    _requestToken = null;
-		try {
-			_requestToken = _twitter.getOAuthRequestToken();
-		} catch (TwitterException e) {
-			_shareView.onTwitterErrorUpdating();
-		}
-		
-		_url = _requestToken.getAuthorizationURL();		
-		_state = State.GET_PIN;
-		
-		_shareView.onTwitterGetPin(this, _url);
-		
-	}
-	
-	public void setPin(String pin) {
-		try {
-			_twitter.getOAuthAccessToken(_requestToken, pin);
-			TwitterUpdateTask twitterUpdateTask = new TwitterUpdateTask();
-			twitterUpdateTask.execute(_twitter);
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
+		ParserWebPageTask task = new ParserWebPageTask(new IRequest() {
+			
+			private int _step = 0;
+			
+			@Override
+			public void setCanceled() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void nextExecute() {
+				_step++;
+				_twitter = new TwitterFactory().getInstance();
+				_twitter.setOAuthConsumer("vRDIaZxcogXoBnAupH1nyQ", "JscEmBVLpwW55XejFKI65qmeJwmU7x7zpJH0i0w14o");
+			    _requestToken = null;
+				try {
+					_requestToken = _twitter.getOAuthRequestToken();
+				} catch (TwitterException e) {
+					_shareView.onTwitterErrorUpdating();
+				}
+				
+				_url = _requestToken.getAuthorizationURL();		
+				_state = State.GET_PIN;
+			}
+			
+			@Override
+			public boolean needExecute() {
+				return _step == 0;
+			}
+			
+			@Override
+			public int getRequestId() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public void finish() {
+				_shareView.onTwitterGetPin(ShareModel.this, _url);
+			}
+		});
+		task.execute((Void)null);
 	}
 	
 	private enum TwitterResult {
 		SUCCESS,
 		ERROR,
 		ERROR_DUPLICATE
-	}; 
+	};
 	
-	public class TwitterUpdateTask extends AsyncTask<Twitter, Void, TwitterResult> {
-
-		@Override
-		protected void onPreExecute(){
-		   super.onPreExecute();
-		} 
-		
-		@Override
-		protected TwitterResult doInBackground(Twitter... twitter) {
-//			try {
-//				twitter[0].updateStatus(_context.getString(R.string.share_message_twitter));
-//			} catch (TwitterException e) {
-//				if (e.getMessage().contains("duplicate")) {
-//					return TwitterResult.ERROR_DUPLICATE;
-//				} else {
-//					return TwitterResult.ERROR;
-//				}
-//			}
-	        return TwitterResult.SUCCESS;
-		}
-		
-		@Override
-		protected void onPostExecute(TwitterResult result) {
-			switch (result) {
-			case SUCCESS:
-				_shareView.onTwitterSuccesUpdating();
-				break;
+	public void setPin(final String pin, final Context context) {
+		ParserWebPageTask task = new ParserWebPageTask(new IRequest() {
+			
+			int _step = 0;
+			TwitterResult _result;
+			
+			@Override
+			public void setCanceled() {
+				// TODO Auto-generated method stub
 				
-			case ERROR:
-				_shareView.onTwitterErrorUpdating();
-				break;
-				
-			case ERROR_DUPLICATE:
-				_shareView.onTwitterErrorDuplicateUpdating();
-				break;
-
-			default:
-				break;
 			}
-		}
+			
+			@Override
+			public void nextExecute() {
+				_step++;
+				
+				try {
+					_twitter.getOAuthAccessToken(_requestToken, pin);
+					_twitter.updateStatus(context.getString(R.string.share_message_twitter));
+				} catch (TwitterException e) {
+					if (e.getMessage().contains("duplicate")) {
+						_result = TwitterResult.ERROR_DUPLICATE;
+					} else {
+						_result = TwitterResult.ERROR;
+					}
+				}
+				 _result = TwitterResult.SUCCESS;
+			}
+			
+			@Override
+			public boolean needExecute() {
+				return _step == 0;
+			}
+			
+			@Override
+			public int getRequestId() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public void finish() {
+				switch (_result) {
+				case SUCCESS:
+					_shareView.onTwitterSuccesUpdating();
+					break;
+					
+				case ERROR:
+					_shareView.onTwitterErrorUpdating();
+					break;
+					
+				case ERROR_DUPLICATE:
+					_shareView.onTwitterErrorDuplicateUpdating();
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
+		task.execute((Void)null);
 	}
 	
 	public void updateAlerts() {

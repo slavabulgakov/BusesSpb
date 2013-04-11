@@ -602,4 +602,12 @@ public class Model extends Application {
 	public void setfbLoggedInPressed(boolean l) {
 		_fbIsLoggedInPressed = l;
 	}
+	
+	private ShareModel _shareModel;
+	public ShareModel getShareModel() {
+		return _shareModel;
+	}
+	public void setShareModel(ShareModel shareModel) {
+		_shareModel = shareModel;
+	}
 }

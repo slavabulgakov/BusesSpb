@@ -46,5 +46,13 @@
     <string name="twitter_enter_pin_get_btn">Получить номер</string>
     <string name="send_with">Отправить с помощью</string>
     <string name="app_id">178239292327584</string>
+    
+    <string name="ok">OK</string>
+    <string name="cancel">Отменить</string>
+    <string name="close">Закрыть</string>
+    
+    <string name="connection_error_title">Ошибка соединения</string>
+    <string name="connection_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
+    
 
 </resources>

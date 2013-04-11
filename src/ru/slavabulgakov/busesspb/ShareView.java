@@ -120,7 +120,7 @@ public class ShareView extends LinearLayout implements IShareView {
 	//////////////
 	// Twitter ===
 //	private Boolean _enterPinDialogIsShowed = false;
-	private void showEnterPinDialog(final ShareModel share) {
+//	private void showEnterPinDialog(final ShareModel share) {
 //		if (_enterPinDialogIsShowed) {
 //			return;
 //		}
@@ -152,11 +152,11 @@ public class ShareView extends LinearLayout implements IShareView {
 //		
 //		_enterPinDialogIsShowed = true;
 //	    alert.show();
-		
-    }
+//		
+//    }
 	
 //	private Boolean _getPinDialogIsShowed = false;
-	private void showGetPinDialog(final ShareModel share, final String url) {
+//	private void showGetPinDialog(final ShareModel share, final String url) {
 //		if (_getPinDialogIsShowed) {
 //			return;
 //		}
@@ -188,11 +188,11 @@ public class ShareView extends LinearLayout implements IShareView {
 //		_getPinDialogIsShowed = true;
 //	    alert.show();
 //		
-    }
+//    }
 	
 	@Override
 	public void onTwitterEnterPin(ShareModel share) {
-    	showEnterPinDialog(share);
+//    	showEnterPinDialog(share);
 	}
 	
 	@Override
@@ -213,7 +213,7 @@ public class ShareView extends LinearLayout implements IShareView {
 		
 	@Override
 	public void onTwitterGetPin(ShareModel share, String url) {
-		showGetPinDialog(share, url);
+//		showGetPinDialog(share, url);
 	}
 	
 //	private OnClickListener _twOnClickListener = new OnClickListener() {
