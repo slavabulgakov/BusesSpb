@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    xmlns:custom="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -122,6 +123,8 @@
 	            	android:id="@+id/shareFBLoginButton"
 	            	android:layout_gravity="bottom|right"
 	            	android:layout_marginLeft="5dp"
+	            	custom:login_text=""
+  					custom:logout_text=""
 	            	android:layout_width="wrap_content"
 	            	android:layout_height="wrap_content"
 	            	style="@style/fb_share_btn" />

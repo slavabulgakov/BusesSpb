@@ -58,6 +58,8 @@ public class MainActivity extends BaseActivity {
 	private ImageButton _menuTrolleyFilter;
 	private ImageButton _menuTramFilter;
 	
+	private final static boolean ENABLE_MAPS = false;
+	
     @SuppressLint("NewApi")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +69,6 @@ public class MainActivity extends BaseActivity {
         _rootView = (RootView)findViewById(R.id.mainMapLayout);
 		_rootView.setOnOpenListener(Contr.getInstance());
 		_rootView.setModel(_model);
-        
-        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
-        _map.moveCamera(center);
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-        _map.animateCamera(zoom);
-        _map.setMyLocationEnabled(true);
-        _map.setOnCameraChangeListener(Contr.getInstance());
-        _map.getUiSettings().setMyLocationButtonEnabled(false);
-        _map.getUiSettings().setZoomControlsEnabled(false);
         
         _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
 		
@@ -97,7 +89,19 @@ public class MainActivity extends BaseActivity {
 			ticketsLayout.addView(ticket);
 		}
 		putCloseAllButtonToTicketsLayout();
-		_updateControls();
+		
+		if (ENABLE_MAPS) {
+			_map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+	        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
+	        _map.moveCamera(center);
+	        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+	        _map.animateCamera(zoom);
+	        _map.setMyLocationEnabled(true);
+	        _map.setOnCameraChangeListener(Contr.getInstance());
+	        _map.getUiSettings().setMyLocationButtonEnabled(false);
+	        _map.getUiSettings().setZoomControlsEnabled(false);
+	        _updateControls();
+		}
 		
 		((ImageButton)findViewById(R.id.location)).setOnClickListener(Contr.getInstance());
 		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Contr.getInstance());
@@ -187,24 +191,26 @@ public class MainActivity extends BaseActivity {
 	}
     
     public void enableMapGestures(Boolean enable) {
-    	if (enable) {
-    		Timer timer = new Timer();
-        	timer.schedule(new TimerTask() {
-    			
-    			@Override
-    			public void run() {
-    				runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-							_map.getUiSettings().setAllGesturesEnabled(true);
-						}
-					});
-    				
-    			}
-    		}, 200);
-		} else {
-			_map.getUiSettings().setAllGesturesEnabled(enable);
+    	if (ENABLE_MAPS) {
+    		if (enable) {
+        		Timer timer = new Timer();
+            	timer.schedule(new TimerTask() {
+        			
+        			@Override
+        			public void run() {
+        				runOnUiThread(new Runnable() {
+    						
+    						@Override
+    						public void run() {
+    							_map.getUiSettings().setAllGesturesEnabled(true);
+    						}
+    					});
+        				
+        			}
+        		}, 200);
+    		} else {
+    			_map.getUiSettings().setAllGesturesEnabled(enable);
+    		}
 		}
 	}
     

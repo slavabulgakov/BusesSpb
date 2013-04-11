@@ -44,7 +44,7 @@ public class AboutActivity extends BaseActivity {
 				}
     			if (_isResumed) {
     				if (session.isOpened() && _model.fbIsLoggedInPressed()) {
-    					_model.setfbLoggedInPressed(false);
+    					_updateFacebookButtons();
     					publishStory();	
     		        }
     			}
@@ -52,18 +52,10 @@ public class AboutActivity extends BaseActivity {
     	});
 		_fbUiLifecycleHelper.onCreate(savedInstanceState);
 		
-		Session session = Session.getActiveSession();
 		_fbPublishBtn = (ImageButton)findViewById(R.id.shareFBImageButton);
 		_fbPublishBtn.setOnClickListener(Contr.getInstance());
 		_fbLoginBtn = (LoginButton)findViewById(R.id.shareFBLoginButton);
-		_fbLoginBtn.setText("");
-		if (session.isOpened()) {
-			_fbLoginBtn.setVisibility(View.GONE);
-			_fbPublishBtn.setVisibility(View.VISIBLE);
-		} else {
-			_fbLoginBtn.setVisibility(View.VISIBLE);
-			_fbPublishBtn.setVisibility(View.GONE);
-		}
+		_updateFacebookButtons();
 		
 //		try {
 //		    PackageInfo info = getPackageManager().getPackageInfo(
@@ -80,8 +72,19 @@ public class AboutActivity extends BaseActivity {
 //
 //		}
 	}
+	
+	private void _updateFacebookButtons() {
+		Session session = Session.getActiveSession();
+		if (session.isOpened()) {
+			_fbLoginBtn.setVisibility(View.GONE);
+			_fbPublishBtn.setVisibility(View.VISIBLE);
+		} else {
+			_fbLoginBtn.setVisibility(View.VISIBLE);
+			_fbPublishBtn.setVisibility(View.GONE);
+		}
+	}
 
-	private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+	private boolean _isSubsetOf(Collection<String> subset, Collection<String> superset) {
 	    for (String string : subset) {
 	        if (!superset.contains(string)) {
 	            return false;
@@ -97,7 +100,7 @@ public class AboutActivity extends BaseActivity {
 
 	        // Check for publish permissions    
 	        List<String> permissions = session.getPermissions();
-	        if (!isSubsetOf(PERMISSIONS, permissions)) {
+	        if (!_isSubsetOf(PERMISSIONS, permissions)) {
 	            Session.NewPermissionsRequest newPermissionsRequest = new Session
 	                    .NewPermissionsRequest(this, PERMISSIONS);
 	        session.requestNewPublishPermissions(newPermissionsRequest);
@@ -140,6 +143,7 @@ public class AboutActivity extends BaseActivity {
 
 	        RequestAsyncTask task = new RequestAsyncTask(request);
 	        task.execute();
+	        _model.setfbLoggedInPressed(false);
 	    }
 
 	}
