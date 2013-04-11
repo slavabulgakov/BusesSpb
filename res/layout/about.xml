@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-    xmlns:custom="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -68,14 +67,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             
-			<com.google.ads.AdView
+            <com.google.ads.AdView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
         ads:adUnitId="@string/admob_publisher_id"
         ads:loadAdOnCreate="true"/>
             
-
         </LinearLayout>
     </ScrollView>
 

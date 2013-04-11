@@ -107,7 +107,7 @@
                 android:src="@drawable/location" />
 
             <LinearLayout
-                android:id="@+id/linearLayout1"
+                android:id="@+id/zoomControls"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -138,10 +138,12 @@
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/linearLayout1"
+                android:layout_alignBottom="@+id/zoomControls"
                 android:layout_alignLeft="@+id/mainRoutesBtn"
                 android:background="@drawable/buttons_bg"
                 android:src="@drawable/location" />
         </RelativeLayout>
+        
+        
 
 </RelativeLayout>

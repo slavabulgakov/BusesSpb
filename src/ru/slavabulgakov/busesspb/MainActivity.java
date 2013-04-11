@@ -5,6 +5,31 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Align;
+import android.graphics.Point;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.Display;
+import android.view.Menu;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,29 +44,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.location.Location;
-import android.os.Bundle;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Align;
-import android.view.Menu;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 public class MainActivity extends BaseActivity {
 	
@@ -129,7 +131,22 @@ public class MainActivity extends BaseActivity {
 		updateFilterButtons();
 		
 		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int width = size.x;
+		if (width < 400) {
+			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
+			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
+			zoomLayoutParams.bottomMargin = _dpToPx(50);
+			zoom.setLayoutParams(zoomLayoutParams);
+		}
     }
+    
+    private int _dpToPx(int dp) {
+		return (int)(getResources().getDisplayMetrics().density * dp);
+	}
     
     public void moveCameraToMyLocation() {
 		Location location = _map.getMyLocation();
