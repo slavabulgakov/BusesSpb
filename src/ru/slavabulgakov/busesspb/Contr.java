@@ -13,7 +13,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -90,29 +89,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			
 		case R.id.about:
 			_currentActivity.startActivity(new Intent(_currentActivity, AboutActivity.class));
-			break;
-			
-		case R.id.aboutSendBtn: {
-			Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-			emailIntent.setType("plain/text");
-			emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{ _currentActivity.getString(R.string.author_email) });
-			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, _currentActivity.getString(R.string.app_name) + " for Android " + Build.VERSION.RELEASE + " feedback");
-			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "\n\n" + "Info: " + Build.BRAND + " " + Build.MODEL);
-			_currentActivity.startActivity(Intent.createChooser(emailIntent, null));
-		}
-			break;
-			
-		case R.id.shareEmailImageButton: {
-			Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-			emailIntent.setType("plain/text");
-			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, _currentActivity.getString(R.string.share_message_title));
-			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, _currentActivity.getString(R.string.share_message));
-			_currentActivity.startActivity(Intent.createChooser(emailIntent, _currentActivity.getString(R.string.send_with)));
-		}
-			break;
-			
-		case R.id.shareFBImageButton:
-			((AboutActivity)_currentActivity).publishStory();
 			break;
 			
 		default:

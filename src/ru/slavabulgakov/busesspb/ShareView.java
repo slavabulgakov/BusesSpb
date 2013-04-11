@@ -1,6 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
-import ru.slavabulgakov.busesspb.ShareContr.IShareView;
+import ru.slavabulgakov.busesspb.ShareModel.IShareView;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,7 +21,7 @@ public class ShareView extends LinearLayout implements IShareView {
 		_context = context;
 		
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		inflater.inflate(R.layout.share, this, true);
+		inflater.inflate(R.layout.share_fragment, this, true);
 
 		((ImageButton)findViewById(R.id.shareEmailImageButton)).setOnClickListener(Contr.getInstance());
 		((ImageButton)findViewById(R.id.shareFBImageButton)).setOnClickListener(Contr.getInstance());
@@ -109,21 +109,6 @@ public class ShareView extends LinearLayout implements IShareView {
 //		showAlertDialog(R.string.share_error_title, R.string.share_error_message, android.R.drawable.ic_dialog_alert);
 	};
 	
-	@Override
-	public void onFBSendSuccess() {
-//		Toast.makeText(_context, R.string.share_success, Toast.LENGTH_LONG).show();
-	}
-	
-	@Override
-	public void onFBErrorDuplicate() {
-//		showAlertDialog(R.string.share_error_title, R.string.share_error_message_duplicate, android.R.drawable.ic_dialog_alert);
-	}
-	
-	@Override
-	public void onFBCanceled() {
-//		Toast.makeText(_context, R.string.share_cancel_title, Toast.LENGTH_LONG).show();
-	}
-	
 	public void onFBInvalidKey(String mess) {
 		showAlertDialog("Invalid key", mess, android.R.drawable.ic_dialog_alert);
 	};
@@ -135,7 +120,7 @@ public class ShareView extends LinearLayout implements IShareView {
 	//////////////
 	// Twitter ===
 //	private Boolean _enterPinDialogIsShowed = false;
-	private void showEnterPinDialog(final ShareContr share) {
+	private void showEnterPinDialog(final ShareModel share) {
 //		if (_enterPinDialogIsShowed) {
 //			return;
 //		}
@@ -171,7 +156,7 @@ public class ShareView extends LinearLayout implements IShareView {
     }
 	
 //	private Boolean _getPinDialogIsShowed = false;
-	private void showGetPinDialog(final ShareContr share, final String url) {
+	private void showGetPinDialog(final ShareModel share, final String url) {
 //		if (_getPinDialogIsShowed) {
 //			return;
 //		}
@@ -206,7 +191,7 @@ public class ShareView extends LinearLayout implements IShareView {
     }
 	
 	@Override
-	public void onTwitterEnterPin(ShareContr share) {
+	public void onTwitterEnterPin(ShareModel share) {
     	showEnterPinDialog(share);
 	}
 	
@@ -227,7 +212,7 @@ public class ShareView extends LinearLayout implements IShareView {
 	
 		
 	@Override
-	public void onTwitterGetPin(ShareContr share, String url) {
+	public void onTwitterGetPin(ShareModel share, String url) {
 		showGetPinDialog(share, url);
 	}
 	

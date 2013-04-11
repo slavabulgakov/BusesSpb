@@ -1,39 +1,35 @@
 package ru.slavabulgakov.busesspb;
 
+import ru.slavabulgakov.busesspb.VkApp.*;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.RequestToken;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import com.facebook.android.Facebook;
 
-public class ShareContr {
+public class ShareModel {
 	public interface IShareView {
 		public void onVKError();
 		public void onVKSendSuccess();
 		
-		public void onFBError();
-		public void onFBErrorDuplicate();
-		public void onFBCanceled();
-		public void onFBSendSuccess();
-		public void onFBInvalidKey(String mess);
-		
-		public void onTwitterGetPin(ShareContr share, String url);
-		public void onTwitterEnterPin(ShareContr share);
+		public void onTwitterGetPin(ShareModel share, String url);
+		public void onTwitterEnterPin(ShareModel share);
 		public void onTwitterSuccesUpdating();
 		public void onTwitterErrorUpdating();
 		public void onTwitterErrorDuplicateUpdating();
 	}
 	
-	private static volatile ShareContr _instance;
-	public static ShareContr getInstance() {
-    	ShareContr localInstance = _instance;
+	private static volatile ShareModel _instance;
+	public static ShareModel getInstance() {
+    	ShareModel localInstance = _instance;
     	if (localInstance == null) {
     		synchronized (Contr.class) {
     			localInstance = _instance;
     			if (localInstance == null) {
-    				_instance = localInstance = new ShareContr();
+    				_instance = localInstance = new ShareModel();
     			}
     		}
     	}
@@ -50,7 +46,7 @@ public class ShareContr {
 	private State _state;
 	
 	
-	public ShareContr() {
+	public ShareModel() {
 		super();
 		_state = State.NOTHING;
 	}
@@ -63,26 +59,23 @@ public class ShareContr {
 	
 	/////////
 	// VK ===
-//	private VkApp _vkApp;
-	public void sendMess2VK() {
-//		if (_vkApp == null) {
-//			Model app = (Model)_context.getApplicationContext();
-//			_vkApp = new VkApp((Context)appgetRepresentation().getCurrentActivity());
-//			_vkApp.setListener(new VkDialogListener() {
-//				
-//				public void onError(String description) {
-//					_shareView.onVKError();
-//				}
-//				
-//				public void onComplete(String url) {
-//					String[] params = _vkApp.getAccessToken(url);
-//					_vkApp.saveAccessToken(params[0], params[1], params[2]);
-//					_vkApp.postToWall(_context.getString(R.string.share_message));
-//					_shareView.onVKSendSuccess();
-//				}
-//			});
-//		}
-//		_vkApp.showLoginDialog();
+	private VkApp _vkApp;
+	public void sendMess2VK(final Context context) {
+		if (_vkApp == null) {
+			_vkApp = new VkApp(context);
+			_vkApp.postToWall(context.getString(R.string.share_message), new VkPostWallListener() {
+				
+				@Override
+				public void onErrorPost() {
+					_shareView.onVKError();
+				}
+				
+				@Override
+				public void onCompletePost() {
+					_shareView.onVKSendSuccess();
+				}
+			});
+		}
 	}
 	//=======
 	/////////
