@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item 
         android:state_selected="true" 
-        android:drawable="@drawable/buttons_bg_selected" />
+        android:drawable="@drawable/filter_bg_selected" />
     <item 
-        android:drawable="@drawable/buttons_bg" />
+        android:drawable="@drawable/filter_bg" />
  </selector>

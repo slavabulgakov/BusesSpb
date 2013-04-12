@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity {
 	private ImageButton _menuTrolleyFilter;
 	private ImageButton _menuTramFilter;
 	
-	private final static boolean ENABLE_MAPS = false;
+	private final static boolean ENABLE_MAPS = true;
 	
     @SuppressLint("NewApi")
 	@Override

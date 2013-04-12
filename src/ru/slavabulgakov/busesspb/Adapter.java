@@ -90,24 +90,30 @@ class Adapter extends ArrayAdapter<Route> {
 			convertView = inflater.inflate(R.layout.listitem_selectroute, parent, false);
 		}
 		((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_filtredList.get(position).routeNumber);
-		int resId = -1;
+		int bgResId = -1;
+		int iconResId = -1;
 		switch (_filtredList.get(position).kind) {
 		case Bus:
-			resId = R.drawable.bus_30_30_colored;
+			bgResId = R.color.bus;
+			iconResId = R.drawable.bus_30_30;
 			break;
 			
 		case Trolley:
-			resId = R.drawable.trolley_30_30_colored;
+			bgResId = R.color.trolley;
+			iconResId = R.drawable.trolley_30_30;
 			break;
 			
 		case Tram:
-			resId = R.drawable.tram_30_30_colored;
+			bgResId = R.color.tram;
+			iconResId = R.drawable.tram_30_30;
 			break;
 
 		default:
 			break;
 		}
-		((ImageView)convertView.findViewById(R.id.listItemSelectRouteKind)).setImageResource(resId);
+		
+		convertView.setBackgroundResource(bgResId);
+		((ImageView)convertView.findViewById(R.id.listItemSelectRouteKind)).setImageResource(iconResId);
 		
 		Integer cost = _filtredList.get(position).cost;
 		TextView costTextView = (TextView)convertView.findViewById(R.id.listItemSelectRouteCost);

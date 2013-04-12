@@ -14,7 +14,7 @@
     <color name="red">#ff0000</color>
     <color name="blue">#7F33b5e5</color>
     <color name="trans">#00ffffff</color>
-    <color name="menu_bg">#151515</color>
+    <color name="menu_bg">#454545</color>
     <string name="routes_placeholder">Введите маршрут</string>
     <string name="internet_access_deny">Проблемы с сетью. Проверьте соединение.</string>
     <string name="app_version">1.0</string>
@@ -53,6 +53,12 @@
     
     <string name="connection_error_title">Ошибка соединения</string>
     <string name="connection_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
+    <color name="bus" >#00adef</color>
+    <color name="trolley" >#70cca1</color>
+    <color name="tram" >#f17171</color>
     
+    <color name="tram_ticket" >#f08a8a</color>
+    <color name="trolley_ticket" >#8fd9b6</color>
+    <color name="bus_ticket" >#44bdeb</color>
 
 </resources>
