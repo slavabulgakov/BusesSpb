@@ -46,6 +46,20 @@ public class RootView extends RelativeLayout {
 			setX(_dpToPx(_xClose));
 		}
 	}
+	
+	@SuppressLint("Override")
+	private void setX(float x) {
+		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
+		lp.leftMargin = (int)x;
+		lp.rightMargin = -(int)x - _shadowWidth;
+		setLayoutParams(lp);
+	}
+	
+	@SuppressLint("Override")
+	private int getX() {
+		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
+		return lp.leftMargin;
+	}
 
 	public RootView(Context context) {
 		super(context);

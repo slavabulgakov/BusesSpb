@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import ru.slavabulgakov.busesspb.R.id;
 import ru.slavabulgakov.busesspb.ShareModel.IShareView;
 
 import com.facebook.*;

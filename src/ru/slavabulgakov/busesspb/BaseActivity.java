@@ -1,6 +1,5 @@
 package ru.slavabulgakov.busesspb;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -9,12 +8,13 @@ import android.content.res.Configuration;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
-public class BaseActivity extends Activity {
+public class BaseActivity extends FragmentActivity {
 	protected ProgressDialog _progressDialog;
 	protected Model _model;
 	

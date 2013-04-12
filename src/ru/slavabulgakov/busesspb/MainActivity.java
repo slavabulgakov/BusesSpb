@@ -14,11 +14,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -34,7 +32,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -44,6 +41,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.SupportMapFragment;
+
+import android.view.WindowManager;
 
 public class MainActivity extends BaseActivity {
 	
@@ -59,8 +59,6 @@ public class MainActivity extends BaseActivity {
 	private ImageButton _menuBusFilter;
 	private ImageButton _menuTrolleyFilter;
 	private ImageButton _menuTramFilter;
-	
-	private final static boolean ENABLE_MAPS = true;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -92,9 +90,9 @@ public class MainActivity extends BaseActivity {
 		}
 		putCloseAllButtonToTicketsLayout();
 		
-		if (ENABLE_MAPS) {
-			_map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-	        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
+		_map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+		if (_map != null) {
+			CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
 	        _map.moveCamera(center);
 	        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
 	        _map.animateCamera(zoom);
@@ -132,10 +130,8 @@ public class MainActivity extends BaseActivity {
 		
 		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
 		
-		Display display = getWindowManager().getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		int width = size.x;
+		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+		int width = display.getWidth();
 		if (width < 400) {
 			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
@@ -208,26 +204,28 @@ public class MainActivity extends BaseActivity {
 	}
     
     public void enableMapGestures(Boolean enable) {
-    	if (ENABLE_MAPS) {
-    		if (enable) {
-        		Timer timer = new Timer();
-            	timer.schedule(new TimerTask() {
-        			
-        			@Override
-        			public void run() {
-        				runOnUiThread(new Runnable() {
-    						
-    						@Override
-    						public void run() {
-    							_map.getUiSettings().setAllGesturesEnabled(true);
-    						}
-    					});
-        				
-        			}
-        		}, 200);
-    		} else {
-    			_map.getUiSettings().setAllGesturesEnabled(enable);
-    		}
+    	if (enable) {
+    		Timer timer = new Timer();
+        	timer.schedule(new TimerTask() {
+    			
+    			@Override
+    			public void run() {
+    				runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							if (_map != null) {
+								_map.getUiSettings().setAllGesturesEnabled(true);
+							}
+						}
+					});
+    				
+    			}
+    		}, 200);
+		} else {
+			if (_map != null) {
+				_map.getUiSettings().setAllGesturesEnabled(enable);
+			}
 		}
 	}
     
@@ -321,14 +319,16 @@ public class MainActivity extends BaseActivity {
 		
 		{// отключение/включение вертелки карты
 			if (!isOpen) {
-				if (_model.getFavorite().size() == 0) {
-					_map.getUiSettings().setRotateGesturesEnabled(false);
-					CameraPosition camPos = _map.getCameraPosition();
-					if (camPos.bearing != 0) {
-						_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
+				if (_map != null) {
+					if (_model.getFavorite().size() == 0) {
+						_map.getUiSettings().setRotateGesturesEnabled(false);
+						CameraPosition camPos = _map.getCameraPosition();
+						if (camPos.bearing != 0) {
+							_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
+						}
+					} else {
+						_map.getUiSettings().setRotateGesturesEnabled(true);
 					}
-				} else {
-					_map.getUiSettings().setRotateGesturesEnabled(true);
 				}
 			}
 		}
@@ -339,7 +339,9 @@ public class MainActivity extends BaseActivity {
 		
 		{// очистка карты
 			if (!isOpen) {
-				_map.clear();
+				if (_map != null) {
+					_map.clear();
+				}
 			}
 		}
 		
@@ -364,13 +366,6 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-	
 	@SuppressLint("UseValueOf")
 	public static float _distFrom(LatLng point1, LatLng point2) {
 	    double earthRadius = 3958.75;
@@ -391,7 +386,7 @@ public class MainActivity extends BaseActivity {
 	public void updateTransport() {
     	if (_model.getFavorite().size() == 0) {
     		View mainFrame = findViewById(R.id.mainFrame);
-    		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+    		GoogleMap map = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
     		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
             _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
 		} else {
@@ -451,41 +446,48 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private float _getWidth() {
-		float zoom = _map.getCameraPosition().zoom;
+		float zoom = 0;
+		if (_map != null) {
+			zoom = _map.getCameraPosition().zoom;
+		}
 		double w = .5 * Math.pow(2, Math.max(.0, 21.0 - zoom));
 		return (float)w;
 	}
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
-		for (Transport transport : array) {
-			LatLng position = new LatLng(transport.Lat, transport.Lng);
-			TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
-			String velocity = "Скорость: " + Integer.toString(transport.velocity) + "км/час";
-			if (transportOverlay == null) {
-				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
-				Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
-				transportOverlay = new TransportOverlay();
-				transportOverlay.transport = transport;
-				transportOverlay.groundOverlay = groundOverlay;
-				transportOverlay.marker = marker;
-				_model.getAllTransportOverlay().add(transportOverlay);
-			} else {
-				transportOverlay.groundOverlay.remove();
-				transportOverlay.marker.remove();
-				transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transport.direction));
-				transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+		if (_map != null) {
+			for (Transport transport : array) {
+				LatLng position = new LatLng(transport.Lat, transport.Lng);
+				TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
+				String velocity = "Скорость: " + Integer.toString(transport.velocity) + "км/час";
+				if (transportOverlay == null) {
+					GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
+					Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+					transportOverlay = new TransportOverlay();
+					transportOverlay.transport = transport;
+					transportOverlay.groundOverlay = groundOverlay;
+					transportOverlay.marker = marker;
+					_model.getAllTransportOverlay().add(transportOverlay);
+				} else {
+					transportOverlay.groundOverlay.remove();
+					transportOverlay.marker.remove();
+					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transport.direction));
+					transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+				}
 			}
 		}
 	}
 	
 	public void showTransportImgOnMap(Bitmap img) {
 		if (img != null) {
-			_map.clear();
-			BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
-	        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-	        _map.addGroundOverlay(new GroundOverlayOptions()
-	            .image(image)
-	            .positionFromBounds(bounds));
+			if (_map != null) {
+				_map.clear();
+				BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
+		        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
+		        _map.addGroundOverlay(new GroundOverlayOptions()
+		            .image(image)
+		            .positionFromBounds(bounds));
+			}
 		}
 	}
 }

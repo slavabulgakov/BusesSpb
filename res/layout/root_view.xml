@@ -14,7 +14,7 @@
                     android:id="@+id/map"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    class="com.google.android.gms.maps.MapFragment" />
+                    class="com.google.android.gms.maps.SupportMapFragment" />
 
                 <View
                     android:id="@+id/view1"
@@ -76,7 +76,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
-                    android:alpha="0.8"
                     android:background="@drawable/filter_btn"
                     android:src="@drawable/filter_bus" />
 
@@ -85,7 +84,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
-                    android:alpha="0.8"
                     android:background="@drawable/filter_btn"
                     android:src="@drawable/filter_trolley" />
 
@@ -93,7 +91,6 @@
                     android:id="@+id/tramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:alpha="0.8"
                     android:background="@drawable/filter_btn"
                     android:src="@drawable/filter_tram" />
 
@@ -144,7 +141,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/zoomControls"
                 android:layout_alignLeft="@+id/mainRoutesBtn"
-                android:alpha=".8"
                 android:background="@drawable/buttons_bg"
                 android:src="@drawable/location" />
 

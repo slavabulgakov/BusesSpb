@@ -1,20 +1,30 @@
 package ru.slavabulgakov.busesspb;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.*;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
-public class AboutActivity extends FragmentActivity implements OnClickListener {
+public class AboutActivity extends BaseActivity implements OnClickListener {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
 		((Button)findViewById(R.id.aboutSendBtn)).setOnClickListener(this);
+		TextView appVersion = (TextView)findViewById(R.id.app_version);
+		try {
+			PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			appVersion.setText(appVersion.getText() + pInfo.versionName);
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

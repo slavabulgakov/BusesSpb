@@ -58,7 +58,7 @@
             android:name="com.facebook.LoginActivity" >
         </activity>
         <activity
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|"
             android:name="com.google.ads.AdActivity" />
     </application>
 

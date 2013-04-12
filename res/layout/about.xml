@@ -25,6 +25,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" android:textSize="30sp"/>
             
             <TextView
+                android:id="@+id/app_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_version"/>
@@ -64,8 +65,11 @@
             <fragment
                 android:id="@+id/shareFragment"
                 android:name="ru.slavabulgakov.busesspb.ShareFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp" />
             
             <com.google.ads.AdView
         android:layout_width="match_parent"

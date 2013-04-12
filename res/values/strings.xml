@@ -17,7 +17,7 @@
     <color name="menu_bg">#454545</color>
     <string name="routes_placeholder">Введите маршрут</string>
     <string name="internet_access_deny">Проблемы с сетью. Проверьте соединение.</string>
-    <string name="app_version">1.0</string>
+    <string name="app_version">Версия: </string>
     <string name="author">Булгаков Слава</string>
     <string name="author_email">slavabulgakov@gmail.com</string>
     <string name="about_text">Если вы обнаружите ошибку, то не стесняйтесь, пишите. У меня нет того многообразия устройств, которое есть у вас, чтобы потестировать на них Автобусы Спб :)</string>
