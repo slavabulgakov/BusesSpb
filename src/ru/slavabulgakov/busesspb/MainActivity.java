@@ -22,7 +22,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -59,6 +58,7 @@ public class MainActivity extends BaseActivity {
 	private ImageButton _menuBusFilter;
 	private ImageButton _menuTrolleyFilter;
 	private ImageButton _menuTramFilter;
+	private RelativeLayout _mainRoutesBtn;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -78,8 +78,8 @@ public class MainActivity extends BaseActivity {
 		_listView = (ListView)findViewById(R.id.selectRouteListView);
 		_listView.setOnItemClickListener(Contr.getInstance());
         
-	    RelativeLayout btn = (RelativeLayout)findViewById(R.id.mainRoutesBtn);
-	    btn.setOnClickListener(Contr.getInstance());
+	    _mainRoutesBtn = (RelativeLayout)findViewById(R.id.mainRoutesBtn);
+	    _mainRoutesBtn.setOnClickListener(Contr.getInstance());
 	    
 	    LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
 		for (Route route : _model.getFavorite()) {
@@ -230,6 +230,7 @@ public class MainActivity extends BaseActivity {
 	}
     
     private void _updateControls() {
+    	
     	{// обновление контента меню
     		if (_model.menuIsOpened()) {
     			if (_model.getAllRoutes().size() == 0) {
@@ -278,31 +279,26 @@ public class MainActivity extends BaseActivity {
     	{// обновление тикетов выбранных маршрутов
     		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
 	    	ticketsLayout.removeAllViews();
-	    	int index = 0;
 			for (Route route : _model.getFavorite()) {
 				TicketCloseLess ticket = new TicketCloseLess(this);
 				ticket.setRoute(route);
 				ticketsLayout.addView(ticket);
-				ticket.setLast(index++ == _model.getFavorite().size() - 1);
 			}
 			
 	    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
 	    	if (_model.getFavorite().size() > 0) {
-	    		((ImageView)findViewById(R.id.menuIcon)).setPadding(5, 3, 10, 0);
 	    		routesBtnScrollView.setVisibility(View.VISIBLE);
 			} else {
-				((ImageView)findViewById(R.id.menuIcon)).setPadding(2, 2, 0, 0);
 				routesBtnScrollView.setVisibility(View.GONE);
 			}
 		}
 	}
     
     public void menuChangeState(boolean isOpen) {
-		
+    	
+    	
 		_updateControls();
 		updateFilterButtons();
-		
-		
 		
 		
 		{// отключение клавиатуры

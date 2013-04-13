@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,6 @@ import org.json.JSONObject;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import android.app.Application;
@@ -352,6 +352,8 @@ public class Model extends Application {
 		}
 	}
 	
+	private String _cookie = null;
+	private String _scope = null;
 	private void _loadDataForRoute(final Route route, final OnLoadCompleteListener listener) {
 		_listener = listener;
 		final int requestId = route.id;
@@ -370,8 +372,44 @@ public class Model extends Application {
 			public void nextExecute() {
 				URL url;
 				try {
-					url = new URL("http://transport.orgp.spb.ru/Portal/transport/map/routeVehicle?ROUTE=" + route.id.toString() + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.4202592596411705&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
+					if (_scope == null || _cookie == null) {
+						url = new URL("http://transport.orgp.spb.ru/Portal/transport/route/1329");
+						URLConnection conn = url.openConnection();
+						conn.connect();
+						BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+						String line = "";
+						
+						String headerName=null;
+						for (int i=1; (headerName = conn.getHeaderFieldKey(i))!=null; i++) {
+						 	if (headerName.equals("Set-Cookie")) {                  
+						 		_cookie = conn.getHeaderField(i).split(";")[0];
+						 		break;
+						 	}
+						}
+			  
+						int index =  0;
+						while ((line = rd.readLine()) != null) {
+							if ((index = line.indexOf("scope")) != -1) {
+								break;
+							}
+							if (_canceled) {
+								throw new LoadTaskException();
+							}
+						}
+						
+						index += 8;
+						int end = index;
+						while (line.charAt(end) != '"') {
+							end++;
+						}
+						_scope = URLEncoder.encode(line.substring(index, end));
+
+					}
+//					url = new URL("http://transport.orgp.spb.ru/Portal/transport/map/routeVehicle?ROUTE=" + route.id.toString() + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.4202592596411705&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
+					url = new URL("http://transport.orgp.spb.ru/Portal/transport/mapx/innerRouteVehicle?ROUTE=" + route.id.toString() + "&SCOPE=" + _scope + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.6481046043336391&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
 					URLConnection conn = url.openConnection();
+					conn.setRequestProperty("Cookie", _cookie);
+					conn.connect();
 					BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 					String line = "";
 		  
@@ -411,6 +449,9 @@ public class Model extends Application {
 			
 			@Override
 			public boolean needExecute() {
+				if (_cookie == null || _scope == null) {
+					_step = 0;
+				}
 				return _step == 0;
 			}
 			

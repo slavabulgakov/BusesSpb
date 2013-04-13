@@ -23,8 +23,9 @@ public class Ticket extends LinearLayout {
 	TextView _routeNumber;
 	Route _route;
 	OnRemoveListener _onRemoveListener;
+	LinearLayout _vertLinearLayout;
 	
-	private void _ticket(Context context, AttributeSet attrs) {
+	protected void load(Context context, AttributeSet attrs) {
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Ticket, 0, 0);
 		String routeNumber = a.getString(R.styleable.Ticket_routeNumber);
 		a.recycle();
@@ -34,10 +35,10 @@ public class Ticket extends LinearLayout {
 		
 		_linearLayout = (LinearLayout)getChildAt(0);
 		
-		LinearLayout vertLinearLayout = (LinearLayout)_linearLayout.getChildAt(0);
-		_icon = (ImageView)vertLinearLayout.getChildAt(0);
+		_vertLinearLayout = (LinearLayout)_linearLayout.getChildAt(0);
+		_icon = (ImageView)_vertLinearLayout.getChildAt(0);
 		
-		_routeNumber = (TextView)vertLinearLayout.getChildAt(1);
+		_routeNumber = (TextView)_vertLinearLayout.getChildAt(1);
 		_routeNumber.setText(routeNumber);
 		
 		_closeButton = (ImageButton)_linearLayout.getChildAt(1);
@@ -53,14 +54,14 @@ public class Ticket extends LinearLayout {
 	
 	public Ticket(Context context) {
 		super(context);
-		_ticket(context, null);
+		load(context, null);
 	}
 
 
 
 	public Ticket(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		_ticket(context, attrs);
+		load(context, attrs);
 	}
 	
 	private void _updateBackground() {
@@ -90,7 +91,9 @@ public class Ticket extends LinearLayout {
 			break;
 		}
 		_linearLayout.setBackgroundResource(resId);
-		_closeButton.setBackgroundColor(closeButton);
+		if (_closeButton != null) {
+			_closeButton.setBackgroundColor(closeButton);
+		}
 		_icon.setImageResource(icon);
 	}
 	

@@ -3,12 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-            <ImageView android:id="@+id/menu_shadow" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:scaleType="fitXY" android:src="@drawable/shadow" />
-
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@id/menu_shadow" >
+                android:layout_height="match_parent" >
 
                 <fragment
                     android:id="@+id/map"
@@ -34,17 +31,20 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="60dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/buttons_bg"
-                android:minHeight="30dp" >
+                android:background="@color/menu_bg"
+                android:minHeight="40dp"
+                android:minWidth="40dp" >
 
                 <ImageView
                     android:id="@+id/menuIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="3dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="11dp"
                     android:src="@drawable/menu_icon" />
 
                 <HorizontalScrollView
@@ -104,8 +104,10 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/buttons_bg"
-                android:src="@drawable/location" />
+                android:background="@color/menu_bg"
+                android:minHeight="40dp"
+                android:minWidth="40dp"
+                android:src="@drawable/about" />
 
             <LinearLayout
                 android:id="@+id/zoomControls"
@@ -113,26 +115,34 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignRight="@+id/about"
-                android:background="@drawable/buttons_bg"
-                android:orientation="vertical" >
+                android:background="@color/menu_bg"
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                android:minHeight="40dp"
+                android:minWidth="40dp" >
 
                 <ImageButton
                     android:id="@+id/plus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
                     android:background="@color/trans"
-                    android:padding="2dp"
                     android:src="@drawable/plus" />
 
                 <ImageButton
                     android:id="@+id/minus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp"
                     android:background="@color/trans"
-                    android:padding="2dp"
                     android:src="@drawable/minus" />
+
             </LinearLayout>
 
             <ImageButton
@@ -141,8 +151,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/zoomControls"
                 android:layout_alignLeft="@+id/mainRoutesBtn"
-                android:background="@drawable/buttons_bg"
-                android:src="@drawable/location" />
+                android:background="@color/menu_bg"
+                android:src="@drawable/location"
+                android:minHeight="40dp"
+                android:minWidth="40dp" />
 
         </RelativeLayout>
         

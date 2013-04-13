@@ -19,7 +19,7 @@ public class RootView extends RelativeLayout {
 	private Boolean _hold = false;
 	private float _prevX = 0;
 	private float _lastDX = 0;
-	private final int _shadowWidth = 10;
+	private final int _shadowWidth = 0;
 	private final int _menuWidth = 250;
 	private final int _touchWidth = 30;
 	private final int _xClose = -_shadowWidth;
