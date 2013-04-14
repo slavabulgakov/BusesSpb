@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -90,6 +91,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			
 		case R.id.about:
 			_currentActivity.startActivity(new Intent(_currentActivity, AboutActivity.class));
+			break;
+			
+		case R.id.clearRouteText:
+			EditText editText = (EditText)_currentActivity.findViewById(R.id.selectRouteText);
+			editText.setText("");
 			break;
 			
 		default:
@@ -171,6 +177,13 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
 		if (listView.getAdapter() != null) {
 			((Adapter)listView.getAdapter()).getFilter().filter(text);
+		}
+		
+		ImageButton clearButton = (ImageButton)_currentActivity.findViewById(R.id.clearRouteText);
+		if (text.length() > 0) {
+			clearButton.setVisibility(View.VISIBLE);
+		} else {
+			clearButton.setVisibility(View.GONE);
 		}
 	}
 

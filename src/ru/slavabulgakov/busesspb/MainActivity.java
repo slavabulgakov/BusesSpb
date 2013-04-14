@@ -59,6 +59,7 @@ public class MainActivity extends BaseActivity {
 	private LinearLayout _menuTrolleyFilter;
 	private LinearLayout _menuTramFilter;
 	private RelativeLayout _mainRoutesBtn;
+	private ImageButton _clearButton;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -74,6 +75,14 @@ public class MainActivity extends BaseActivity {
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.addTextChangedListener(Contr.getInstance());
+		
+		_clearButton = (ImageButton)findViewById(R.id.clearRouteText);
+		_clearButton.setOnClickListener(Contr.getInstance());
+		if (_editText.getText().length() > 0) {
+			_clearButton.setVisibility(View.VISIBLE);
+		} else {
+			_clearButton.setVisibility(View.GONE);
+		}
 		
 		_listView = (ListView)findViewById(R.id.selectRouteListView);
 		_listView.setOnItemClickListener(Contr.getInstance());
