@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.slavabulgakov.busesspb"
     android:versionCode="1"
+    android:installLocation="preferExternal"
     android:versionName="1.0" >
 
     <uses-sdk
@@ -59,7 +60,7 @@
             android:name="com.facebook.LoginActivity" >
         </activity>
         <activity
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:name="com.google.ads.AdActivity" />
     </application>
 

@@ -41,14 +41,14 @@ public class RootView extends RelativeLayout {
 	public void setModel(Model model) {
 		_model = model;
 		if (_model.menuIsOpened()) {
-			setX(_dpToPx(_xOpen));
+			_setX(_dpToPx(_xOpen));
 		} else {
-			setX(_dpToPx(_xClose));
+			_setX(_dpToPx(_xClose));
 		}
 	}
 	
 	@SuppressLint("Override")
-	private void setX(float x) {
+	private void _setX(float x) {
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
 		lp.leftMargin = (int)x;
 		lp.rightMargin = -(int)x - _shadowWidth;
@@ -56,7 +56,7 @@ public class RootView extends RelativeLayout {
 	}
 	
 	@SuppressLint("Override")
-	private int getX() {
+	private int _getX() {
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
 		return lp.leftMargin;
 	}
@@ -81,9 +81,9 @@ public class RootView extends RelativeLayout {
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			if (ev.getRawX() - getX() <= _dpToPx(_touchWidth)) {
+			if (ev.getRawX() - _getX() <= _dpToPx(_touchWidth)) {
 				_setHolded(true);
-			} else if (ev.getRawX() - getX() > _dpToPx(_touchWidth) && _model.menuIsOpened()) {
+			} else if (ev.getRawX() - _getX() > _dpToPx(_touchWidth) && _model.menuIsOpened()) {
 				_setHolded(true);
 			}
 			_prevX = ev.getRawX();
@@ -92,12 +92,12 @@ public class RootView extends RelativeLayout {
 		case MotionEvent.ACTION_MOVE:
 			float dX = ev.getRawX() - _prevX;
 			if (_hold) {
-				if (getX() + dX > _dpToPx(_xOpen)) {
-					setX(_dpToPx(_xOpen));
-				} else if (getX() + dX < 0) {
-					setX(_dpToPx(_xClose));
+				if (_getX() + dX > _dpToPx(_xOpen)) {
+					_setX(_dpToPx(_xOpen));
+				} else if (_getX() + dX < 0) {
+					_setX(_dpToPx(_xClose));
 				} else {
-					setX(getX() + dX);
+					_setX(_getX() + dX);
 					_lastDX = dX;
 					_prevX = ev.getRawX();
 				}
@@ -106,14 +106,14 @@ public class RootView extends RelativeLayout {
 			
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
-			if (getX() <= _dpToPx(_shadowWidth)) {
+			if (_getX() <= _dpToPx(_shadowWidth)) {
 				_setOpened(false);
-				setX(_dpToPx(_xClose));
-			} else if (getX() > _dpToPx(_xOpen) && _model.menuIsOpened()) {
+				_setX(_dpToPx(_xClose));
+			} else if (_getX() > _dpToPx(_xOpen) && _model.menuIsOpened()) {
 				_animateMove(-1);
-			} else if (getX() > _dpToPx(_xOpen)) {
+			} else if (_getX() > _dpToPx(_xOpen)) {
 				_setOpened(true);
-				setX(_dpToPx(_xOpen));
+				_setX(_dpToPx(_xOpen));
 			} else {
 				_animateMove(0);
 			}
@@ -166,13 +166,13 @@ public class RootView extends RelativeLayout {
 	@SuppressLint("NewApi")
 	private void _animateMove(int direction) {
 		if (direction > 0) {
-			_scroller.startScroll((int)getX(), 0, _dpToPx(_xOpen) - (int)getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, _dpToPx(_xOpen) - (int)_getX(), 0);
 		} else if (direction < 0) {
-			_scroller.startScroll((int)getX(), 0, -_shadowWidth - (int)getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0);
 		} else if (_lastDX > 0) {
-			_scroller.startScroll((int)getX(), 0, _dpToPx(_xOpen) - (int)getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, _dpToPx(_xOpen) - (int)_getX(), 0);
 		} else if (_lastDX < 0) {
-			_scroller.startScroll((int)getX(), 0, -_shadowWidth - (int)getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0);
 		}
 		
 		post(new Runnable() {
@@ -182,7 +182,7 @@ public class RootView extends RelativeLayout {
 			public void run() {
 				if (_scroller.isFinished()) {
 					_scroller.forceFinished(true);
-					if ((int)getX() < 100) {
+					if ((int)_getX() < 100) {
 						_setOpened(false);
 					} else {
 						_setOpened(true);
@@ -192,11 +192,11 @@ public class RootView extends RelativeLayout {
 				Boolean more = _scroller.computeScrollOffset();
 				int currentX = _scroller.getCurrX();
 				if (currentX > _dpToPx(_xOpen)) {
-					setX(_dpToPx(_xOpen));
+					_setX(_dpToPx(_xOpen));
 				} else if (currentX < 0) {
-					setX(_dpToPx(_xClose));
+					_setX(_dpToPx(_xClose));
 				} else {
-					setX(currentX);
+					_setX(currentX);
 					_prevX = currentX;
 				}
 				

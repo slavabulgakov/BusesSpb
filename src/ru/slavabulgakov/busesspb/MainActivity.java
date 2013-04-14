@@ -17,14 +17,11 @@ import android.graphics.Paint.Align;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -46,8 +43,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.jhlabs.map.proj.CentralCylindricalProjection;
-
 import android.view.WindowManager;
 
 public class MainActivity extends BaseActivity {
@@ -226,28 +221,13 @@ public class MainActivity extends BaseActivity {
 	public void putCloseAllButtonToTicketsLayout() {
 		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
 		if (_model.getFavorite().size() > 1) {
-			if (ticketsLayout.getChildAt(0).getClass() != ImageButton.class) {
-				RelativeLayout closeAllBtn = new RelativeLayout(this);
-				closeAllBtn.setOnClickListener(Contr.getInstance());
-				closeAllBtn.setBackgroundResource(R.color.yellow);
-				closeAllBtn.setTag("closeAllBtn");
-				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-				lp.setMargins(0, 0, 5, 0);
-				lp.gravity = Gravity.CENTER_VERTICAL;
-				closeAllBtn.setLayoutParams(lp);
-				closeAllBtn.setMinimumWidth(35);
+			if (ticketsLayout.getChildAt(0).getClass() != CloseAllTickets.class) {
+				CloseAllTickets closeAllBtn = new CloseAllTickets(this);
 				ticketsLayout.addView(closeAllBtn, 0);
-				
-				ImageView closeImage = new ImageView(this);
-				closeImage.setImageResource(R.drawable.close);
-				LayoutParams rlp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-				rlp.addRule(RelativeLayout.CENTER_IN_PARENT);
-				closeImage.setLayoutParams(rlp);
-				closeAllBtn.addView(closeImage);
 			}
 		} else {
 			if (ticketsLayout.getChildCount() > 0) {
-				if (ticketsLayout.getChildAt(0).getClass() == ImageButton.class) {
+				if (ticketsLayout.getChildAt(0).getClass() == CloseAllTickets.class) {
 					ticketsLayout.removeViewAt(0);
 				}
 			}
