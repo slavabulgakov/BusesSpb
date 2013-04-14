@@ -52,12 +52,12 @@ public class MainActivity extends BaseActivity {
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private RootView _rootView;
-	private ImageButton _busFilter;
-	private ImageButton _trolleyFilter;
-	private ImageButton _tramFilter;
-	private ImageButton _menuBusFilter;
-	private ImageButton _menuTrolleyFilter;
-	private ImageButton _menuTramFilter;
+	private LinearLayout _busFilter;
+	private LinearLayout _trolleyFilter;
+	private LinearLayout _tramFilter;
+	private LinearLayout _menuBusFilter;
+	private LinearLayout _menuTrolleyFilter;
+	private LinearLayout _menuTramFilter;
 	private RelativeLayout _mainRoutesBtn;
 	
     @SuppressLint("NewApi")
@@ -89,6 +89,36 @@ public class MainActivity extends BaseActivity {
 			ticketsLayout.addView(ticket);
 		}
 		putCloseAllButtonToTicketsLayout();
+		HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)findViewById(R.id.routeTicketsScrollView);
+		if (_model.getFavorite().size() > 0) {
+			routeTicketsScrollView.setVisibility(View.VISIBLE);
+		} else {
+			routeTicketsScrollView.setVisibility(View.GONE);
+		}
+		
+		
+		
+		
+		_busFilter = (LinearLayout)findViewById(R.id.busFilter);
+		_busFilter.setOnClickListener(Contr.getInstance());
+		
+		_trolleyFilter = (LinearLayout)findViewById(R.id.trolleyFilter);
+		_trolleyFilter.setOnClickListener(Contr.getInstance());
+		
+		_tramFilter = (LinearLayout)findViewById(R.id.tramFilter);
+		_tramFilter.setOnClickListener(Contr.getInstance());
+		
+		_menuBusFilter = (LinearLayout)findViewById(R.id.menuBusFilter);
+    	_menuBusFilter.setOnClickListener(Contr.getInstance());
+    	
+    	_menuTrolleyFilter = (LinearLayout)findViewById(R.id.menuTrolleyFilter);
+		_menuTrolleyFilter.setOnClickListener(Contr.getInstance());
+		
+		_menuTramFilter = (LinearLayout)findViewById(R.id.menuTramFilter);
+		_menuTramFilter.setOnClickListener(Contr.getInstance());
+		updateFilterButtons();
+		
+		
 		
 		_map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		if (_map != null) {
@@ -108,26 +138,6 @@ public class MainActivity extends BaseActivity {
 		((ImageButton)findViewById(R.id.minus)).setOnClickListener(Contr.getInstance());
 		
 		
-		
-		_busFilter = (ImageButton)findViewById(R.id.busFilter);
-		_busFilter.setOnClickListener(Contr.getInstance());
-		
-		_trolleyFilter = (ImageButton)findViewById(R.id.trolleyFilter);
-		_trolleyFilter.setOnClickListener(Contr.getInstance());
-		
-		_tramFilter = (ImageButton)findViewById(R.id.tramFilter);
-		_tramFilter.setOnClickListener(Contr.getInstance());
-		
-		_menuBusFilter = (ImageButton)findViewById(R.id.menuBusFilter);
-    	_menuBusFilter.setOnClickListener(Contr.getInstance());
-    	
-    	_menuTrolleyFilter = (ImageButton)findViewById(R.id.menuTrolleyFilter);
-		_menuTrolleyFilter.setOnClickListener(Contr.getInstance());
-		
-		_menuTramFilter = (ImageButton)findViewById(R.id.menuTramFilter);
-		_menuTramFilter.setOnClickListener(Contr.getInstance());
-		updateFilterButtons();
-		
 		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
 		
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
@@ -135,7 +145,7 @@ public class MainActivity extends BaseActivity {
 		if (width < 400) {
 			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
-			zoomLayoutParams.bottomMargin = _dpToPx(50);
+			zoomLayoutParams.bottomMargin = _dpToPx(60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
     }
@@ -294,6 +304,11 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
+    private void _keyboardTurnOff() {
+    	InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
+    }
+    
     public void menuChangeState(boolean isOpen) {
     	
     	
@@ -303,8 +318,7 @@ public class MainActivity extends BaseActivity {
 		
 		{// отключение клавиатуры
 			if (!isOpen) {
-				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
+				_keyboardTurnOff();
 				_model.saveFavorite();
 			}
 		}
@@ -382,8 +396,7 @@ public class MainActivity extends BaseActivity {
 	public void updateTransport() {
     	if (_model.getFavorite().size() == 0) {
     		View mainFrame = findViewById(R.id.mainFrame);
-    		GoogleMap map = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-    		LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+    		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
             _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
 		} else {
 			_model.showFavoriteRoutes(Contr.getInstance());

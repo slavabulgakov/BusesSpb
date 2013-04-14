@@ -18,7 +18,9 @@
             android:layout_margin="10dp"
             android:background="@drawable/text_view"
             android:ems="10"
+            android:enabled="false"
             android:hint="@string/routes_placeholder"
+            android:minHeight="40dp"
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -28,44 +30,79 @@
             android:id="@+id/menuKindBtns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center" >
-
-                <ImageButton
+            
+            	<LinearLayout
                     android:id="@+id/menuBusFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="20dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/filter_bus" />
+                    android:layout_alignParentLeft="true"
+                    android:minHeight="40dp"
+                    android:minWidth="40dp"
+                    android:orientation="vertical" >
 
-                <ImageButton
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bus"
+                        android:minHeight="35dp"
+                        android:minWidth="40dp"
+                        android:src="@drawable/bus_30_30" />
+
+                </LinearLayout>
+                
+            	<LinearLayout
                     android:id="@+id/menuTrolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginRight="20dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/filter_trolley" />
+                    android:layout_centerHorizontal="true"
+                    android:minHeight="40dp"
+                    android:minWidth="40dp"
+                    android:orientation="vertical" >
 
-                <ImageButton
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/trolley"
+                        android:minHeight="35dp"
+                        android:minWidth="40dp"
+                        android:src="@drawable/trolley_30_30" />
+
+                </LinearLayout>
+                
+            	<LinearLayout
                     android:id="@+id/menuTramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/filter_tram" />
+                    android:layout_alignParentRight="true"
+                    android:minHeight="40dp"
+                    android:minWidth="40dp"
+                    android:orientation="vertical" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/tram"
+                        android:minHeight="35dp"
+                        android:minWidth="40dp"
+                        android:src="@drawable/tram_30_30" />
+
+                </LinearLayout>
 
             </RelativeLayout>
 
         <HorizontalScrollView
-            android:id="@+id/horizontalScrollView1"
+            android:id="@+id/routeTicketsScrollView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp" >
+            android:layout_marginLeft="10dp" >
 
             <LinearLayout
                 android:id="@+id/selectRouteTickets"
@@ -77,7 +114,9 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" >
 
             <ProgressBar
                 android:id="@+id/selectRouteProgressBar"
@@ -91,8 +130,6 @@
                 android:id="@+id/selectRouteListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:divider="#474747"
                 android:dividerHeight="10dp" >
 

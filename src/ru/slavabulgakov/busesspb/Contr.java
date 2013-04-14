@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -195,6 +196,13 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		}
 		_model.getFavorite().add(route);
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
+		
+		HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
+		if (_model.getFavorite().size() > 0) {
+			routeTicketsScrollView.setVisibility(View.VISIBLE);
+		} else {
+			routeTicketsScrollView.setVisibility(View.GONE);
+		}
 	}
 
 	@Override

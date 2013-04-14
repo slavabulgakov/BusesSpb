@@ -8,13 +8,7 @@
     <string name="close">Закрыть</string>
     <string name="about">О программе</string>
     <string name="loading">Загрузка</string>
-    <color name="white">#FFFFFF</color>
     <string name="routes">Маршруты</string>
-    <color name="black">#000000</color>
-    <color name="red">#ff0000</color>
-    <color name="blue">#7F33b5e5</color>
-    <color name="trans">#00ffffff</color>
-    <color name="menu_bg">#454545</color>
     <string name="routes_placeholder">Введите маршрут</string>
     <string name="internet_access_deny">Проблемы с сетью. Проверьте соединение.</string>
     <string name="app_version">Версия: </string>
@@ -25,8 +19,6 @@
     <string name="none">none</string>
     <string name="share">Рассказать\nдрузьям:</string>
     <string name="admob_publisher_id">a15164a111d9a0f</string>
-    
-    
     <string name="share_error_title">Ошибка отправки сообщения</string>
     <string name="share_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
     <string name="share_error_message_duplicate">При загрузке данных произошла ошибка. Возможно схожее сообщение уже опубликовано.</string>
@@ -36,29 +28,32 @@
     <string name="share_cancel_title">Сообщение не опубликовано</string>
     <string name="share_cancel_message">При публикации сообщение произошла ошибка. Проверьте ваше подключение к сети.</string>
     <string name="share_success">Сообщение удачно опубликовано. Спасибо, что рассказываете друзьям о Автобусах СПб!</string>
-    
     <string name="twitter_get_pin_title">Получите номер</string>
     <string name="twitter_get_pin_message">Авторизируйтесь сайте Твиттера и скопируйте номер</string>
     <string name="twitter_get_pin_continue_btn">Далее</string>
-    
     <string name="twitter_enter_pin_title">Введите номер</string>
     <string name="twitter_enter_pin_message">Вставьте номер в поле</string>
     <string name="twitter_enter_pin_get_btn">Получить номер</string>
     <string name="send_with">Отправить с помощью</string>
     <string name="app_id">178239292327584</string>
-    
     <string name="ok">OK</string>
     <string name="cancel">Отменить</string>
     <string name="close">Закрыть</string>
-    
     <string name="connection_error_title">Ошибка соединения</string>
     <string name="connection_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
+    
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="red">#ff0000</color>
+    <color name="blue">#7F33b5e5</color>
+    <color name="trans">#00ffffff</color>
+    <color name="menu_bg">#454545</color>
     <color name="bus" >#00adef</color>
     <color name="trolley" >#70cca1</color>
     <color name="tram" >#f17171</color>
-    
     <color name="tram_ticket" >#f08a8a</color>
     <color name="trolley_ticket" >#8fd9b6</color>
     <color name="bus_ticket" >#44bdeb</color>
+    <color name="yellow">#f9d278</color>
 
 </resources>

@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:background="@color/tram" >
+    android:layout_marginRight="5dp" >
     
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:background="@color/tram"
+        android:orientation="vertical"
+        android:paddingRight="5dp" >
         
         <ImageView
         	android:id="@+id/ticketIcon"
@@ -34,9 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_marginLeft="5dp"
         android:background="@color/tram_ticket"
-        android:paddingTop="2dp"
         android:src="@drawable/close" />
 
 </LinearLayout>

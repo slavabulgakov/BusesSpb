@@ -32,7 +32,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/menu_bg"
                 android:minHeight="40dp"
@@ -68,31 +67,67 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/mainRoutesBtn"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="40dp"
                 android:layout_toRightOf="@+id/mainRoutesBtn" >
 
-                <ImageButton
+                <LinearLayout
                     android:id="@+id/busFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/filter_bus" />
+                    android:minHeight="40dp"
+                    android:minWidth="40dp"
+                    android:orientation="vertical" >
 
-                <ImageButton
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bus"
+                        android:minHeight="35dp"
+                        android:minWidth="40dp"
+                        android:src="@drawable/bus_30_30" />
+
+                </LinearLayout>
+                
+                <LinearLayout
                     android:id="@+id/trolleyFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/filter_trolley" />
+                    android:minHeight="40dp"
+                    android:minWidth="40dp"
+                    android:orientation="vertical" >
 
-                <ImageButton
+                    <ImageView
+                    	android:layout_width="wrap_content"
+                    	android:layout_height="wrap_content"
+                    	android:background="@color/trolley"
+                    	android:minHeight="35dp"
+                        android:minWidth="40dp"
+                    	android:src="@drawable/trolley_30_30" />
+
+                </LinearLayout>
+                
+                <LinearLayout
                     android:id="@+id/tramFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@drawable/filter_btn"
-                    android:src="@drawable/filter_tram" />
+                    android:minHeight="40dp"
+                    android:minWidth="40dp"
+                    android:orientation="vertical" >
+
+                    <ImageView
+                    	android:layout_width="wrap_content"
+                    	android:layout_height="wrap_content"
+                    	android:background="@color/tram"
+                    	android:minHeight="35dp"
+                        android:minWidth="40dp"
+                    	android:src="@drawable/tram_30_30" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
