@@ -465,23 +465,25 @@ public class MainActivity extends BaseActivity {
 
 	public void showTransportListOnMap(ArrayList<Transport> array) {
 		if (_map != null) {
-			for (Transport transport : array) {
-				LatLng position = new LatLng(transport.Lat, transport.Lng);
-				TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
-				String velocity = "Скорость: " + Integer.toString(transport.velocity) + "км/час";
-				if (transportOverlay == null) {
-					GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
-					Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
-					transportOverlay = new TransportOverlay();
-					transportOverlay.transport = transport;
-					transportOverlay.groundOverlay = groundOverlay;
-					transportOverlay.marker = marker;
-					_model.getAllTransportOverlay().add(transportOverlay);
-				} else {
-					transportOverlay.groundOverlay.remove();
-					transportOverlay.marker.remove();
-					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transport.direction));
-					transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+			if (array != null) {
+				for (Transport transport : array) {
+					LatLng position = new LatLng(transport.Lat, transport.Lng);
+					TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
+					String velocity = "Скорость: " + Integer.toString(transport.velocity) + "км/час";
+					if (transportOverlay == null) {
+						GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
+						Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+						transportOverlay = new TransportOverlay();
+						transportOverlay.transport = transport;
+						transportOverlay.groundOverlay = groundOverlay;
+						transportOverlay.marker = marker;
+						_model.getAllTransportOverlay().add(transportOverlay);
+					} else {
+						transportOverlay.groundOverlay.remove();
+						transportOverlay.marker.remove();
+						transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transport.direction));
+						transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+					}
 				}
 			}
 		}
