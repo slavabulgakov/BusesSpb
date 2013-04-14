@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,7 +18,7 @@ public class Ticket extends LinearLayout {
 	
 	LinearLayout _linearLayout;
 	ImageView _icon;
-	ImageButton _closeButton;
+	ImageView _closeButton;
 	TextView _routeNumber;
 	Route _route;
 	OnRemoveListener _onRemoveListener;
@@ -41,8 +40,8 @@ public class Ticket extends LinearLayout {
 		_routeNumber = (TextView)_vertLinearLayout.getChildAt(1);
 		_routeNumber.setText(routeNumber);
 		
-		_closeButton = (ImageButton)_linearLayout.getChildAt(1);
-		_closeButton.setOnClickListener(new OnClickListener() {
+		_closeButton = (ImageView)_linearLayout.getChildAt(1);
+		_linearLayout.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
@@ -92,7 +91,7 @@ public class Ticket extends LinearLayout {
 		}
 		_linearLayout.setBackgroundResource(resId);
 		if (_closeButton != null) {
-			_closeButton.setBackgroundColor(closeButton);
+			_closeButton.setBackgroundResource(closeButton);
 		}
 		_icon.setImageResource(icon);
 	}
