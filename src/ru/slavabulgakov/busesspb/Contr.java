@@ -129,7 +129,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			}
 		}
 		
-		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == ImageButton.class) {
+		if (_currentActivity.getClass() == MainActivity.class) {
 			if (v.getTag() != null) {
 				if (v.getTag().equals("closeAllBtn")) {
 					LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);

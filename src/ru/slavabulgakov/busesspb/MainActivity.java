@@ -17,17 +17,22 @@ import android.graphics.Paint.Align;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,6 +46,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.jhlabs.map.proj.CentralCylindricalProjection;
 
 import android.view.WindowManager;
 
@@ -157,6 +163,21 @@ public class MainActivity extends BaseActivity {
 			zoomLayoutParams.bottomMargin = _dpToPx(60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
+		
+		if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
+			_busFilter.setVisibility(View.GONE);
+			_trolleyFilter.setVisibility(View.GONE);
+			_tramFilter.setVisibility(View.GONE);
+			_menuBusFilter.setVisibility(View.GONE);
+			_menuTrolleyFilter.setVisibility(View.GONE);
+			_menuTramFilter.setVisibility(View.GONE);
+			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.GONE);
+			_editText.setVisibility(View.GONE);
+			((ImageButton)findViewById(R.id.about)).setVisibility(View.GONE);
+			_progressBar.setVisibility(View.GONE);
+			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.GONE);
+			((ImageButton)findViewById(R.id.location)).setVisibility(View.GONE);
+		}
     }
     
     private int _dpToPx(int dp) {
@@ -206,12 +227,23 @@ public class MainActivity extends BaseActivity {
 		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
 		if (_model.getFavorite().size() > 1) {
 			if (ticketsLayout.getChildAt(0).getClass() != ImageButton.class) {
-				ImageButton closeAllBtn = new ImageButton(this);
+				RelativeLayout closeAllBtn = new RelativeLayout(this);
 				closeAllBtn.setOnClickListener(Contr.getInstance());
-				closeAllBtn.setImageResource(R.drawable.close);
-				closeAllBtn.setBackgroundResource(R.drawable.buttons_bg);
+				closeAllBtn.setBackgroundResource(R.color.yellow);
 				closeAllBtn.setTag("closeAllBtn");
+				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+				lp.setMargins(0, 0, 5, 0);
+				lp.gravity = Gravity.CENTER_VERTICAL;
+				closeAllBtn.setLayoutParams(lp);
+				closeAllBtn.setMinimumWidth(35);
 				ticketsLayout.addView(closeAllBtn, 0);
+				
+				ImageView closeImage = new ImageView(this);
+				closeImage.setImageResource(R.drawable.close);
+				LayoutParams rlp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+				rlp.addRule(RelativeLayout.CENTER_IN_PARENT);
+				closeImage.setLayoutParams(rlp);
+				closeAllBtn.addView(closeImage);
 			}
 		} else {
 			if (ticketsLayout.getChildCount() > 0) {
