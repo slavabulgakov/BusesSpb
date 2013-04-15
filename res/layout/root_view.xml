@@ -33,7 +33,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/menu_bg"
+                android:background="@drawable/btn_pressed_black"
                 android:minHeight="40dp"
                 android:minWidth="40dp" >
 
@@ -51,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginRight="5dp"
                     android:layout_toRightOf="@+id/menuIcon" >
 
                     <LinearLayout
@@ -76,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/filter_btn"
+                    android:background="@drawable/btn_selected_black"
                     android:minHeight="40dp"
                     android:minWidth="40dp"
                     android:orientation="vertical" >
@@ -84,7 +84,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/bus"
+                        android:background="@drawable/ticket_bg_bus"
                         android:minHeight="35dp"
                         android:minWidth="40dp"
                         android:src="@drawable/bus_30_30" />
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/filter_btn"
+                    android:background="@drawable/btn_selected_black"
                     android:minHeight="40dp"
                     android:minWidth="40dp"
                     android:orientation="vertical" >
@@ -104,7 +104,7 @@
                     <ImageView
                     	android:layout_width="wrap_content"
                     	android:layout_height="wrap_content"
-                    	android:background="@color/trolley"
+                    	android:background="@drawable/ticket_bg_trolley"
                     	android:minHeight="35dp"
                         android:minWidth="40dp"
                     	android:src="@drawable/trolley_30_30" />
@@ -115,7 +115,7 @@
                     android:id="@+id/tramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="@drawable/filter_btn"
+                    android:background="@drawable/btn_selected_black"
                     android:minHeight="40dp"
                     android:minWidth="40dp"
                     android:orientation="vertical" >
@@ -123,7 +123,7 @@
                     <ImageView
                     	android:layout_width="wrap_content"
                     	android:layout_height="wrap_content"
-                    	android:background="@color/tram"
+                    	android:background="@drawable/ticket_bg_tram"
                     	android:minHeight="35dp"
                         android:minWidth="40dp"
                     	android:src="@drawable/tram_30_30" />
@@ -140,7 +140,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/menu_bg"
+                android:background="@drawable/btn_pressed_black"
                 android:minHeight="40dp"
                 android:minWidth="40dp"
                 android:src="@drawable/about" />
@@ -166,7 +166,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="10dp"
-                    android:background="@drawable/menu_bg"
+                    android:background="@drawable/btn_pressed_black"
                     android:src="@drawable/plus" />
 
                 <ImageButton
@@ -178,7 +178,7 @@
                     android:paddingRight="10dp"
                     android:paddingTop="10dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/menu_bg"
+                    android:background="@drawable/btn_pressed_black"
                     android:src="@drawable/minus" />
 
             </LinearLayout>
@@ -189,7 +189,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/zoomControls"
                 android:layout_alignLeft="@+id/mainRoutesBtn"
-                android:background="@drawable/menu_bg"
+                android:background="@drawable/btn_pressed_black"
                 android:src="@drawable/location"
                 android:minHeight="40dp"
                 android:minWidth="40dp" />

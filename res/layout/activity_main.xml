@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/close"
-                android:background="@color/menu_bg"
+                android:background="@drawable/btn_pressed_black"
                 android:minHeight="30dp"
                 android:minWidth="30dp"
                 android:layout_alignParentRight="true"
@@ -55,7 +55,7 @@
                     android:id="@+id/menuBusFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/filter_btn"
+                    android:background="@drawable/btn_selected_black"
                     android:layout_alignParentLeft="true"
                     android:minHeight="40dp"
                     android:minWidth="40dp"
@@ -64,7 +64,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/bus"
+                        android:background="@drawable/ticket_bg_bus"
                         android:minHeight="35dp"
                         android:minWidth="40dp"
                         android:src="@drawable/bus_30_30" />
@@ -75,7 +75,7 @@
                     android:id="@+id/menuTrolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/filter_btn"
+                    android:background="@drawable/btn_selected_black"
                     android:layout_centerHorizontal="true"
                     android:minHeight="40dp"
                     android:minWidth="40dp"
@@ -84,7 +84,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/trolley"
+                        android:background="@drawable/ticket_bg_trolley"
                         android:minHeight="35dp"
                         android:minWidth="40dp"
                         android:src="@drawable/trolley_30_30" />
@@ -95,7 +95,7 @@
                     android:id="@+id/menuTramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/filter_btn"
+                    android:background="@drawable/btn_selected_black"
                     android:layout_alignParentRight="true"
                     android:minHeight="40dp"
                     android:minWidth="40dp"
@@ -104,7 +104,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/tram"
+                        android:background="@drawable/ticket_bg_tram"
                         android:minHeight="35dp"
                         android:minWidth="40dp"
                         android:src="@drawable/tram_30_30" />

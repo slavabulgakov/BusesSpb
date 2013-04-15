@@ -273,9 +273,9 @@ public class MainActivity extends BaseActivity {
     				_progressBar.setVisibility(View.VISIBLE);
     				_listView.setVisibility(View.INVISIBLE);
     				_editText.setEnabled(false);
-    				_busFilter.setEnabled(false);
-    				_trolleyFilter.setEnabled(false);
-    				_tramFilter.setEnabled(false);
+    				_menuBusFilter.setEnabled(false);
+    				_menuTrolleyFilter.setEnabled(false);
+    				_menuTramFilter.setEnabled(false);
     				_model.loadDataForAllRoutes(Contr.getInstance());
     			} else {
     				showTransportList();
@@ -334,7 +334,7 @@ public class MainActivity extends BaseActivity {
 			}
 	    	
 	    	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_mainRoutesBtn.getLayoutParams();
-			lp.setMargins(lp.leftMargin, lp.topMargin, _model.getFavorite().size() > 0 ? 50 : 0, lp.bottomMargin);
+			lp.setMargins(lp.leftMargin, lp.topMargin, _model.getFavorite().size() > 0 ? _dpToPx(50) : 0, lp.bottomMargin);
 			_mainRoutesBtn.setLayoutParams(lp);
 		}
 	}
