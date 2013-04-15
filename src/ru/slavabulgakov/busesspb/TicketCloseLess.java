@@ -28,4 +28,10 @@ public class TicketCloseLess extends Ticket {
 		_routeNumber = (TextView)_linearLayout.getChildAt(1);
 		_routeNumber.setText(routeNumber);
 	}
+	
+	public void removeRightMargin() {
+		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)getLayoutParams();
+		lp.setMargins(lp.leftMargin, lp.topMargin, -5, lp.bottomMargin);
+		setLayoutParams(lp);
+	}
 }

@@ -310,10 +310,15 @@ public class MainActivity extends BaseActivity {
     	{// обновление тикетов выбранных маршрутов
     		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
 	    	ticketsLayout.removeAllViews();
+	    	boolean first = true;
 			for (Route route : _model.getFavorite()) {
 				TicketCloseLess ticket = new TicketCloseLess(this);
 				ticket.setRoute(route);
-				ticketsLayout.addView(ticket);
+				ticketsLayout.addView(ticket, 0);
+				if (first) {
+					ticket.removeRightMargin();
+					first = false;
+				}
 			}
 			
 	    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
@@ -322,6 +327,10 @@ public class MainActivity extends BaseActivity {
 			} else {
 				routesBtnScrollView.setVisibility(View.GONE);
 			}
+	    	
+	    	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_mainRoutesBtn.getLayoutParams();
+			lp.setMargins(lp.leftMargin, lp.topMargin, _model.getFavorite().size() > 0 ? 50 : 0, lp.bottomMargin);
+			_mainRoutesBtn.setLayoutParams(lp);
 		}
 	}
     
@@ -375,8 +384,6 @@ public class MainActivity extends BaseActivity {
 				}
 			}
 		}
-		
-		
 	}
     
     public void toggleLeftMenu() {
