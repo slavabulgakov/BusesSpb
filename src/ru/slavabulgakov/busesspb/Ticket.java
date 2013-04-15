@@ -69,19 +69,19 @@ public class Ticket extends LinearLayout {
 		int icon = -1;
 		switch (_route.kind) {
 		case Bus:
-			resId = R.color.bus;
+			resId = R.drawable.ticket_bg_bus;
 			closeButton = R.color.bus_ticket;
 			icon = R.drawable.bus_30_30;
 			break;
 			
 		case Trolley:
-			resId = R.color.trolley;
+			resId = R.drawable.ticket_bg_trolley;
 			closeButton = R.color.trolley_ticket;
 			icon = R.drawable.trolley_30_30;
 			break;
 			
 		case Tram:
-			resId = R.color.tram;
+			resId = R.drawable.ticket_bg_tram;
 			closeButton = R.color.tram_ticket;
 			icon = R.drawable.tram_30_30;
 			break;

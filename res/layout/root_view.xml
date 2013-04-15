@@ -33,7 +33,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@color/menu_bg"
+                android:background="@drawable/menu_bg"
                 android:minHeight="40dp"
                 android:minWidth="40dp" >
 
@@ -140,7 +140,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@color/menu_bg"
+                android:background="@drawable/menu_bg"
                 android:minHeight="40dp"
                 android:minWidth="40dp"
                 android:src="@drawable/about" />
@@ -161,22 +161,24 @@
                     android:id="@+id/plus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/trans"
+                    android:layout_marginBottom="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:background="@drawable/menu_bg"
                     android:src="@drawable/plus" />
 
                 <ImageButton
                     android:id="@+id/minus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@color/trans"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/menu_bg"
                     android:src="@drawable/minus" />
 
             </LinearLayout>
@@ -187,7 +189,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/zoomControls"
                 android:layout_alignLeft="@+id/mainRoutesBtn"
-                android:background="@color/menu_bg"
+                android:background="@drawable/menu_bg"
                 android:src="@drawable/location"
                 android:minHeight="40dp"
                 android:minWidth="40dp" />
