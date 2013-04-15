@@ -14,7 +14,7 @@ public class CloseAllTickets extends RelativeLayout {
 	public CloseAllTickets(Context context) {
 		super(context);
 		setOnClickListener(Contr.getInstance());
-		setBackgroundResource(R.color.yellow);
+		setBackgroundResource(R.drawable.close_all_btn_bg);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		lp.setMargins(0, 0, 5, 0);
 		lp.gravity = Gravity.CENTER_VERTICAL;
