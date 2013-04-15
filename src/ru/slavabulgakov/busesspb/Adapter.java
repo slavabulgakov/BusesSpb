@@ -94,17 +94,17 @@ class Adapter extends ArrayAdapter<Route> {
 		int iconResId = -1;
 		switch (_filtredList.get(position).kind) {
 		case Bus:
-			bgResId = R.color.bus;
+			bgResId = R.drawable.listitem_bg_bus;
 			iconResId = R.drawable.bus_30_30;
 			break;
 			
 		case Trolley:
-			bgResId = R.color.trolley;
+			bgResId = R.drawable.listitem_bg_trolley;
 			iconResId = R.drawable.trolley_30_30;
 			break;
 			
 		case Tram:
-			bgResId = R.color.tram;
+			bgResId = R.drawable.listitem_bg_tram;
 			iconResId = R.drawable.tram_30_30;
 			break;
 
