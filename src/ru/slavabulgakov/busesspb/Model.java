@@ -376,7 +376,6 @@ public class Model extends Application {
 				try {
 					if (_scope == null || _cookie == null) {
 						if (_scopeCookieIsLoading) {
-							Log.d("scope_cookie", "_scopeCookieIsLoading");
 							_step++;
 							return;
 						}
@@ -412,7 +411,6 @@ public class Model extends Application {
 						}
 						_scope = URLEncoder.encode(line.substring(index, end));
 						_scopeCookieIsLoading = false;
-						Log.d("scope_cookie", "_scopeCookie LOADED");
 					}
 //					url = new URL("http://transport.orgp.spb.ru/Portal/transport/map/routeVehicle?ROUTE=" + route.id.toString() + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.4202592596411705&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
 					url = new URL("http://transport.orgp.spb.ru/Portal/transport/mapx/innerRouteVehicle?ROUTE=" + route.id.toString() + "&SCOPE=" + _scope + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.6481046043336391&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
@@ -448,13 +446,10 @@ public class Model extends Application {
 							throw new LoadTaskException();
 						}
 					}
-					Log.d("scope_cookie", "ARRAY IS LOADED");
 				} catch (LoadTaskException e) {
 					_array = null;
-					Log.d("scope_cookie", "EXCEPTION");
 				} catch (Exception e) {
 					e.printStackTrace();
-					Log.d("scope_cookie", "EXCEPTION");
 				}
 				_step++;
 			}

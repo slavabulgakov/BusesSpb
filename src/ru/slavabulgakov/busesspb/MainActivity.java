@@ -152,6 +152,7 @@ public class MainActivity extends BaseActivity {
 		
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int width = display.getWidth();
+		width = _pxToDp(width);
 		if (width < 400) {
 			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
@@ -177,6 +178,10 @@ public class MainActivity extends BaseActivity {
     
     private int _dpToPx(int dp) {
 		return (int)(getResources().getDisplayMetrics().density * dp);
+	}
+    
+    private int _pxToDp(int px) {
+		return (int)(px / getResources().getDisplayMetrics().density);
 	}
     
     public void moveCameraToMyLocation() {
