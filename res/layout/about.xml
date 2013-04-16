@@ -3,6 +3,7 @@
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/menu_bg"
     android:orientation="vertical">
 
     <ScrollView
@@ -84,5 +85,17 @@
         ads:adUnitId="@string/admob_publisher_id"
         ads:loadAdOnCreate="true" >
     </com.google.ads.AdView>
+
+    <ImageButton
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_pressed_blue"
+        android:minHeight="40dp"
+        android:minWidth="40dp"
+        android:src="@drawable/back_btn" />
 
 </RelativeLayout>

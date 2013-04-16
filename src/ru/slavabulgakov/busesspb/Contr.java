@@ -98,6 +98,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			editText.setText("");
 			break;
 			
+		case R.id.back_btn:
+			_currentActivity.finish();
+			break;
+			
 		default:
 			break;
 		}
