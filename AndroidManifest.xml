@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.slavabulgakov.busesspb"
-    android:versionCode="1"
+    android:versionCode="2"
     android:installLocation="preferExternal"
     android:versionName="1.0" >
 
@@ -30,7 +30,7 @@
         
         <meta-data
     		android:name="com.google.android.maps.v2.API_KEY"
-    		android:value="AIzaSyDJglOkbYmnXTUuFQYzp27KmR7db9Oo0Wk"/>
+    		android:value="AIzaSyBPUJgnJrcSBOmrF78c4nQntnL18CV99cs"/>
         
         <activity
             android:name="ru.slavabulgakov.busesspb.MainActivity"
