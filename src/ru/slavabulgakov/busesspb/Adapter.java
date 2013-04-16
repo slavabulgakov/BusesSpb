@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.content.Context;
@@ -30,28 +31,33 @@ class Adapter extends ArrayAdapter<Route> {
 		protected void publishResults(CharSequence constraint, FilterResults results) {
 			synchronized (this) {
 				_filtredList.clear();
-				if (results != null && results.count > 0) {
-					@SuppressWarnings("unchecked")
-					ArrayList<Route>objects = (ArrayList<Route>)results.values;
-					for (Route route : objects) {
-						_filtredList.add(route);
-					}
-					Collections.sort(_filtredList, new Comparator<Route>() {
-
-						@Override
-						public int compare(Route lhs, Route rhs) {
-							int result = lhs.routeNumber.compareToIgnoreCase(rhs.routeNumber);
-							int left = _model.enumKindToInt(lhs.kind);
-							int right = _model.enumKindToInt(rhs.kind);
-							if (result == 0) {
-								result = left - right;
-							}
-							return result;
-						}
-					});
-					notifyDataSetChanged();
+				@SuppressWarnings("unchecked")
+				ArrayList<Route>objects = (ArrayList<Route>)results.values;
+				for (Route route : objects) {
+					_filtredList.add(route);
 				}
+				notifyDataSetChanged();
 			}
+		}
+		
+		private int _routeNumberToInt(String routeNumber) {
+			int result = -1;
+			boolean next = false;
+			do {
+				try {
+					result = Integer.parseInt(routeNumber);
+					next = false;
+				} catch (NumberFormatException e) {
+					if (routeNumber.length() > 1) {
+						routeNumber = routeNumber.substring(0, routeNumber.length() - 2);
+						next = true;
+					} else {
+						next = false;
+					}
+				}
+			} while (next);
+			
+			return result;
 		}
 		
 		@Override
@@ -62,12 +68,49 @@ class Adapter extends ArrayAdapter<Route> {
 			if (constraint != null) {
 				synchronized (this) {
 					for (Route route : _model.getAllRoutes()) {
-						if ((constraint.length() == 0 || route.routeNumber.contains(constraint)) && _model.isEnabledFilterMenu(route.kind)) {
+						if ((constraint.length() == 0 || route.routeNumber.toLowerCase().contains(constraint.toString().toLowerCase())) && _model.isEnabledFilterMenu(route.kind)) {
 							_data.add(route);
 						}
 					}
 				}
 			}
+			
+			
+			Collections.sort(_data, new Comparator<Route>() {
+
+				@Override
+				public int compare(Route lhs, Route rhs) {
+					int left = 0;
+					int right = 0;
+					int result = 0;
+					
+					
+					left = lhs.routeNumber.length();
+					right = rhs.routeNumber.length();
+					result = left - right;
+
+					
+					if (result == 0) {
+						left = _routeNumberToInt(lhs.routeNumber);
+						right = _routeNumberToInt(rhs.routeNumber);
+						result = left - right;
+					}
+					
+					
+					if (result == 0) {
+						result = lhs.routeNumber.compareToIgnoreCase(rhs.routeNumber);
+					}
+					 
+					if (result == 0) {
+						left = _model.enumKindToInt(lhs.kind);
+						right = _model.enumKindToInt(rhs.kind);
+						result = left - right;
+					}
+					return result;
+				}
+			});
+			
+			
 			synchronized (this) {
 				filterResults.values = _data;
 				filterResults.count = _data.size();
