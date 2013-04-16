@@ -399,9 +399,9 @@ public class MainActivity extends BaseActivity {
 		_progressBar.setVisibility(View.INVISIBLE);
 		_listView.setVisibility(View.VISIBLE);
 		_editText.setEnabled(true);
-		_busFilter.setEnabled(true);
-		_trolleyFilter.setEnabled(true);
-		_tramFilter.setEnabled(true);
+		_menuBusFilter.setEnabled(true);
+		_menuTrolleyFilter.setEnabled(true);
+		_menuTramFilter.setEnabled(true);
 		if (_listView.getAdapter() == null) {
 			Adapter adapter = new Adapter(this, _model);
 			_listView.setAdapter(adapter);
