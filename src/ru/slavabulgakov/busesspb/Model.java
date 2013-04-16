@@ -44,6 +44,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 enum TransportKind {
+	None,
 	Bus,
 	Trolley,
 	Tram,
@@ -88,7 +89,7 @@ public class Model extends Application {
 	
 	private static final String STORAGE_NAME = "busesspb";
 	
-	private int _enumKindToSimpleKind(TransportKind kind) {
+	public int enumKindToInt(TransportKind kind) {
 		switch (kind) {
 		case Bus:
 			return Model.BUS_FILTER;
@@ -110,7 +111,7 @@ public class Model extends Application {
 		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		int filter = settings.getInt(name, 0);
-		int f = _enumKindToSimpleKind(kind);
+		int f = enumKindToInt(kind);
 		filter ^= f;
 		editor.putInt(name, filter);
 		editor.commit();
@@ -119,7 +120,7 @@ public class Model extends Application {
 	private boolean _isEnabledFilterFromStorage(TransportKind kind, String name) {
 		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
 		int filter = settings.getInt(name, 0);
-		int f = _enumKindToSimpleKind(kind);
+		int f = enumKindToInt(kind);
 		return (filter & f) > 0 || filter == 0;
 	}
 	

@@ -2,6 +2,7 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
@@ -35,6 +36,19 @@ class Adapter extends ArrayAdapter<Route> {
 					for (Route route : objects) {
 						_filtredList.add(route);
 					}
+					Collections.sort(_filtredList, new Comparator<Route>() {
+
+						@Override
+						public int compare(Route lhs, Route rhs) {
+							int result = lhs.routeNumber.compareToIgnoreCase(rhs.routeNumber);
+							int left = _model.enumKindToInt(lhs.kind);
+							int right = _model.enumKindToInt(rhs.kind);
+							if (result == 0) {
+								result = left - right;
+							}
+							return result;
+						}
+					});
 					notifyDataSetChanged();
 				}
 			}
@@ -61,7 +75,7 @@ class Adapter extends ArrayAdapter<Route> {
 			return filterResults;
 		}
 		
-		public void filterByKind() {
+		public void filterByCurrentPrams() {
 			filter(_constraint);
 		}
 		

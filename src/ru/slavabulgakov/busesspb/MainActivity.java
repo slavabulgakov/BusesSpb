@@ -436,6 +436,11 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 	
+	public void updateListView() {
+		Adapter adapter = (Adapter)_listView.getAdapter();
+		adapter.getFilter().filterByCurrentPrams();
+	}
+	
 	private TransportOverlay _getTransportOverlayById(int id) {
 		TransportOverlay findTransportOverlay = null;
 		for (TransportOverlay transportOverlay : _model.getAllTransportOverlay()) {

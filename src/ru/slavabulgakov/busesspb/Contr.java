@@ -108,35 +108,39 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		
 		if (listView != null) {
 			if (listView.getAdapter() != null) {
+				TransportKind kind = TransportKind.None;
 				switch (v.getId()) {
 				case R.id.menuBusFilter:
-					_model.setFilterMenu(TransportKind.Bus);
-					((Adapter)listView.getAdapter()).getFilter().filterByKind();
-					((MainActivity)_currentActivity).updateFilterButtons();
+					kind = TransportKind.Bus;
 					break;
 					
 				case R.id.menuTrolleyFilter:
-					_model.setFilterMenu(TransportKind.Trolley);
-					((Adapter)listView.getAdapter()).getFilter().filterByKind();
-					((MainActivity)_currentActivity).updateFilterButtons();
+					kind = TransportKind.Trolley;
 					break;
 					
 				case R.id.menuTramFilter:
-					_model.setFilterMenu(TransportKind.Tram);
-					((Adapter)listView.getAdapter()).getFilter().filterByKind();
-					((MainActivity)_currentActivity).updateFilterButtons();
+					kind = TransportKind.Tram;
 					break;
 
 				default:
 					break;
+				}
+				if (kind != TransportKind.None) {
+					_model.setFilterMenu(kind);
+					((MainActivity)_currentActivity).updateListView();
+					((MainActivity)_currentActivity).updateFilterButtons();
 				}
 			}
 		}
 		
 		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == CloseAllTickets.class) {
 			LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+			for (Route route : _model.getFavorite()) {
+				_model.getAllRoutes().add(route);
+			}
 			_model.getFavorite().clear();
 			ticketsLayout.removeAllViews();
+			((MainActivity)_currentActivity).updateListView();
 		}
 	}
 
@@ -219,7 +223,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		}
 		_model.getFavorite().add(route);
 		_model.getAllRoutes().remove(route);
-		adapter.getFilter().filter("");
+		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		
 		HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
@@ -234,9 +238,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onRemove(Ticket ticket) {
 		_model.getFavorite().remove(ticket.getRoute());
 		_model.getAllRoutes().add(ticket.getRoute());
-		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-		Adapter adapter = (Adapter)listView.getAdapter();
-		adapter.getFilter().filter("");
+		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 	}
 
