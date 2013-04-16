@@ -469,21 +469,33 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private BitmapDescriptor _getRouteNumberBitMap(String routeNumber) {
-		Bitmap bitmap = Bitmap.createBitmap(40, 30, Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
+		int width = 40;
+		int height = 20;
+		int fontSize = 11;
+		
+		
 		Resources resources = getResources();
 		float scale = resources.getDisplayMetrics().density;
+		float scaledFontSize = fontSize * (float)scale;
 		
-//		Paint paintGreen = new Paint(Paint.ANTI_ALIAS_FLAG);
-//		paintGreen.setColor(Color.GREEN);
-//		canvas.drawRect(0, 0, 40, 30, paintGreen);
+		
+		Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		
+		Paint paintHighlight = new Paint(Paint.ANTI_ALIAS_FLAG);
+		float textWidth = paintHighlight.measureText(routeNumber);
+		paintHighlight.setColor(Color.argb(0xff, 0x45, 0x45, 0x45));
+		int leftRightMargin = (width - (int)textWidth) / 2;
+		int topBottomMargin = (int)(((float)height - scaledFontSize) / 2.0 - 3.0 * scale);
+		canvas.drawRect(leftRightMargin, topBottomMargin, width - leftRightMargin, topBottomMargin + scaledFontSize, paintHighlight);
 		
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		paint.setTextAlign(Align.CENTER);
-		paint.setColor(Color.BLACK);
-		paint.setTextSize((int) (11 * scale));
+		paint.setColor(Color.WHITE);
+		paint.setTextSize(scaledFontSize);
 		paint.setShadowLayer(4, 2, 2, Color.WHITE);
-		canvas.drawText(routeNumber, 20, 15, paint);
+		canvas.drawText(routeNumber, width / 2, height / 2, paint);
+		
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
 	}
 	
@@ -502,7 +514,7 @@ public class MainActivity extends BaseActivity {
 				for (Transport transport : array) {
 					LatLng position = new LatLng(transport.Lat, transport.Lng);
 					TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
-					String velocity = "Скорость: " + Integer.toString(transport.velocity) + "км/час";
+					String velocity = getString(R.string.velocity) + Integer.toString(transport.velocity) + getString(R.string.km);
 					if (transportOverlay == null) {
 						GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
 						Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
