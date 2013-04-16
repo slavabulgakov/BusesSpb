@@ -176,9 +176,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onImgLoadComplete(Bitmap img) {
 		if (_currentActivity.getClass() == MainActivity.class) {
-			if(img == null) {
-				Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
-			}
 			((MainActivity)_currentActivity).showTransportImgOnMap(img);
 		}
 		
