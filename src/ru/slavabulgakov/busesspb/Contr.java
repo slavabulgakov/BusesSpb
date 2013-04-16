@@ -207,7 +207,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
 		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-		Route route = ((Adapter)listView.getAdapter()).getItem(position);
+		Adapter adapter = (Adapter)listView.getAdapter();
+		Route route = adapter.getItem(position);
 		Ticket ticket = new Ticket(_currentActivity, null);
 		ticket.setRoute(route);
 		ticket.setOnRemoveListener(this);
@@ -217,6 +218,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			ticketsLayout.addView(ticket);
 		}
 		_model.getFavorite().add(route);
+		_model.getAllRoutes().remove(route);
+		adapter.getFilter().filter("");
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		
 		HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
@@ -230,6 +233,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onRemove(Ticket ticket) {
 		_model.getFavorite().remove(ticket.getRoute());
+		_model.getAllRoutes().add(ticket.getRoute());
+		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
+		Adapter adapter = (Adapter)listView.getAdapter();
+		adapter.getFilter().filter("");
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 	}
 
