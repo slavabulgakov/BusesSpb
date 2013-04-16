@@ -315,15 +315,10 @@ public class MainActivity extends BaseActivity {
     	{// обновление тикетов выбранных маршрутов
     		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
 	    	ticketsLayout.removeAllViews();
-	    	boolean first = true;
 			for (Route route : _model.getFavorite()) {
 				TicketCloseLess ticket = new TicketCloseLess(this);
 				ticket.setRoute(route);
 				ticketsLayout.addView(ticket, 0);
-				if (first) {
-					ticket.removeRightMargin();
-					first = false;
-				}
 			}
 			
 	    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
@@ -438,7 +433,9 @@ public class MainActivity extends BaseActivity {
 	
 	public void updateListView() {
 		Adapter adapter = (Adapter)_listView.getAdapter();
-		adapter.getFilter().filterByCurrentPrams();
+		if (adapter != null) {
+			adapter.getFilter().filterByCurrentPrams();
+		}
 	}
 	
 	private TransportOverlay _getTransportOverlayById(int id) {
