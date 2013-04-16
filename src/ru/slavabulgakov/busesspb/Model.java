@@ -503,7 +503,7 @@ public class Model extends Application {
 		IRequest req = new IRequest() {
 			
 			int _step = 0;
-			Bitmap _img;
+			Bitmap _img = null;
 			
 			@Override
 			public void setCanceled() {
@@ -546,6 +546,7 @@ public class Model extends Application {
 		            InputStream input = connection.getInputStream();
 		            _img = BitmapFactory.decodeStream(input);
 		        } catch (IOException e) {
+		        	_img = null;
 		            e.printStackTrace();
 		        }
 				_step++;

@@ -11,6 +11,7 @@
     <string name="routes">Маршруты</string>
     <string name="routes_placeholder">Введите маршрут</string>
     <string name="internet_access_deny">Проблемы с сетью. Проверьте соединение.</string>
+    <string name="server_access_deny">Проблемы с сервером.</string>
     <string name="app_version">Версия: </string>
     <string name="author">Автор: Булгаков Слава</string>
     <string name="author_email">slavabulgakov@gmail.com</string>
@@ -42,6 +43,8 @@
     <string name="close">Закрыть</string>
     <string name="connection_error_title">Ошибка соединения</string>
     <string name="connection_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
+    <string name="velocity">Скорость: </string>
+    <string name="km">км/час</string>
     
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

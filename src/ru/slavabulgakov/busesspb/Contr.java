@@ -152,6 +152,9 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onTransportListOfRouteLoadComplete(ArrayList<Transport> array) {
 		if (_currentActivity.getClass() == MainActivity.class) {
+			if(array == null) {
+				Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
+			}
 			((MainActivity)_currentActivity).showTransportListOnMap(array);
 		}
 	}
@@ -159,6 +162,9 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onRouteKindsLoadComplete(ArrayList<Route> array) {
 		if (_currentActivity.getClass() == MainActivity.class) {
+			if(array == null) {
+				Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
+			}
 			((MainActivity)_currentActivity).showTransportList();
 		}
 	}
@@ -166,6 +172,9 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onImgLoadComplete(Bitmap img) {
 		if (_currentActivity.getClass() == MainActivity.class) {
+			if(img == null) {
+				Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
+			}
 			((MainActivity)_currentActivity).showTransportImgOnMap(img);
 		}
 		
