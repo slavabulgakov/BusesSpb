@@ -31,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
@@ -136,6 +137,28 @@ public class Model extends Application {
 	}
 	public boolean isEnabledFilterMenu(TransportKind kind) {
 		return _isEnabledFilterFromStorage(kind, "menu_filter");
+	}
+	
+	
+	private LatLng _currentLocation;
+	public LatLng getCurrentLocation() {
+		if (_currentLocation == null) {
+			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+			double lat = (double)settings.getFloat("current_lat", (float) 59.946282);
+			double lng = (double)settings.getFloat("current_lng", (float) 30.356412);
+			_currentLocation = new LatLng(lat, lng);
+		}
+		return _currentLocation;
+	}
+	public void saveCurrentLocation() {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putFloat("current_lat", (float)_currentLocation.latitude);
+		editor.putFloat("current_lng", (float)_currentLocation.longitude);
+		editor.commit();
+	}
+	public void setCurrentLocation(LatLng location) {
+		_currentLocation = location;
 	}
 	
 	
