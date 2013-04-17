@@ -170,7 +170,7 @@ public class ShareModel {
 			public void nextExecute() {
 				_step++;
 				_twitter = new TwitterFactory().getInstance();
-				_twitter.setOAuthConsumer("vRDIaZxcogXoBnAupH1nyQ", "JscEmBVLpwW55XejFKI65qmeJwmU7x7zpJH0i0w14o");
+				_twitter.setOAuthConsumer("H4GnHcr6R8fF9OpjZHJUA", "UXuCsR8x2wxXIebifAi9HSDnEG97KNxdY50QFmjVQ");
 			    _requestToken = null;
 				try {
 					_requestToken = _twitter.getOAuthRequestToken();

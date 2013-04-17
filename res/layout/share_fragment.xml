@@ -30,7 +30,14 @@
 
         <ImageButton android:id="@+id/shareFBImageButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/share_facebook_btn_bg" android:background="@null" android:layout_marginLeft="5dp" android:contentDescription="@string/none" />
         
-        <com.facebook.widget.LoginButton android:id="@+id/shareFBLoginButton" android:layout_gravity="bottom|right" android:layout_marginLeft="5dp" custom:login_text="" custom:logout_text="" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/fb_share_btn" />
+        <com.facebook.widget.LoginButton
+            android:id="@+id/shareFBLoginButton"
+            android:layout_gravity="bottom|right"
+            android:layout_marginLeft="5dp" custom:login_text=""
+            custom:logout_text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/fb_share_btn" />
 
         
             </LinearLayout>
