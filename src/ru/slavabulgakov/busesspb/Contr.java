@@ -218,8 +218,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		} else {
 			ticketsLayout.addView(ticket);
 		}
-		_model.getFavorite().add(route);
-		_model.getAllRoutes().remove(route);
+		_model.setRouteToFavorite(route);
 		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		
@@ -233,8 +232,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onRemove(Ticket ticket) {
-		_model.getFavorite().remove(ticket.getRoute());
-		_model.getAllRoutes().add(ticket.getRoute());
+		_model.setRouteToAll(ticket.getRoute());
 		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 	}

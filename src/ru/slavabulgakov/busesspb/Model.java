@@ -206,6 +206,34 @@ public class Model extends Application {
 		return _favoriteRoutes;
 	}
 	
+	private void _removeRouteFromList(Route route, ArrayList<Route> list) {
+		boolean exist = false;
+		do {
+			exist = false;
+			int index = 0;
+			for (Route route_ : list) {
+				if (route.id.equals(route_.id)) {
+					exist = true;
+					break;
+				}
+				index++;
+			}
+			if (exist) {
+				list.remove(index);
+			}
+		} while (exist);
+	}
+	
+	public void setRouteToFavorite(Route route) {
+		_removeRouteFromList(route, _allRoutes);
+		_favoriteRoutes.add(route);
+	}
+	
+	public void setRouteToAll(Route route) {
+		_removeRouteFromList(route, _favoriteRoutes);
+		_allRoutes.add(route);
+	}
+	
 	public void saveFavorite() {
 		_saveToFile(_favoriteRoutes, "favoriteTransportList.ser");
 	}
@@ -217,8 +245,11 @@ public class Model extends Application {
 		return _allRoutes;
 	}
 	
-	public void setAll(ArrayList<Route> all) {
+	private void _setAllRoutes(ArrayList<Route> all) {
 		_allRoutes = all;
+		for (Route route : _favoriteRoutes) {
+			_removeRouteFromList(route, _allRoutes);
+		}
 	}
 	
 	public void changeListener(OnLoadCompleteListener listener) {
@@ -325,7 +356,7 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				if (isOnline()) {
-					setAll(_array);
+					_setAllRoutes(_array);
 					_listener.onRouteKindsLoadComplete(_array);
 				}
 				_removeParserById(requestId);
