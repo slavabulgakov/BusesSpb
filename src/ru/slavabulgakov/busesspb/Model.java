@@ -140,27 +140,44 @@ public class Model extends Application {
 	}
 	
 	
-	private LatLng _currentLocation;
-	public LatLng getCurrentLocation() {
-		if (_currentLocation == null) {
+	private LatLng _location;
+	public LatLng getLocation() {
+		if (_location == null) {
 			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
 			double lat = (double)settings.getFloat("current_lat", (float) 59.946282);
 			double lng = (double)settings.getFloat("current_lng", (float) 30.356412);
-			_currentLocation = new LatLng(lat, lng);
+			_location = new LatLng(lat, lng);
 		}
-		return _currentLocation;
+		return _location;
 	}
-	public void saveCurrentLocation() {
+	public void saveLocation() {
 		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putFloat("current_lat", (float)_currentLocation.latitude);
-		editor.putFloat("current_lng", (float)_currentLocation.longitude);
+		editor.putFloat("current_lat", (float)_location.latitude);
+		editor.putFloat("current_lng", (float)_location.longitude);
 		editor.commit();
 	}
-	public void setCurrentLocation(LatLng location) {
-		_currentLocation = location;
+	public void setLocation(LatLng location) {
+		_location = location;
 	}
 	
+	private float _zoom = 0;
+	public float getZoom() {
+		if (_zoom == 0) {
+			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+			_zoom = settings.getFloat("zoom", 10);
+		}
+		return _zoom;
+	}
+	public void saveZoom() {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putFloat("zoom", _zoom);
+		editor.commit();
+	}
+	public void setZoom(float zoom) {
+		_zoom = zoom;
+	}
 	
 	
 	private ArrayList<ParserWebPageTask> _parsers;

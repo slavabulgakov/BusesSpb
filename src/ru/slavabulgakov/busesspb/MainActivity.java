@@ -132,9 +132,9 @@ public class MainActivity extends BaseActivity {
 		
 		_map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		if (_map != null) {
-			CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(59.946282, 30.356412));
+			CameraUpdate center = CameraUpdateFactory.newLatLng(_model.getLocation());
 	        _map.moveCamera(center);
-	        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+	        CameraUpdate zoom = CameraUpdateFactory.zoomTo(_model.getZoom());
 	        _map.animateCamera(zoom);
 	        _map.setMyLocationEnabled(true);
 	        _map.setOnCameraChangeListener(Contr.getInstance());
@@ -215,6 +215,9 @@ public class MainActivity extends BaseActivity {
     
 	@Override
 	protected void onPause() {
+		_model.saveFavorite();
+		_model.saveLocation();
+		_model.saveZoom();
     	if (_timer != null) {
     		_timer.cancel();
     		_timer = null;
@@ -349,7 +352,6 @@ public class MainActivity extends BaseActivity {
 		{// отключение клавиатуры
 			if (!isOpen) {
 				_keyboardTurnOff();
-				_model.saveFavorite();
 			}
 		}
 		
