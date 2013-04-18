@@ -61,6 +61,7 @@ public class MainActivity extends BaseActivity {
 	private LinearLayout _menuTramFilter;
 	private RelativeLayout _mainRoutesBtn;
 	private ImageButton _clearButton;
+	LinearLayout _ticketsLayout;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -91,12 +92,12 @@ public class MainActivity extends BaseActivity {
 	    _mainRoutesBtn = (RelativeLayout)findViewById(R.id.mainRoutesBtn);
 	    _mainRoutesBtn.setOnClickListener(Contr.getInstance());
 	    
-	    LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
+	    _ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
 		for (Route route : _model.getFavorite()) {
 			Ticket ticket = new Ticket(this);
 			ticket.setRoute(route);
 			ticket.setOnRemoveListener(Contr.getInstance());
-			ticketsLayout.addView(ticket);
+			_ticketsLayout.addView(ticket);
 		}
 		putCloseAllButtonToTicketsLayout();
 		HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)findViewById(R.id.routeTicketsScrollView);
@@ -140,7 +141,6 @@ public class MainActivity extends BaseActivity {
 	        _map.setOnCameraChangeListener(Contr.getInstance());
 	        _map.getUiSettings().setMyLocationButtonEnabled(false);
 	        _map.getUiSettings().setZoomControlsEnabled(false);
-	        _updateControls();
 		}
 		
 		((ImageButton)findViewById(R.id.location)).setOnClickListener(Contr.getInstance());
@@ -226,17 +226,22 @@ public class MainActivity extends BaseActivity {
 	}
 
 
+	@Override
+	protected void onResume() {
+		_updateTimer();
+		super.onResume();
+	}
+
 	public void putCloseAllButtonToTicketsLayout() {
-		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
 		if (_model.getFavorite().size() > 1) {
-			if (ticketsLayout.getChildAt(0).getClass() != CloseAllTickets.class) {
+			if (_ticketsLayout.getChildAt(0).getClass() != CloseAllTickets.class) {
 				CloseAllTickets closeAllBtn = new CloseAllTickets(this);
-				ticketsLayout.addView(closeAllBtn, 0);
+				_ticketsLayout.addView(closeAllBtn, 0);
 			}
 		} else {
-			if (ticketsLayout.getChildCount() > 0) {
-				if (ticketsLayout.getChildAt(0).getClass() == CloseAllTickets.class) {
-					ticketsLayout.removeViewAt(0);
+			if (_ticketsLayout.getChildCount() > 0) {
+				if (_ticketsLayout.getChildAt(0).getClass() == CloseAllTickets.class) {
+					_ticketsLayout.removeViewAt(0);
 				}
 			}
 		}
@@ -268,6 +273,29 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
+    private void _updateTimer() {
+    	if (_timer != null) {
+			_timer.cancel();
+			_timer = null;
+		}
+		if (!_model.menuIsOpened()) {
+			_timer = new Timer();
+	    	_timer.schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						MainActivity.this.runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								updateTransport();
+							}
+						});
+					}
+				}, 0, 5000);
+		}
+    }
+    
     private void _updateControls() {
     	
     	{// обновление контента меню
@@ -289,28 +317,7 @@ public class MainActivity extends BaseActivity {
     	
     	
     	
-    	{// обновление таймера
-			if (_timer != null) {
-    			_timer.cancel();
-    			_timer = null;
-			}
-			if (!_model.menuIsOpened()) {
-				_timer = new Timer();
-		    	_timer.schedule(new TimerTask() {
-
-						@Override
-						public void run() {
-							MainActivity.this.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									updateTransport();
-								}
-							});
-						}
-					}, 0, 5000);
-			}
-		}
+    	_updateTimer();
     	
     	
     	
