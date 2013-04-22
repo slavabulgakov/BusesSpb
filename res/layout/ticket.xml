@@ -33,6 +33,7 @@
     
     <ImageView
         android:id="@+id/imageButton1"
+        android:duplicateParentState="true"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"

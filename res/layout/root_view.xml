@@ -86,6 +86,7 @@
                         android:background="@drawable/ticket_bg_bus"
                         android:minHeight="35dp"
                         android:minWidth="40dp"
+                        android:duplicateParentState="true"
                         android:src="@drawable/bus_30_30" />
 
                 </LinearLayout>
@@ -106,6 +107,7 @@
                     	android:background="@drawable/ticket_bg_trolley"
                     	android:minHeight="35dp"
                         android:minWidth="40dp"
+                        android:duplicateParentState="true"
                     	android:src="@drawable/trolley_30_30" />
 
                 </LinearLayout>
@@ -125,6 +127,7 @@
                     	android:background="@drawable/ticket_bg_tram"
                     	android:minHeight="35dp"
                         android:minWidth="40dp"
+                        android:duplicateParentState="true"
                     	android:src="@drawable/tram_30_30" />
 
                 </LinearLayout>
