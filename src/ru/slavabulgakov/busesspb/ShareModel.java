@@ -232,6 +232,7 @@ public class ShareModel {
 					} else {
 						_result = TwitterResult.ERROR;
 					}
+					return;
 				}
 				 _result = TwitterResult.SUCCESS;
 			}

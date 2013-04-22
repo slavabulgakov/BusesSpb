@@ -122,7 +122,7 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 //	        postParams.putString("caption", "Build great social apps and get more installs.");
 	        postParams.putString("description", getString(R.string.share_message));
 	        postParams.putString("link", "https://play.google.com/store/apps/details?id=ru.slavabulgakov.busesspb");
-	        postParams.putString("picture", "http://yandex.st/morda-logo/i/logo.png");
+	        postParams.putString("picture", "https://lh5.ggpht.com/1nCZiHrQQX-zcoXlRp6uZ0IZ5oV69wKs7QmzFoJAn30RIIHaQYsEuDGFxnRnBG-OYus=w124");
 
 	        Request.Callback callback= new Request.Callback() {
 	            public void onCompleted(Response response) {
@@ -152,6 +152,10 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		_fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	public void onActivityResult_(int requestCode, int resultCode, Intent data) {
 		_fbUiLifecycleHelper.onActivityResult(requestCode, resultCode, data);
 	}
 

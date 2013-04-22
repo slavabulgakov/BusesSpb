@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 public class AboutActivity extends BaseActivity implements OnClickListener {
 	
+	private ShareFragment _shareFragment;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,6 +28,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 			e.printStackTrace();
 		}
 		((ImageButton)findViewById(R.id.back_btn)).setOnClickListener(Contr.getInstance());
+		_shareFragment = (ShareFragment)getSupportFragmentManager().findFragmentById(R.id.shareFragment);
 	}
 
 	@Override
@@ -36,5 +39,11 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " for Android " + Build.VERSION.RELEASE + " feedback");
 		emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "\n\n" + "Info: " + Build.BRAND + " " + Build.MODEL);
 		startActivity(Intent.createChooser(emailIntent, null));
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		_shareFragment.onActivityResult_(requestCode, resultCode, data);
 	}
 }
