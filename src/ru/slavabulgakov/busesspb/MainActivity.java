@@ -228,7 +228,7 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	protected void onResume() {
-		_updateTimer();
+		_updateControls();
 		super.onResume();
 	}
 
