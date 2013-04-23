@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.slavabulgakov.busesspb"
-    android:versionCode="3"
+    android:versionCode="4"
     android:installLocation="preferExternal"
-    android:versionName="1.0" >
+    android:versionName="1.1" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -35,7 +35,7 @@
         
         <meta-data
     		android:name="com.google.android.maps.v2.API_KEY"
-    		android:value="AIzaSyCcxBiwqgjBOu4Hu65FajJ7GtXRr3pJxLo"/>
+		android:value="AIzaSyCcxBiwqgjBOu4Hu65FajJ7GtXRr3pJxLo"/>
         
         <activity
             android:name="ru.slavabulgakov.busesspb.MainActivity"
