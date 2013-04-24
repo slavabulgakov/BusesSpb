@@ -6,14 +6,21 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class Ticket extends LinearLayout {
+public class Ticket extends LinearLayout implements AnimationListener {
 	
 	interface OnRemoveListener {
 		void onRemove(Ticket ticket);
+	}
+	
+	interface OnAnimationEndListener {
+		void onAnimated(Ticket ticket);
 	}
 	
 	LinearLayout _linearLayout;
@@ -109,4 +116,33 @@ public class Ticket extends LinearLayout {
 	public void setOnRemoveListener(OnRemoveListener listener) {
 		_onRemoveListener = listener;
 	}
+	
+	public void animatedShow() {
+		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)getLayoutParams();
+		int height = lp.height;
+		Animation animation = new TranslateAnimation(0, 0, height, 0);
+		animation.setDuration(400);
+		animation.setFillAfter(true);
+		startAnimation(animation);
+	}
+	private OnAnimationEndListener _animationEndListener;
+	public void animatedOffset(OnAnimationEndListener listener) {
+		_animationEndListener = listener;
+		Animation animation = new TranslateAnimation(0, getWidth(), 0, 0);
+		animation.setDuration(400);
+		animation.setFillAfter(true);
+		animation.setAnimationListener(this);
+		startAnimation(animation);
+	}
+
+	@Override
+	public void onAnimationEnd(Animation arg0) {
+		_animationEndListener.onAnimated(this);
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation arg0) {}
+
+	@Override
+	public void onAnimationStart(Animation arg0) {}
 }

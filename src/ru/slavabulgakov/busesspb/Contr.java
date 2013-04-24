@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.RootView.OnActionListener;
+import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -17,6 +18,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -207,18 +210,34 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+		final LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
 		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
 		Adapter adapter = (Adapter)listView.getAdapter();
 		Route route = adapter.getItem(position);
-		Ticket ticket = new Ticket(_currentActivity, null);
+		final Ticket ticket = new Ticket(_currentActivity, null);
 		ticket.setRoute(route);
 		ticket.setOnRemoveListener(this);
 		if (_model.getFavorite().size() > 1) {
-			ticketsLayout.addView(ticket, 1);
+			for (int i = 0; i < ticketsLayout.getChildCount() - 1; i++) {
+				View ticket_ = (View)ticketsLayout.getChildAt(i);
+				if (ticket_.getClass() == Ticket.class) {
+					((Ticket)ticket_).animatedOffset(new OnAnimationEndListener() {
+						
+						@Override
+						public void onAnimated(Ticket t) {
+							if (ticket.getParent() == null) {
+								ticketsLayout.addView(ticket, 1);
+								ticket.animatedShow();
+							}
+						}
+					});
+				}
+			}
 		} else {
 			ticketsLayout.addView(ticket);
+			ticket.animatedShow();
 		}
+		
 		_model.setRouteToFavorite(route);
 		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
