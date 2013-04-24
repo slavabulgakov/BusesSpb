@@ -117,9 +117,13 @@ public class Ticket extends LinearLayout implements AnimationListener {
 		_onRemoveListener = listener;
 	}
 	
+	private boolean _isShowed = false;
+	public boolean isShowed() {
+		return _isShowed;
+	}
 	public void animatedShow() {
-		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)getLayoutParams();
-		int height = lp.height;
+		_isShowed = true;
+		int height = 50;
 		Animation animation = new TranslateAnimation(0, 0, height, 0);
 		animation.setDuration(400);
 		animation.setFillAfter(true);
@@ -128,7 +132,7 @@ public class Ticket extends LinearLayout implements AnimationListener {
 	private OnAnimationEndListener _animationEndListener;
 	public void animatedOffset(OnAnimationEndListener listener) {
 		_animationEndListener = listener;
-		Animation animation = new TranslateAnimation(0, getWidth(), 0, 0);
+		Animation animation = new TranslateAnimation(-getWidth(), 0, 0, 0);
 		animation.setDuration(400);
 		animation.setFillAfter(true);
 		animation.setAnimationListener(this);
