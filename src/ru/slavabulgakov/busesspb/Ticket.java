@@ -52,8 +52,18 @@ public class Ticket extends LinearLayout implements AnimationListener {
 			
 			@Override
 			public void onClick(View arg0) {
-				_onRemoveListener.onRemove(Ticket.this);
-				((ViewGroup)Ticket.this.getParent()).removeView(Ticket.this);
+				animatedRemove(new OnAnimationEndListener() {
+					
+					@Override
+					public void onAnimated(Ticket ticket) {
+						((View) getParent()).post(new Runnable() {
+				            public void run() {
+				            	((ViewGroup)Ticket.this.getParent()).removeView(Ticket.this);
+				            }
+				        });
+						_onRemoveListener.onRemove(Ticket.this);
+					}
+				});
 			}
 		});
 	}
@@ -117,12 +127,15 @@ public class Ticket extends LinearLayout implements AnimationListener {
 		_onRemoveListener = listener;
 	}
 	
-	private boolean _isShowed = false;
-	public boolean isShowed() {
-		return _isShowed;
+	public void animatedRemove(OnAnimationEndListener listener) {
+		_animationEndListener = listener;
+		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
+		animation.setDuration(400);
+		animation.setFillAfter(true);
+		animation.setAnimationListener(this);
+		startAnimation(animation);
 	}
 	public void animatedShow() {
-		_isShowed = true;
 		int height = 50;
 		Animation animation = new TranslateAnimation(0, 0, height, 0);
 		animation.setDuration(400);
@@ -130,9 +143,17 @@ public class Ticket extends LinearLayout implements AnimationListener {
 		startAnimation(animation);
 	}
 	private OnAnimationEndListener _animationEndListener;
-	public void animatedOffset(OnAnimationEndListener listener) {
+	public void animatedOffsetRight(OnAnimationEndListener listener) {
 		_animationEndListener = listener;
-		Animation animation = new TranslateAnimation(-getWidth(), 0, 0, 0);
+		Animation animation = new TranslateAnimation(-getWidth(), Animation.RELATIVE_TO_PARENT, 0, 0);
+		animation.setDuration(400);
+		animation.setFillAfter(true);
+		animation.setAnimationListener(this);
+		startAnimation(animation);
+	}
+	public void animatedOffsetLeft(OnAnimationEndListener listener) {
+		_animationEndListener = listener;
+		Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT, -getWidth(), 0, 0);
 		animation.setDuration(400);
 		animation.setFillAfter(true);
 		animation.setAnimationListener(this);
@@ -141,7 +162,9 @@ public class Ticket extends LinearLayout implements AnimationListener {
 
 	@Override
 	public void onAnimationEnd(Animation arg0) {
-		_animationEndListener.onAnimated(this);
+		if (_animationEndListener != null) {
+				_animationEndListener.onAnimated(this);
+			}
 	}
 
 	@Override

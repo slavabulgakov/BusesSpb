@@ -237,6 +237,7 @@ public class MainActivity extends BaseActivity {
 			if (_ticketsLayout.getChildAt(0).getClass() != CloseAllTickets.class) {
 				CloseAllTickets closeAllBtn = new CloseAllTickets(this);
 				_ticketsLayout.addView(closeAllBtn, 0);
+				closeAllBtn.animatedShow();
 			}
 		} else {
 			if (_ticketsLayout.getChildCount() > 0) {

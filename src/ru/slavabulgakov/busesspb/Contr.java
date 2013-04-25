@@ -215,30 +215,23 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		final Ticket ticket = new Ticket(_currentActivity, null);
 		ticket.setRoute(route);
 		ticket.setOnRemoveListener(this);
+		_model.setRouteToFavorite(route);
+		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		if (_model.getFavorite().size() > 1) {
-			ticketsLayout.addView(ticket, 1);
-			for (int i = 0; i < ticketsLayout.getChildCount() - 1; i++) {
+			for (int i = 0; i < ticketsLayout.getChildCount(); i++) {
 				View ticket_ = (View)ticketsLayout.getChildAt(i);
 				if (ticket_.getClass() == Ticket.class) {
-					((Ticket)ticket_).animatedOffset(new OnAnimationEndListener() {
-						
-						@Override
-						public void onAnimated(Ticket t) {
-							if (!ticket.isShowed()) {
-								ticket.animatedShow();
-							}
-						}
-					});
+					((Ticket)ticket_).animatedOffsetRight(null);
 				}
 			}
+			
+			ticketsLayout.addView(ticket, 1);
+			ticket.animatedShow();
 		} else {
 			ticketsLayout.addView(ticket);
 			ticket.animatedShow();
 		}
-		
-		_model.setRouteToFavorite(route);
 		((MainActivity)_currentActivity).updateListView();
-		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		
 		HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
 		if (_model.getFavorite().size() > 0) {
@@ -253,6 +246,21 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		_model.setRouteToAll(ticket.getRoute());
 		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
+		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+		for(int i = 0; i < ticketsLayout.getChildCount() - 1; i++) {
+			if (ticketsLayout.getChildAt(i).getClass() == Ticket.class) {
+				Ticket t = (Ticket)ticketsLayout.getChildAt(i);
+				if (t.getRoute().id.equals(ticket.getRoute().id)) {
+					for(int j = i + 1; j < ticketsLayout.getChildCount() - 1; j++) {
+						if(ticketsLayout.getChildAt(j).getClass() == Ticket.class) {
+							Ticket ti = (Ticket)ticketsLayout.getChildAt(j);
+							ti.animatedOffsetLeft(null);
+						}
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
