@@ -61,9 +61,9 @@ public class Ticket extends LinearLayout implements AnimationListener {
 				            	((ViewGroup)Ticket.this.getParent()).removeView(Ticket.this);
 				            }
 				        });
-						_onRemoveListener.onRemove(Ticket.this);
 					}
 				});
+				_onRemoveListener.onRemove(Ticket.this);
 			}
 		});
 	}
@@ -131,31 +131,33 @@ public class Ticket extends LinearLayout implements AnimationListener {
 		_animationEndListener = listener;
 		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
 		animation.setDuration(400);
-		animation.setFillAfter(true);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
+	private boolean _isShowed = false;
+	public boolean isShowed() {
+		return _isShowed;
+	}
+	
 	public void animatedShow() {
 		int height = 50;
 		Animation animation = new TranslateAnimation(0, 0, height, 0);
 		animation.setDuration(400);
-		animation.setFillAfter(true);
 		startAnimation(animation);
+		_isShowed = true;
 	}
 	private OnAnimationEndListener _animationEndListener;
-	public void animatedOffsetRight(OnAnimationEndListener listener) {
+	public void animatedOffsetRight(int offset, OnAnimationEndListener listener) {
 		_animationEndListener = listener;
-		Animation animation = new TranslateAnimation(-getWidth(), Animation.RELATIVE_TO_PARENT, 0, 0);
+		Animation animation = new TranslateAnimation(-offset, 0, 0, 0);
 		animation.setDuration(400);
-		animation.setFillAfter(true);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
 	public void animatedOffsetLeft(OnAnimationEndListener listener) {
 		_animationEndListener = listener;
-		Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT, -getWidth(), 0, 0);
+		Animation animation = new TranslateAnimation(0, -73, 0, 0);
 		animation.setDuration(400);
-		animation.setFillAfter(true);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}

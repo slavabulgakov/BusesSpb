@@ -18,6 +18,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -218,13 +221,13 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		_model.setRouteToFavorite(route);
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		if (_model.getFavorite().size() > 1) {
+			
 			for (int i = 0; i < ticketsLayout.getChildCount(); i++) {
 				View ticket_ = (View)ticketsLayout.getChildAt(i);
 				if (ticket_.getClass() == Ticket.class) {
-					((Ticket)ticket_).animatedOffsetRight(null);
+					((Ticket)ticket_).animatedOffsetRight(73, null);
 				}
 			}
-			
 			ticketsLayout.addView(ticket, 1);
 			ticket.animatedShow();
 		} else {
@@ -247,11 +250,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
-		for(int i = 0; i < ticketsLayout.getChildCount() - 1; i++) {
+		for(int i = 0; i < ticketsLayout.getChildCount(); i++) {
 			if (ticketsLayout.getChildAt(i).getClass() == Ticket.class) {
 				Ticket t = (Ticket)ticketsLayout.getChildAt(i);
 				if (t.getRoute().id.equals(ticket.getRoute().id)) {
-					for(int j = i + 1; j < ticketsLayout.getChildCount() - 1; j++) {
+					for(int j = i + 1; j < ticketsLayout.getChildCount(); j++) {
 						if(ticketsLayout.getChildAt(j).getClass() == Ticket.class) {
 							Ticket ti = (Ticket)ticketsLayout.getChildAt(j);
 							ti.animatedOffsetLeft(null);
