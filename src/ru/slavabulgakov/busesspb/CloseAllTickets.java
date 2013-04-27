@@ -14,6 +14,12 @@ import android.widget.RelativeLayout;
 
 public class CloseAllTickets extends RelativeLayout implements AnimationListener {
 	
+	static final int ANIMATION_DURATION = 2000;
+	
+	interface OnAnimationEndListener {
+		void onAnimated(CloseAllTickets button);
+	}
+	
 	public CloseAllTickets(Context context) {
 		super(context);
 		setOnClickListener(Contr.getInstance());
@@ -32,26 +38,29 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 		addView(closeImage);
 	}
 	
-	public void animatedShow() {
-		int height = 50;
-		Animation animation = new TranslateAnimation(0, 0, height, 0);
-		animation.setDuration(400);
+	public void animatedShow(int offset) {
+		Animation animation = new TranslateAnimation(0, 0, offset, 0);
+		animation.setDuration(ANIMATION_DURATION);
 		animation.setFillAfter(true);
 		startAnimation(animation);
 	}
 	
-	public void animatedRemove() {
-		int height = 50;
-		Animation animation = new TranslateAnimation(0, 0, 0, height);
-		animation.setDuration(400);
-		animation.setFillAfter(true);
+	private OnAnimationEndListener _listener;
+	public void animatedRemove(OnAnimationEndListener listener) {
+		_listener = listener;
+		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
+		animation.setDuration(ANIMATION_DURATION);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
 
 	@Override
 	public void onAnimationEnd(Animation arg0) {
+		if (_listener != null) {
+			_listener.onAnimated(this);
+		}
 		((ViewGroup)getParent()).removeView(this);
+		clearAnimation();
 	}
 
 	@Override

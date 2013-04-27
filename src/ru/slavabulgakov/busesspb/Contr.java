@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.RootView.OnActionListener;
-import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -18,9 +17,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -221,18 +217,22 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		_model.setRouteToFavorite(route);
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		if (_model.getFavorite().size() > 1) {
-			
+			int width = 73;
+			if (_model.getFavorite().size() == 2) {
+				width += 35;
+			}
 			for (int i = 0; i < ticketsLayout.getChildCount(); i++) {
 				View ticket_ = (View)ticketsLayout.getChildAt(i);
 				if (ticket_.getClass() == Ticket.class) {
-					((Ticket)ticket_).animatedOffsetRight(73, null);
+					
+					((Ticket)ticket_).animatedOffsetRight(_model.dpToPx(width), null);
 				}
 			}
 			ticketsLayout.addView(ticket, 1);
-			ticket.animatedShow();
+			ticket.animatedShow(_model.dpToPx(60));
 		} else {
 			ticketsLayout.addView(ticket);
-			ticket.animatedShow();
+			ticket.animatedShow(_model.dpToPx(60));
 		}
 		((MainActivity)_currentActivity).updateListView();
 		
@@ -247,6 +247,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onRemove(Ticket ticket) {
 		_model.setRouteToAll(ticket.getRoute());
+		int width = 73;
+		if (_model.getFavorite().size() < 2) {
+			width += 35;
+		}
 		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
 		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
@@ -257,7 +261,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 					for(int j = i + 1; j < ticketsLayout.getChildCount(); j++) {
 						if(ticketsLayout.getChildAt(j).getClass() == Ticket.class) {
 							Ticket ti = (Ticket)ticketsLayout.getChildAt(j);
-							ti.animatedOffsetLeft(null);
+							ti.animatedOffsetLeft(_model.dpToPx(width), null);
 						}
 					}
 					break;

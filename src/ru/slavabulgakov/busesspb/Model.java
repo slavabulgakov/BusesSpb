@@ -727,4 +727,12 @@ public class Model extends Application {
 	public void setShareModel(ShareModel shareModel) {
 		_shareModel = shareModel;
 	}
+	
+	public int dpToPx(int dp) {
+		return (int)(getResources().getDisplayMetrics().density * dp);
+	}
+    
+    public int pxToDp(int px) {
+		return (int)(px / getResources().getDisplayMetrics().density);
+	}
 }

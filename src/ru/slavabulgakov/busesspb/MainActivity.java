@@ -152,11 +152,11 @@ public class MainActivity extends BaseActivity {
 		
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int width = display.getWidth();
-		width = _pxToDp(width);
+		width = _model.pxToDp(width);
 		if (width < 400) {
 			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
-			zoomLayoutParams.bottomMargin = _dpToPx(60);
+			zoomLayoutParams.bottomMargin = _model.dpToPx(60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
 		
@@ -175,14 +175,6 @@ public class MainActivity extends BaseActivity {
 			((ImageButton)findViewById(R.id.location)).setVisibility(View.GONE);
 		}
     }
-    
-    private int _dpToPx(int dp) {
-		return (int)(getResources().getDisplayMetrics().density * dp);
-	}
-    
-    private int _pxToDp(int px) {
-		return (int)(px / getResources().getDisplayMetrics().density);
-	}
     
     public void moveCameraToMyLocation() {
 		Location location = _map.getMyLocation();
@@ -237,12 +229,13 @@ public class MainActivity extends BaseActivity {
 			if (_ticketsLayout.getChildAt(0).getClass() != CloseAllTickets.class) {
 				CloseAllTickets closeAllBtn = new CloseAllTickets(this);
 				_ticketsLayout.addView(closeAllBtn, 0);
-				closeAllBtn.animatedShow();
+				closeAllBtn.animatedShow(_model.dpToPx(60));
 			}
 		} else {
 			if (_ticketsLayout.getChildCount() > 0) {
-				if (_ticketsLayout.getChildAt(0).getClass() == CloseAllTickets.class) {
-					_ticketsLayout.removeViewAt(0);
+				View closeAllBtn = _ticketsLayout.getChildAt(0);
+				if (closeAllBtn.getClass() == CloseAllTickets.class) {
+					((CloseAllTickets)closeAllBtn).animatedRemove(null);
 				}
 			}
 		}
@@ -340,7 +333,7 @@ public class MainActivity extends BaseActivity {
 			}
 	    	
 	    	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_mainRoutesBtn.getLayoutParams();
-			lp.setMargins(lp.leftMargin, lp.topMargin, _model.getFavorite().size() > 0 ? _dpToPx(50) : 0, lp.bottomMargin);
+			lp.setMargins(lp.leftMargin, lp.topMargin, _model.getFavorite().size() > 0 ? _model.dpToPx(50) : 0, lp.bottomMargin);
 			_mainRoutesBtn.setLayoutParams(lp);
 		}
 	}
