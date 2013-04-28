@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,7 +16,7 @@ import android.widget.RelativeLayout;
 
 public class CloseAllTickets extends RelativeLayout implements AnimationListener {
 	
-	static final int ANIMATION_DURATION = 1500;
+	static final int ANIMATION_DURATION = 2000;
 	
 	interface OnAnimationEndListener {
 		void onAnimated(CloseAllTickets button);
@@ -42,6 +43,7 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	public void animatedShow(int offset) {
 		Animation animation = new TranslateAnimation(0, 0, offset, 0);
 		animation.setDuration(ANIMATION_DURATION);
+		animation.setInterpolator(new DecelerateInterpolator());
 		animation.setFillAfter(true);
 		startAnimation(animation);
 	}
@@ -51,6 +53,7 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 		_listener = listener;
 		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
 		animation.setDuration(ANIMATION_DURATION);
+		animation.setInterpolator(new DecelerateInterpolator());
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}

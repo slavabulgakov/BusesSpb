@@ -241,20 +241,12 @@ public class MainActivity extends BaseActivity {
 						
 						@Override
 						public void onAnimated(final CloseAllTickets button) {
-							button.setVisibility(View.INVISIBLE);
-							
-							Timer timer = new Timer();
-							timer.schedule(new TimerTask() {
-								
-								@Override
-								public void run() {
-									((View) button.getParent()).post(new Runnable() {
-							            public void run() {
-							            	((ViewGroup)button.getParent()).removeView(button);
-							            }
-							        });
-								}
-							}, 500);
+							button.setVisibility(View.GONE);
+							((View) button.getParent()).post(new Runnable() {
+					            public void run() {
+					            	((ViewGroup)button.getParent()).removeView(button);
+					            }
+					        });
 						}
 					});
 				}
