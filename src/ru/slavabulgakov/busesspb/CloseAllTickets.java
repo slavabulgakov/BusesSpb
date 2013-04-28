@@ -4,6 +4,7 @@ package ru.slavabulgakov.busesspb;
 
 import android.content.Context;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -14,7 +15,7 @@ import android.widget.RelativeLayout;
 
 public class CloseAllTickets extends RelativeLayout implements AnimationListener {
 	
-	static final int ANIMATION_DURATION = 2000;
+	static final int ANIMATION_DURATION = 1500;
 	
 	interface OnAnimationEndListener {
 		void onAnimated(CloseAllTickets button);
@@ -59,7 +60,6 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 		if (_listener != null) {
 			_listener.onAnimated(this);
 		}
-		((ViewGroup)getParent()).removeView(this);
 		clearAnimation();
 	}
 

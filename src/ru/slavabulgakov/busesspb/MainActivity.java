@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -235,7 +237,26 @@ public class MainActivity extends BaseActivity {
 			if (_ticketsLayout.getChildCount() > 0) {
 				View closeAllBtn = _ticketsLayout.getChildAt(0);
 				if (closeAllBtn.getClass() == CloseAllTickets.class) {
-					((CloseAllTickets)closeAllBtn).animatedRemove(null);
+					((CloseAllTickets)closeAllBtn).animatedRemove(new OnAnimationEndListener() {
+						
+						@Override
+						public void onAnimated(final CloseAllTickets button) {
+							button.setVisibility(View.INVISIBLE);
+							
+							Timer timer = new Timer();
+							timer.schedule(new TimerTask() {
+								
+								@Override
+								public void run() {
+									((View) button.getParent()).post(new Runnable() {
+							            public void run() {
+							            	((ViewGroup)button.getParent()).removeView(button);
+							            }
+							        });
+								}
+							}, 500);
+						}
+					});
 				}
 			}
 		}
