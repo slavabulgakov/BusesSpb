@@ -16,7 +16,7 @@ import android.widget.RelativeLayout;
 
 public class CloseAllTickets extends RelativeLayout implements AnimationListener {
 	
-	static final int ANIMATION_DURATION = 2000;
+	static final int ANIMATION_DURATION = 300;
 	
 	interface OnAnimationEndListener {
 		void onAnimated(CloseAllTickets button);
