@@ -16,8 +16,6 @@ import android.widget.RelativeLayout;
 
 public class CloseAllTickets extends RelativeLayout implements AnimationListener {
 	
-	static final int ANIMATION_DURATION = 300;
-	
 	interface OnAnimationEndListener {
 		void onAnimated(CloseAllTickets button);
 	}
@@ -42,7 +40,7 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	
 	public void animatedShow(int offset) {
 		Animation animation = new TranslateAnimation(0, 0, offset, 0);
-		animation.setDuration(ANIMATION_DURATION);
+		animation.setDuration(Contr.ANIMATION_DURATION);
 		animation.setInterpolator(new DecelerateInterpolator());
 		animation.setFillAfter(true);
 		startAnimation(animation);
@@ -52,7 +50,7 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	public void animatedRemove(OnAnimationEndListener listener) {
 		_listener = listener;
 		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
-		animation.setDuration(ANIMATION_DURATION);
+		animation.setDuration(Contr.ANIMATION_DURATION);
 		animation.setInterpolator(new DecelerateInterpolator());
 		animation.setAnimationListener(this);
 		startAnimation(animation);

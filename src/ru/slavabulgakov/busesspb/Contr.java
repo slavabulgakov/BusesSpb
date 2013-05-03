@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.RootView.OnActionListener;
+import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -16,6 +17,7 @@ import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -35,6 +37,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	private static volatile Contr _instance;
 	private Model _model;
 	private Activity _currentActivity;
+	
+	static final int ANIMATION_DURATION = 200;
 	
 	public static Contr getInstance() {
     	Contr localInstance = _instance;
@@ -143,8 +147,47 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 				_model.getAllRoutes().add(route);
 			}
 			_model.getFavorite().clear();
-			ticketsLayout.removeAllViews();
+//			ticketsLayout.removeAllViews();
 			((MainActivity)_currentActivity).updateListView();
+			
+			for (int i = 0; i < ticketsLayout.getChildCount(); i++) {
+				View view = ticketsLayout.getChildAt(i);
+				if (view.getClass() == Ticket.class) {
+					Ticket ticket = (Ticket)view;
+					ticket.animatedRemove(new OnAnimationEndListener() {
+						
+						@Override
+						public void onAnimated(final Ticket ticket_) {
+							ticket_.setVisibility(View.GONE);
+							((View)ticket_.getParent()).post(new Runnable() {
+					            public void run() {
+					            	((ViewGroup)ticket_.getParent()).removeView(ticket_);
+					            }
+					        });
+						}
+					});
+				} else if (view.getClass() == CloseAllTickets.class) {
+					CloseAllTickets closeAllTickets = (CloseAllTickets)view;
+					closeAllTickets.animatedRemove(new CloseAllTickets.OnAnimationEndListener() {
+						
+						@Override
+						public void onAnimated(final CloseAllTickets button) {
+							button.setVisibility(View.GONE);
+							((View)button.getParent()).post(new Runnable() {
+					            public void run() {
+					            	((ViewGroup)button.getParent()).removeView(button);
+					            }
+					        });
+							HorizontalScrollView ticketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
+							ticketsScrollView.setVisibility(View.GONE);
+							FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
+							TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
+							animation.setDuration(Contr.ANIMATION_DURATION);
+							frameLayout.startAnimation(animation);
+						}
+					});
+				}
+			}
 		}
 	}
 
@@ -243,34 +286,37 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		final HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
 		FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
 		TranslateAnimation animation = null;
-		if (_model.getFavorite().size() > 0) {
-			animation = new TranslateAnimation(0, 0, 0, routeTicketsScrollView.getHeight());
-		} else {
-			animation = new TranslateAnimation(0, 0, 0, -routeTicketsScrollView.getHeight());
+		if (_model.getFavorite().size() == 1) {
+			animation = new TranslateAnimation(0, 0, 0, _model.dpToPx(60));
+			routeTicketsScrollView.setVisibility(View.GONE);
+		} else if (_model.getFavorite().size() == 0) {
+			animation = new TranslateAnimation(0, 0, 0, -_model.dpToPx(60));
 		}
-		animation.setDuration(2000);
-		animation.setAnimationListener(new AnimationListener() {
-			
-			@Override
-			public void onAnimationStart(Animation animation) {}
-			
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
-			
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				if (_model.getFavorite().size() > 0) {
-					routeTicketsScrollView.setVisibility(View.VISIBLE);
-				} else {
-					routeTicketsScrollView.setVisibility(View.GONE);
+		if (animation != null) {
+			animation.setDuration(Contr.ANIMATION_DURATION);
+			animation.setAnimationListener(new AnimationListener() {
+				
+				@Override
+				public void onAnimationStart(Animation animation) {}
+				
+				@Override
+				public void onAnimationRepeat(Animation animation) {}
+				
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					if (_model.getFavorite().size() > 0) {
+						routeTicketsScrollView.setVisibility(View.VISIBLE);
+					} else {
+						routeTicketsScrollView.setVisibility(View.GONE);
+					}
 				}
-			}
-		});
-		frameLayout.startAnimation(animation);
+			});
+			frameLayout.startAnimation(animation);
+		}
 	}
 
 	@Override
-	public void onRemove(Ticket ticket) {
+	public void willRemove(Ticket ticket) {
 		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
 		int width = ticket.getWidth();
 		int closeAllBtnWidth = ticketsLayout.getChildAt(0).getWidth();
@@ -300,6 +346,18 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 					break;
 				}
 			}
+		}
+	}
+	
+	@Override
+	public void didRemove(Ticket ticket) {
+		if (_model.getFavorite().size() == 0) {
+			HorizontalScrollView ticketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
+			ticketsScrollView.setVisibility(View.GONE);
+			FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
+			TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
+			animation.setDuration(Contr.ANIMATION_DURATION);
+			frameLayout.startAnimation(animation);
 		}
 	}
 

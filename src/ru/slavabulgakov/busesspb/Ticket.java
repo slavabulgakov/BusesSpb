@@ -9,16 +9,17 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Ticket extends LinearLayout implements AnimationListener {
 	
-	static final int ANIMATION_DURATION = 300;
-	
 	interface OnRemoveListener {
-		void onRemove(Ticket ticket);
+		void willRemove(Ticket ticket);
+		void didRemove(Ticket ticket);
 	}
 	
 	interface OnAnimationEndListener {
@@ -64,9 +65,10 @@ public class Ticket extends LinearLayout implements AnimationListener {
 				            	((ViewGroup)Ticket.this.getParent()).removeView(Ticket.this);
 				            }
 				        });
+						_onRemoveListener.didRemove(ticket);
 					}
 				});
-				_onRemoveListener.onRemove(Ticket.this);
+				_onRemoveListener.willRemove(Ticket.this);
 			}
 		});
 	}
@@ -133,7 +135,7 @@ public class Ticket extends LinearLayout implements AnimationListener {
 	public void animatedRemove(OnAnimationEndListener listener) {
 		_animationEndListener = listener;
 		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
-		animation.setDuration(ANIMATION_DURATION);
+		animation.setDuration(Contr.ANIMATION_DURATION);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
@@ -144,7 +146,7 @@ public class Ticket extends LinearLayout implements AnimationListener {
 	
 	public void animatedShow(int offset) {
 		Animation animation = new TranslateAnimation(0, 0, offset, 0);
-		animation.setDuration(ANIMATION_DURATION);
+		animation.setDuration(Contr.ANIMATION_DURATION);
 		startAnimation(animation);
 		_isShowed = true;
 	}
@@ -152,14 +154,14 @@ public class Ticket extends LinearLayout implements AnimationListener {
 	public void animatedOffsetRight(int offset, OnAnimationEndListener listener) {
 		_animationEndListener = listener;
 		Animation animation = new TranslateAnimation(-offset, 0, 0, 0);
-		animation.setDuration(ANIMATION_DURATION);
+		animation.setDuration(Contr.ANIMATION_DURATION);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
 	public void animatedOffsetLeft(int offset, OnAnimationEndListener listener) {
 		_animationEndListener = listener;
 		Animation animation = new TranslateAnimation(0, -offset, 0, 0);
-		animation.setDuration(ANIMATION_DURATION);
+		animation.setDuration(Contr.ANIMATION_DURATION);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
