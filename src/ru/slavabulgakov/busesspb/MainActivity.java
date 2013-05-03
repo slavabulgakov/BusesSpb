@@ -133,17 +133,7 @@ public class MainActivity extends BaseActivity {
 		
 		
 		
-		_map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-		if (_map != null) {
-			CameraUpdate center = CameraUpdateFactory.newLatLng(_model.getLocation());
-	        _map.moveCamera(center);
-	        CameraUpdate zoom = CameraUpdateFactory.zoomTo(_model.getZoom());
-	        _map.animateCamera(zoom);
-	        _map.setMyLocationEnabled(true);
-	        _map.setOnCameraChangeListener(Contr.getInstance());
-	        _map.getUiSettings().setMyLocationButtonEnabled(false);
-	        _map.getUiSettings().setZoomControlsEnabled(false);
-		}
+		
 		
 		((ImageButton)findViewById(R.id.location)).setOnClickListener(Contr.getInstance());
 		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Contr.getInstance());
@@ -160,21 +150,6 @@ public class MainActivity extends BaseActivity {
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
 			zoomLayoutParams.bottomMargin = _model.dpToPx(60);
 			zoom.setLayoutParams(zoomLayoutParams);
-		}
-		
-		if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
-			_busFilter.setVisibility(View.GONE);
-			_trolleyFilter.setVisibility(View.GONE);
-			_tramFilter.setVisibility(View.GONE);
-			_menuBusFilter.setVisibility(View.GONE);
-			_menuTrolleyFilter.setVisibility(View.GONE);
-			_menuTramFilter.setVisibility(View.GONE);
-			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.GONE);
-			_editText.setVisibility(View.GONE);
-			((ImageButton)findViewById(R.id.about)).setVisibility(View.GONE);
-			_progressBar.setVisibility(View.GONE);
-			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.GONE);
-			((ImageButton)findViewById(R.id.location)).setVisibility(View.GONE);
 		}
     }
     
@@ -222,6 +197,46 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	protected void onResume() {
+		_map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+		if (_map != null) {
+			CameraUpdate center = CameraUpdateFactory.newLatLng(_model.getLocation());
+	        _map.moveCamera(center);
+	        CameraUpdate zoom = CameraUpdateFactory.zoomTo(_model.getZoom());
+	        _map.animateCamera(zoom);
+	        _map.setMyLocationEnabled(true);
+	        _map.setOnCameraChangeListener(Contr.getInstance());
+	        _map.getUiSettings().setMyLocationButtonEnabled(false);
+	        _map.getUiSettings().setZoomControlsEnabled(false);
+		}
+		
+		if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
+			_busFilter.setVisibility(View.GONE);
+			_trolleyFilter.setVisibility(View.GONE);
+			_tramFilter.setVisibility(View.GONE);
+			_menuBusFilter.setVisibility(View.GONE);
+			_menuTrolleyFilter.setVisibility(View.GONE);
+			_menuTramFilter.setVisibility(View.GONE);
+			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.GONE);
+			_editText.setVisibility(View.GONE);
+			((ImageButton)findViewById(R.id.about)).setVisibility(View.GONE);
+			_progressBar.setVisibility(View.GONE);
+			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.GONE);
+			((ImageButton)findViewById(R.id.location)).setVisibility(View.GONE);
+		} else {
+			_busFilter.setVisibility(View.VISIBLE);
+			_trolleyFilter.setVisibility(View.VISIBLE);
+			_tramFilter.setVisibility(View.VISIBLE);
+			_menuBusFilter.setVisibility(View.VISIBLE);
+			_menuTrolleyFilter.setVisibility(View.VISIBLE);
+			_menuTramFilter.setVisibility(View.VISIBLE);
+			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.VISIBLE);
+			_editText.setVisibility(View.VISIBLE);
+			((ImageButton)findViewById(R.id.about)).setVisibility(View.VISIBLE);
+			_progressBar.setVisibility(View.VISIBLE);
+			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.VISIBLE);
+			((ImageButton)findViewById(R.id.location)).setVisibility(View.VISIBLE);
+		}
+		
 		_updateControls();
 		super.onResume();
 	}
@@ -439,9 +454,11 @@ public class MainActivity extends BaseActivity {
 	@SuppressLint("NewApi")
 	public void updateTransport() {
     	if (_model.getFavorite().size() == 0) {
-    		View mainFrame = findViewById(R.id.mainFrame);
-    		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-            _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+    		if (_map != null) {
+    			View mainFrame = findViewById(R.id.mainFrame);
+        		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
+                _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+			}
 		} else {
 			_model.showFavoriteRoutes(Contr.getInstance());
 		}

@@ -151,11 +151,13 @@ public class Model extends Application {
 		return _location;
 	}
 	public void saveLocation() {
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putFloat("current_lat", (float)_location.latitude);
-		editor.putFloat("current_lng", (float)_location.longitude);
-		editor.commit();
+		if (_location != null) {
+			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putFloat("current_lat", (float)_location.latitude);
+			editor.putFloat("current_lng", (float)_location.longitude);
+			editor.commit();
+		}
 	}
 	public void setLocation(LatLng location) {
 		_location = location;
@@ -172,7 +174,7 @@ public class Model extends Application {
 	public void saveZoom() {
 		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putFloat("zoom", _zoom);
+		editor.putFloat("zoom", _zoom == 0 ? 10 : _zoom);
 		editor.commit();
 	}
 	public void setZoom(float zoom) {
