@@ -135,7 +135,7 @@ public class Ticket extends LinearLayout implements AnimationListener {
 	public void animatedRemove(OnAnimationEndListener listener) {
 		_animationEndListener = listener;
 		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
-		animation.setDuration(Contr.ANIMATION_DURATION);
+		animation.setDuration(Animations.ANIMATION_DURATION);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
@@ -146,7 +146,7 @@ public class Ticket extends LinearLayout implements AnimationListener {
 	
 	public void animatedShow(int offset) {
 		Animation animation = new TranslateAnimation(0, 0, offset, 0);
-		animation.setDuration(Contr.ANIMATION_DURATION);
+		animation.setDuration(Animations.ANIMATION_DURATION);
 		startAnimation(animation);
 		_isShowed = true;
 	}
@@ -154,14 +154,14 @@ public class Ticket extends LinearLayout implements AnimationListener {
 	public void animatedOffsetRight(int offset, OnAnimationEndListener listener) {
 		_animationEndListener = listener;
 		Animation animation = new TranslateAnimation(-offset, 0, 0, 0);
-		animation.setDuration(Contr.ANIMATION_DURATION);
+		animation.setDuration(Animations.ANIMATION_DURATION);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}
 	public void animatedOffsetLeft(int offset, OnAnimationEndListener listener) {
 		_animationEndListener = listener;
 		Animation animation = new TranslateAnimation(0, -offset, 0, 0);
-		animation.setDuration(Contr.ANIMATION_DURATION);
+		animation.setDuration(Animations.ANIMATION_DURATION);
 		animation.setAnimationListener(this);
 		startAnimation(animation);
 	}

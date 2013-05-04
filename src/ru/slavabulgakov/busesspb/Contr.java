@@ -36,9 +36,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	
 	private static volatile Contr _instance;
 	private Model _model;
-	private Activity _currentActivity;
-	
-	static final int ANIMATION_DURATION = 200;
+	private BaseActivity _currentActivity;
 	
 	public static Contr getInstance() {
     	Contr localInstance = _instance;
@@ -56,6 +54,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void setActivity(BaseActivity activity) {
 		_currentActivity = activity;
 		_model = (Model)_currentActivity.getApplicationContext();
+	}
+	
+	public BaseActivity getActivity() {
+		return _currentActivity;
 	}
 
 	@SuppressLint("NewApi")
@@ -182,7 +184,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 							ticketsScrollView.setVisibility(View.GONE);
 							FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
 							TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
-							animation.setDuration(Contr.ANIMATION_DURATION);
+							animation.setDuration(Animations.ANIMATION_DURATION);
 							frameLayout.startAnimation(animation);
 						}
 					});
@@ -253,66 +255,21 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		final LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
+	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-		Adapter adapter = (Adapter)listView.getAdapter();
-		Route route = adapter.getItem(position);
-		final Ticket ticket = new Ticket(_currentActivity, null);
-		ticket.setRoute(route);
-		ticket.setOnRemoveListener(this);
+		final Adapter adapter = (Adapter)listView.getAdapter();
+		final Route route = adapter.getItem(position);
 		_model.setRouteToFavorite(route);
-		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
-		if (_model.getFavorite().size() > 1) {
-			int width = 73;
-			if (_model.getFavorite().size() == 2) {
-				width += 35;
+		Animations.listItemCollapse(view, new Animations.OnAnimationEndListener() {
+			
+			@Override
+			public void onAnimated(View view) {
+				adapter.removeRoute(position, view);
 			}
-			for (int i = 0; i < ticketsLayout.getChildCount(); i++) {
-				View ticket_ = (View)ticketsLayout.getChildAt(i);
-				if (ticket_.getClass() == Ticket.class) {
-					
-					((Ticket)ticket_).animatedOffsetRight(_model.dpToPx(width), null);
-				}
-			}
-			ticketsLayout.addView(ticket, 1);
-			ticket.animatedShow(_model.dpToPx(60));
-		} else {
-			ticketsLayout.addView(ticket);
-			ticket.animatedShow(_model.dpToPx(60));
-		}
-		((MainActivity)_currentActivity).updateListView();
+		});
 		
-		final HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
-		FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
-		TranslateAnimation animation = null;
-		if (_model.getFavorite().size() == 1) {
-			animation = new TranslateAnimation(0, 0, 0, _model.dpToPx(60));
-			routeTicketsScrollView.setVisibility(View.GONE);
-		} else if (_model.getFavorite().size() == 0) {
-			animation = new TranslateAnimation(0, 0, 0, -_model.dpToPx(60));
-		}
-		if (animation != null) {
-			animation.setDuration(Contr.ANIMATION_DURATION);
-			animation.setAnimationListener(new AnimationListener() {
-				
-				@Override
-				public void onAnimationStart(Animation animation) {}
-				
-				@Override
-				public void onAnimationRepeat(Animation animation) {}
-				
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					if (_model.getFavorite().size() > 0) {
-						routeTicketsScrollView.setVisibility(View.VISIBLE);
-					} else {
-						routeTicketsScrollView.setVisibility(View.GONE);
-					}
-				}
-			});
-			frameLayout.startAnimation(animation);
-		}
+		Animations.addTicket(route);
+		Animations.slideDownRoutesListView();
 	}
 
 	@Override
@@ -356,7 +313,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			ticketsScrollView.setVisibility(View.GONE);
 			FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
 			TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
-			animation.setDuration(Contr.ANIMATION_DURATION);
+			animation.setDuration(Animations.ANIMATION_DURATION);
 			frameLayout.startAnimation(animation);
 		}
 	}

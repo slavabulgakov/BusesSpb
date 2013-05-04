@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ class Adapter extends ArrayAdapter<Route> {
 	private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Route>());
 	Context _context;
 	Model _model;
+	LayoutInflater _inflater;
 	
 	class MyFilter extends Filter {
 
@@ -122,29 +124,47 @@ class Adapter extends ArrayAdapter<Route> {
 		
 	}
 	
+	private class ViewHolder {
+		public boolean needInflate;
+		public TextView routeNumber;
+		public ImageView routeKindImg;
+		public TextView cost;
+		public ImageView currency;
+	}
+	
 	public Adapter(Context context, Model model) {
 		super(context, R.layout.listitem_selectroute, model.getAllRoutes());
 		_context = context;
 		_model = model;
 		_filter = new MyFilter();
+		_inflater = ((Activity)_context).getLayoutInflater();
 	}
-	
-	
 	
 	@Override
 	public Route getItem(int position) {
 		return _filtredList.get(position);
 	}
 
-
+	public void removeRoute(int position, View view) {
+		ViewHolder vh = (ViewHolder)view.getTag();
+		vh.needInflate = true;
+		_filtredList.remove(position);
+		notifyDataSetChanged();
+	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-			LayoutInflater inflater = ((Activity)_context).getLayoutInflater();
-			convertView = inflater.inflate(R.layout.listitem_selectroute, parent, false);
+			convertView = _inflater.inflate(R.layout.listitem_selectroute, parent, false);
+			_setViewHolder(convertView);
+		} else if (((ViewHolder)convertView.getTag()).needInflate) {
+			convertView = _inflater.inflate(R.layout.listitem_selectroute, parent, false);
+			_setViewHolder(convertView);
 		}
-		((TextView)convertView.findViewById(R.id.listItemSelectRouteRouteName)).setText(_filtredList.get(position).routeNumber);
+		
+		ViewHolder vh = (ViewHolder)convertView.getTag();
+		
+		vh.routeNumber.setText(_filtredList.get(position).routeNumber);
 		int bgResId = -1;
 		int iconResId = -1;
 		switch (_filtredList.get(position).kind) {
@@ -168,11 +188,11 @@ class Adapter extends ArrayAdapter<Route> {
 		}
 		
 		convertView.setBackgroundResource(bgResId);
-		((ImageView)convertView.findViewById(R.id.listItemSelectRouteKind)).setImageResource(iconResId);
+		vh.routeKindImg.setImageResource(iconResId);
 		
 		Integer cost = _filtredList.get(position).cost;
-		TextView costTextView = (TextView)convertView.findViewById(R.id.listItemSelectRouteCost);
-		ImageView currency = (ImageView)convertView.findViewById(R.id.currency);
+		TextView costTextView = vh.cost;
+		ImageView currency = vh.currency;
 		if (cost == null) {
 			costTextView.setVisibility(View.INVISIBLE);
 			currency.setVisibility(View.INVISIBLE);
@@ -183,6 +203,16 @@ class Adapter extends ArrayAdapter<Route> {
 		}
 		
 		return convertView;
+	}
+	
+	private void _setViewHolder(View view) {
+		ViewHolder vh = new ViewHolder();
+		vh.routeKindImg = (ImageView)view.findViewById(R.id.listItemSelectRouteKind);
+		vh.routeNumber = (TextView)view.findViewById(R.id.listItemSelectRouteRouteName);
+		vh.cost = (TextView)view.findViewById(R.id.listItemSelectRouteCost);
+		vh.currency = (ImageView)view.findViewById(R.id.currency);
+		vh.needInflate = false;
+		view.setTag(vh);
 	}
 
 	@Override

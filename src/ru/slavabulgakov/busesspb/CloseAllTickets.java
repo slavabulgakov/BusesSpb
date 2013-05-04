@@ -40,7 +40,7 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	
 	public void animatedShow(int offset) {
 		Animation animation = new TranslateAnimation(0, 0, offset, 0);
-		animation.setDuration(Contr.ANIMATION_DURATION);
+		animation.setDuration(Animations.ANIMATION_DURATION);
 		animation.setInterpolator(new DecelerateInterpolator());
 		animation.setFillAfter(true);
 		startAnimation(animation);
@@ -50,7 +50,7 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	public void animatedRemove(OnAnimationEndListener listener) {
 		_listener = listener;
 		Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
-		animation.setDuration(Contr.ANIMATION_DURATION);
+		animation.setDuration(Animations.ANIMATION_DURATION);
 		animation.setInterpolator(new DecelerateInterpolator());
 		animation.setAnimationListener(this);
 		startAnimation(animation);
