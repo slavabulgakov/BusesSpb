@@ -8,7 +8,6 @@ import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -504,32 +503,26 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private BitmapDescriptor _getRouteNumberBitMap(String routeNumber) {
-		int width = 40;
-		int height = 20;
-		int fontSize = 11;
+		int height = _model.dpToPx(20);
+		int fontSize = _model.dpToPx(11);
 		
-		
-		Resources resources = getResources();
-		float scale = resources.getDisplayMetrics().density;
-		float scaledFontSize = fontSize * (float)scale;
-		
-		
-		Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
 		
 		Paint paintHighlight = new Paint(Paint.ANTI_ALIAS_FLAG);
-		float textWidth = paintHighlight.measureText(routeNumber);
 		paintHighlight.setColor(Color.argb(0xff, 0x45, 0x45, 0x45));
-		int leftRightMargin = (width - (int)textWidth) / 2;
-		int topBottomMargin = (int)(((float)height - scaledFontSize) / 2.0 - 3.0 * scale);
-		canvas.drawRect(leftRightMargin, topBottomMargin, width - leftRightMargin, topBottomMargin + scaledFontSize, paintHighlight);
+		int textWidth = Math.round(_model.dpToPx((int)paintHighlight.measureText(routeNumber)));
+		int leftRightMargin = 0;
+		Bitmap bitmap = Bitmap.createBitmap(textWidth + leftRightMargin * 2, height, Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		
+		int topBottomMargin = 0;
+		canvas.drawRect(leftRightMargin, topBottomMargin, textWidth - leftRightMargin, topBottomMargin + fontSize, paintHighlight);
 		
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		paint.setTextAlign(Align.CENTER);
 		paint.setColor(Color.WHITE);
-		paint.setTextSize(scaledFontSize);
+		paint.setTextSize(fontSize);
 		paint.setShadowLayer(4, 2, 2, Color.WHITE);
-		canvas.drawText(routeNumber, width / 2, height / 2, paint);
+		canvas.drawText(routeNumber, textWidth / 2, height / 2 - _model.dpToPx(1), paint);
 		
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
 	}

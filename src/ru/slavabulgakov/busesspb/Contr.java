@@ -11,7 +11,6 @@ import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.text.Editable;
@@ -19,8 +18,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -274,36 +271,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void willRemove(Ticket ticket) {
-		LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
-		int width = ticket.getWidth();
-		int closeAllBtnWidth = ticketsLayout.getChildAt(0).getWidth();
-		if (_model.getFavorite().size() == 2) {
-			width += closeAllBtnWidth;
-		}
 		_model.setRouteToAll(ticket.getRoute());
 		((MainActivity)_currentActivity).updateListView();
 		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
-		for(int i = 0; i < ticketsLayout.getChildCount(); i++) {
-			if (ticketsLayout.getChildAt(i).getClass() == Ticket.class) {
-				Ticket t = (Ticket)ticketsLayout.getChildAt(i);
-				if (t.getRoute().id.equals(ticket.getRoute().id)) {
-					if (ticketsLayout.getChildCount() == 3) {
-						if (i == ticketsLayout.getChildCount() - 1) {
-							Ticket ti = (Ticket)ticketsLayout.getChildAt(1);
-							ti.animatedOffsetLeft(_model.dpToPx(closeAllBtnWidth), null);
-						} else {
-							for(int j = i + 1; j < ticketsLayout.getChildCount(); j++) {
-								if(ticketsLayout.getChildAt(j).getClass() == Ticket.class) {
-									Ticket ti = (Ticket)ticketsLayout.getChildAt(j);
-									ti.animatedOffsetLeft(_model.dpToPx(width), null);
-								}
-							}
-						}
-					} 
-					break;
-				}
-			}
-		}
+		
+		Animations.removeTicket(ticket);
 	}
 	
 	@Override

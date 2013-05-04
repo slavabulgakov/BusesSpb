@@ -123,4 +123,42 @@ public class Animations {
 		view.setAnimation(animation);
 		view.startAnimation(animation);
 	}
+	
+	static public void removeTicket(Ticket ticket) {
+		MainActivity mainActivity = _getMainActivity();
+		if (mainActivity == null) {
+			return;
+		}
+		
+		Model model = _getModel();
+		
+		LinearLayout ticketsLayout = (LinearLayout)mainActivity.findViewById(R.id.selectRouteTickets);
+		int width = ticket.getWidth();
+		int closeAllBtnWidth = ticketsLayout.getChildAt(0).getWidth();
+		if (model.getFavorite().size() == 2) {
+			width += closeAllBtnWidth;
+		}
+		
+		for(int i = 0; i < ticketsLayout.getChildCount(); i++) {
+			if (ticketsLayout.getChildAt(i).getClass() == Ticket.class) {
+				Ticket t = (Ticket)ticketsLayout.getChildAt(i);
+				if (t.getRoute().id.equals(ticket.getRoute().id)) {
+					if (ticketsLayout.getChildCount() == 3) {
+						if (i == ticketsLayout.getChildCount() - 1) {
+							Ticket ti = (Ticket)ticketsLayout.getChildAt(1);
+							ti.animatedOffsetLeft(model.dpToPx(closeAllBtnWidth), null);
+						} else {
+							for(int j = i + 1; j < ticketsLayout.getChildCount(); j++) {
+								if(ticketsLayout.getChildAt(j).getClass() == Ticket.class) {
+									Ticket ti = (Ticket)ticketsLayout.getChildAt(j);
+									ti.animatedOffsetLeft(model.dpToPx(width), null);
+								}
+							}
+						}
+					} 
+					break;
+				}
+			}
+		}
+	}
 }
