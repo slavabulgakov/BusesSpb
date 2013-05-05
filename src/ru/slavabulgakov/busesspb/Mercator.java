@@ -155,7 +155,7 @@ public class Mercator {
 			start_mer = box_left_mer;
 		} else {
 			coeff = lat_coeff;
-			start_deg = box_up_deg + .0035;
+			start_deg = box_up_deg + .00365;
 			start_mer = box_up_mer;
 		}
     	
@@ -189,7 +189,7 @@ public class Mercator {
 			start_mer = box_left_mer;
 		} else {
 			coeff = lat_coeff;
-			start_deg = box_up_deg + .0035;
+			start_deg = box_up_deg + .00365;
 			start_mer = box_up_mer;
 		}
     	
