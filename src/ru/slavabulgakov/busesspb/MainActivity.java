@@ -208,6 +208,8 @@ public class MainActivity extends BaseActivity {
 	        _map.getUiSettings().setZoomControlsEnabled(false);
 		}
 		
+		_toggleRotateMap(_model.menuIsOpened());
+		
 		if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
 			_busFilter.setVisibility(View.GONE);
 			_trolleyFilter.setVisibility(View.GONE);
@@ -370,6 +372,22 @@ public class MainActivity extends BaseActivity {
 		imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
     }
     
+    private void _toggleRotateMap(boolean isOpen) {
+    	if (!isOpen) {
+			if (_map != null) {
+				if (_model.getFavorite().size() == 0) {
+					_map.getUiSettings().setRotateGesturesEnabled(false);
+					CameraPosition camPos = _map.getCameraPosition();
+					if (camPos.bearing != 0) {
+						_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
+					}
+				} else {
+					_map.getUiSettings().setRotateGesturesEnabled(true);
+				}
+			}
+		}
+    }
+    
     public void menuChangeState(boolean isOpen) {
     	
     	
@@ -388,19 +406,7 @@ public class MainActivity extends BaseActivity {
 		
 		
 		{// отключение/включение вертелки карты
-			if (!isOpen) {
-				if (_map != null) {
-					if (_model.getFavorite().size() == 0) {
-						_map.getUiSettings().setRotateGesturesEnabled(false);
-						CameraPosition camPos = _map.getCameraPosition();
-						if (camPos.bearing != 0) {
-							_map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(camPos.target, camPos.zoom, camPos.tilt, 0)));
-						}
-					} else {
-						_map.getUiSettings().setRotateGesturesEnabled(true);
-					}
-				}
-			}
+			_toggleRotateMap(isOpen);
 		}
 		
 		
@@ -521,7 +527,6 @@ public class MainActivity extends BaseActivity {
 		paint.setTextAlign(Align.CENTER);
 		paint.setColor(Color.WHITE);
 		paint.setTextSize(fontSize);
-		paint.setShadowLayer(4, 2, 2, Color.WHITE);
 		canvas.drawText(routeNumber, textWidth / 2, height / 2 - _model.dpToPx(1), paint);
 		
 		return BitmapDescriptorFactory.fromBitmap(bitmap);

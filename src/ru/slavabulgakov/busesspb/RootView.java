@@ -117,7 +117,9 @@ public class RootView extends RelativeLayout {
 			} else {
 				_animateMove(0);
 			}
-			_setHolded(false);
+			if (_hold) {
+				_setHolded(false);
+			}
 			break;
 
 		default:
