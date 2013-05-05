@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,6 +30,11 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 		}
 		((ImageButton)findViewById(R.id.back_btn)).setOnClickListener(Contr.getInstance());
 		_shareFragment = (ShareFragment)getSupportFragmentManager().findFragmentById(R.id.shareFragment);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return false;
 	}
 
 	@Override
