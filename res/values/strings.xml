@@ -18,6 +18,7 @@
     <string name="author_email2">Email: slavabulgakov@gmail.com</string>
     <string name="about_text">Если вы обнаружите ошибку, то не стесняйтесь, пишите. У меня нет того многообразия устройств, которое есть у вас, чтобы потестировать на них Автобусы СПб :)</string>
     <string name="send_btn">Отправить отзыв или сообщить о проблеме</string>
+    <string name="rate_btn">Оценить приложение</string>
     <string name="none">none</string>
     <string name="share">Рассказать\nдрузьям:</string>
     <string name="admob_publisher_id">a15164a111d9a0f</string>
@@ -45,6 +46,7 @@
     <string name="connection_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
     <string name="velocity">Скорость: </string>
     <string name="km">км/час</string>
+    <string name="market_deny">Невозможно открыть Google Play, пожалуйста, уставите приложение Google Play</string>
     
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
