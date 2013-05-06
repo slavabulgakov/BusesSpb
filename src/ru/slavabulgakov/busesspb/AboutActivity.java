@@ -23,7 +23,6 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
-		((Button)findViewById(R.id.aboutSendBtn)).setOnClickListener(this);
 		TextView appVersion = (TextView)findViewById(R.id.app_version);
 		try {
 			PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
