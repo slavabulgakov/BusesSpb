@@ -50,7 +50,7 @@
         android:padding="15dp"
         android:text="@string/rate_btn"
         android:textSize="20sp"
-        android:drawableLeft="@drawable/email_01"
+        android:drawableLeft="@drawable/ratestar"
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowColor="#000000"
