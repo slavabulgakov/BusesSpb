@@ -203,9 +203,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onTransportListOfRouteLoadComplete(ArrayList<Transport> array) {
 		if (_currentActivity.getClass() == MainActivity.class) {
-			if(array == null) {
-				Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
-			}
 			((MainActivity)_currentActivity).showTransportListOnMap(array);
 		}
 	}
