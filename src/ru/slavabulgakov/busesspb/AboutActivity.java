@@ -31,6 +31,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
+		((ImageButton)findViewById(R.id.back_btn)).setOnClickListener(Contr.getInstance());
 		((Button)findViewById(R.id.aboutRateBtn)).setOnClickListener(this);
 		((Button)findViewById(R.id.aboutSendBtn)).setOnClickListener(this);
 		_shareFragment = (ShareFragment)getSupportFragmentManager().findFragmentById(R.id.shareFragment);
