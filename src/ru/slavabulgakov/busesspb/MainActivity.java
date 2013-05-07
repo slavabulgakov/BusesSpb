@@ -6,6 +6,8 @@ import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +21,12 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -150,6 +158,39 @@ public class MainActivity extends BaseActivity {
 			zoomLayoutParams.bottomMargin = _model.dpToPx(60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
+		
+//		Timer timer = new Timer();
+//		timer.schedule(new TimerTask() {
+//			
+//			@Override
+//			public void run() {
+//				runOnUiThread(new Runnable() {
+//					
+//					@Override
+//					public void run() {
+//						_openCloseAnimation();
+//					}
+//				});
+//			}
+//		}, 10000);
+		
+    }
+    
+    private void _openCloseAnimation() {
+    	AnimationSet set = new AnimationSet(false);
+		
+		TranslateAnimation open = new TranslateAnimation(0, 50, 0, 0);
+		open.setInterpolator(new OvershootInterpolator());
+		open.setDuration(1000);
+		set.addAnimation(open);
+		
+		TranslateAnimation close = new TranslateAnimation(0, -50, 0, 0);
+		close.setInterpolator(new BounceInterpolator());
+		close.setDuration(2000);
+		close.setStartOffset(1000);
+		set.addAnimation(close);
+		
+		_rootView.startAnimation(set);
     }
     
     public void moveCameraToMyLocation() {
@@ -567,6 +608,7 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 	
+	boolean _showed = false;
 	public void showTransportImgOnMap(Bitmap img) {
 		if (img != null) {
 			if (_map != null) {
@@ -576,6 +618,11 @@ public class MainActivity extends BaseActivity {
 		        _map.addGroundOverlay(new GroundOverlayOptions()
 		            .image(image)
 		            .positionFromBounds(bounds));
+		        
+		        if (!_showed) {
+					_showed = true;
+					_openCloseAnimation();
+				}
 			}
 		}
 	}
