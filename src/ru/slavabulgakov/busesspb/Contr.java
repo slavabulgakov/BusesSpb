@@ -299,6 +299,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onInternetAccessDeny() {
-		Toast.makeText(_currentActivity, R.string.internet_access_deny, Toast.LENGTH_LONG).show();
+		Toast.makeText(_currentActivity, R.string.internet_access_deny, Toast.LENGTH_SHORT).show();
 	}
 }

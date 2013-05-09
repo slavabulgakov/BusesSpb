@@ -701,7 +701,7 @@ public class Model extends Application {
 	    if (!online) {
 	    	Date now = new Date();
 			if (_lastNetErrorDate != null) {
-				if (now.getTime() - _lastNetErrorDate.getTime() > 2000) {
+				if (now.getTime() - _lastNetErrorDate.getTime() > 10000) {
 					_lastNetErrorDate = now;
 					_listener.onInternetAccessDeny();
 				}
