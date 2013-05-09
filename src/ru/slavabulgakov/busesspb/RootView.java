@@ -5,7 +5,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
@@ -199,11 +201,53 @@ public class RootView extends RelativeLayout {
 					_setX(_dpToPx(_xClose));
 				} else {
 					_setX(currentX);
-					_prevX = currentX;
 				}
 				
 				if (more) {
 					post(this);
+				}
+			}
+		});
+	}
+	
+	public void animateOpen(final int delta) {
+		final Scroller scroller = new Scroller(getContext(), new OvershootInterpolator());
+		scroller.startScroll(0, 0, delta, 0, 500);
+		post(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (scroller.isFinished()) {
+					scroller.forceFinished(true);
+					_animateClose(delta);
+					return;
+				}
+				boolean more = scroller.computeScrollOffset();
+				int currentX = scroller.getCurrX();
+				_setX(currentX);
+				if (more) {
+					postDelayed(this, 16);
+				}
+			}
+		});
+	}
+	
+	private void _animateClose(int delta) {
+		final Scroller scroller = new Scroller(getContext(), new BounceInterpolator());
+		scroller.startScroll(delta, 0, -delta, 0, 1000);
+		post(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (scroller.isFinished()) {
+					scroller.forceFinished(true);
+					return;
+				}
+				boolean more = scroller.computeScrollOffset();
+				int currentX = scroller.getCurrX();
+				_setX(currentX);
+				if (more) {
+					postDelayed(this, 16);
 				}
 			}
 		});

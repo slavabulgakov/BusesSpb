@@ -158,39 +158,6 @@ public class MainActivity extends BaseActivity {
 			zoomLayoutParams.bottomMargin = _model.dpToPx(60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
-		
-//		Timer timer = new Timer();
-//		timer.schedule(new TimerTask() {
-//			
-//			@Override
-//			public void run() {
-//				runOnUiThread(new Runnable() {
-//					
-//					@Override
-//					public void run() {
-//						_openCloseAnimation();
-//					}
-//				});
-//			}
-//		}, 10000);
-		
-    }
-    
-    private void _openCloseAnimation() {
-    	AnimationSet set = new AnimationSet(false);
-		
-		TranslateAnimation open = new TranslateAnimation(0, 50, 0, 0);
-		open.setInterpolator(new OvershootInterpolator());
-		open.setDuration(1000);
-		set.addAnimation(open);
-		
-		TranslateAnimation close = new TranslateAnimation(0, -50, 0, 0);
-		close.setInterpolator(new BounceInterpolator());
-		close.setDuration(2000);
-		close.setStartOffset(1000);
-		set.addAnimation(close);
-		
-		_rootView.startAnimation(set);
     }
     
     public void moveCameraToMyLocation() {
@@ -621,7 +588,7 @@ public class MainActivity extends BaseActivity {
 		        
 		        if (!_showed) {
 					_showed = true;
-					_openCloseAnimation();
+					_rootView.animateOpen(_model.dpToPx(100));
 				}
 			}
 		}
