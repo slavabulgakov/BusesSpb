@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -290,6 +291,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onMenuChangeState(boolean isOpen) {
 		((MainActivity)_currentActivity).menuChangeState(isOpen);
+		int resId = isOpen ? R.drawable.menu_close_icon : R.drawable.menu_open_icon;
+		((ImageView)_currentActivity.findViewById(R.id.menuIcon)).setImageResource(resId);
 	}
 
 	@Override

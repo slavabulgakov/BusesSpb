@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="11dp"
-                    android:src="@drawable/menu_icon" />
+                    android:src="@drawable/menu_open_icon" />
 
                 <HorizontalScrollView
                     android:id="@+id/mainRoutesBtnScrollView"
