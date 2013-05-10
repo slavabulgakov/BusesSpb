@@ -575,21 +575,23 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 	
-	boolean _showed = false;
+	private int _countShows = 0;
 	public void showTransportImgOnMap(Bitmap img) {
 		if (img != null) {
 			if (_map != null) {
-				_map.clear();
+				_model.removeImgTransportOverlay();
 				BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
 		        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-		        _map.addGroundOverlay(new GroundOverlayOptions()
+		        GroundOverlay overlay = _map.addGroundOverlay(new GroundOverlayOptions()
 		            .image(image)
 		            .positionFromBounds(bounds));
+		        _model.setImgTransportOverlay(overlay);
 		        
-		        if (!_showed) {
-					_showed = true;
+		        if (!_model.openAnimationIsShowed() && _timer != null && _countShows > 3 && !_model.menuIsOpenedOnce()) {
+					_model.setOpenAnimationIsShowed();
 					_rootView.animateOpen(_model.dpToPx(100));
 				}
+		        _countShows++;
 			}
 		}
 	}

@@ -163,6 +163,18 @@ public class Model extends Application {
 		_location = location;
 	}
 	
+	public boolean openAnimationIsShowed() {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		boolean isShowed = settings.getBoolean("open_animation_is_showed", false);
+		return isShowed;
+	}
+	public void setOpenAnimationIsShowed() {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("open_animation_is_showed", true);
+		editor.commit();
+	}
+	
 	private float _zoom = 0;
 	public float getZoom() {
 		if (_zoom == 0) {
@@ -676,7 +688,6 @@ public class Model extends Application {
 	}
 	
 	private ArrayList<TransportOverlay> _allTransportOverlay;
-	
 	public ArrayList<TransportOverlay> getAllTransportOverlay() {
 		if (_allTransportOverlay == null) {
 			_allTransportOverlay = new ArrayList<Model.TransportOverlay>();
@@ -684,12 +695,38 @@ public class Model extends Application {
 		return _allTransportOverlay;
 	}
 	
+	private GroundOverlay _imgTransportOverlay = null;
+	public void setImgTransportOverlay(GroundOverlay overlay) {
+		_imgTransportOverlay = overlay;
+	}
+	public void removeImgTransportOverlay() {
+		if (_imgTransportOverlay != null) {
+			_imgTransportOverlay.remove();
+			_imgTransportOverlay = null;
+		}
+	}
+	
 	private boolean _menuIsOpened = false;
 	public void setMenuOpened(boolean opened) {
 		_menuIsOpened = opened;
+		if (_menuIsOpened) {
+			_setMenuIsOpenedOnce();
+		}
 	}
 	public boolean menuIsOpened() {
 		return _menuIsOpened;
+	}
+	
+	public boolean menuIsOpenedOnce() {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		boolean isOpenedOnce = settings.getBoolean("menu_is_opened_once", false);
+		return isOpenedOnce;
+	}
+	private void _setMenuIsOpenedOnce() {
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("menu_is_opened_once", true);
+		editor.commit();
 	}
 	
 	public boolean isOnline() {
