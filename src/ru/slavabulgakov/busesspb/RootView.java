@@ -16,6 +16,7 @@ public class RootView extends RelativeLayout {
 	interface OnActionListener {
 		void onMenuChangeState(boolean isOpen);
 		void onHold(Boolean hold);
+		void onMove(double percent);
 	}
 	private OnActionListener _listener;
 	private Boolean _hold = false;
@@ -43,9 +44,9 @@ public class RootView extends RelativeLayout {
 	public void setModel(Model model) {
 		_model = model;
 		if (_model.menuIsOpened()) {
-			_setX(_dpToPx(_xOpen));
+			_setX(_model.dpToPx(_xOpen));
 		} else {
-			_setX(_dpToPx(_xClose));
+			_setX(_model.dpToPx(_xClose));
 		}
 	}
 	
@@ -78,14 +79,18 @@ public class RootView extends RelativeLayout {
 		_load(context, attrs);
 	}
 	
+	private void _onMove() {
+		_listener.onMove((double)_getX() / (double)_model.dpToPx(_menuWidth));
+	}
+	
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			if (ev.getRawX() - _getX() <= _dpToPx(_touchWidth)) {
+			if (ev.getRawX() - _getX() <= _model.dpToPx(_touchWidth)) {
 				_setHolded(true);
-			} else if (ev.getRawX() - _getX() > _dpToPx(_touchWidth) && _model.menuIsOpened()) {
+			} else if (ev.getRawX() - _getX() > _model.dpToPx(_touchWidth) && _model.menuIsOpened()) {
 				_setHolded(true);
 			}
 			_prevX = ev.getRawX();
@@ -94,34 +99,36 @@ public class RootView extends RelativeLayout {
 		case MotionEvent.ACTION_MOVE:
 			float dX = ev.getRawX() - _prevX;
 			if (_hold) {
-				if (_getX() + dX > _dpToPx(_xOpen)) {
-					_setX(_dpToPx(_xOpen));
+				if (_getX() + dX > _model.dpToPx(_xOpen)) {
+					_setX(_model.dpToPx(_xOpen));
 				} else if (_getX() + dX < 0) {
-					_setX(_dpToPx(_xClose));
+					_setX(_model.dpToPx(_xClose));
 				} else {
 					_setX(_getX() + dX);
 					_lastDX = dX;
 					_prevX = ev.getRawX();
 				}
+				_onMove();
 			}
 			break;
 			
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
-			if (_getX() <= _dpToPx(_shadowWidth)) {
+			if (_getX() <= _model.dpToPx(_shadowWidth)) {
 				_setOpened(false);
-				_setX(_dpToPx(_xClose));
-			} else if (_getX() > _dpToPx(_xOpen) && _model.menuIsOpened()) {
+				_setX(_model.dpToPx(_xClose));
+			} else if (_getX() > _model.dpToPx(_xOpen) && _model.menuIsOpened()) {
 				_animateMove(-1);
-			} else if (_getX() > _dpToPx(_xOpen)) {
+			} else if (_getX() > _model.dpToPx(_xOpen)) {
 				_setOpened(true);
-				_setX(_dpToPx(_xOpen));
+				_setX(_model.dpToPx(_xOpen));
 			} else {
 				_animateMove(0);
 			}
 			if (_hold) {
 				_setHolded(false);
 			}
+			_onMove();
 			break;
 
 		default:
@@ -156,10 +163,6 @@ public class RootView extends RelativeLayout {
 		}
 	}
 	
-	private int _dpToPx(int dp) {
-		return (int)(getResources().getDisplayMetrics().density * dp);
-	}
-
 	private void _setOpened(Boolean opened) {
 		if (_listener != null && opened != _model.menuIsOpened()) {
 			_model.setMenuOpened(opened);
@@ -170,13 +173,13 @@ public class RootView extends RelativeLayout {
 	@SuppressLint("NewApi")
 	private void _animateMove(int direction) {
 		if (direction > 0) {
-			_scroller.startScroll((int)_getX(), 0, _dpToPx(_xOpen) - (int)_getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, _model.dpToPx(_xOpen) - (int)_getX(), 0, 500);
 		} else if (direction < 0) {
-			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0, 500);
 		} else if (_lastDX > 0) {
-			_scroller.startScroll((int)_getX(), 0, _dpToPx(_xOpen) - (int)_getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, _model.dpToPx(_xOpen) - (int)_getX(), 0, 500);
 		} else if (_lastDX < 0) {
-			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0);
+			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0, 500);
 		}
 		
 		post(new Runnable() {
@@ -195,16 +198,18 @@ public class RootView extends RelativeLayout {
 				}
 				Boolean more = _scroller.computeScrollOffset();
 				int currentX = _scroller.getCurrX();
-				if (currentX > _dpToPx(_xOpen)) {
-					_setX(_dpToPx(_xOpen));
+				if (currentX > _model.dpToPx(_xOpen)) {
+					_setX(_model.dpToPx(_xOpen));
 				} else if (currentX < 0) {
-					_setX(_dpToPx(_xClose));
+					_setX(_model.dpToPx(_xClose));
 				} else {
 					_setX(currentX);
 				}
 				
+				_onMove();
+				
 				if (more) {
-					post(this);
+					postDelayed(this, 16);
 				}
 			}
 		});

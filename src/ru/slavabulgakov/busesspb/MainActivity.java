@@ -71,6 +71,7 @@ public class MainActivity extends BaseActivity {
 	private RelativeLayout _mainRoutesBtn;
 	private ImageButton _clearButton;
 	LinearLayout _ticketsLayout;
+	private LinearLayout _leftMenu;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -158,6 +159,15 @@ public class MainActivity extends BaseActivity {
 			zoomLayoutParams.bottomMargin = _model.dpToPx(60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
+		
+		_leftMenu = (LinearLayout)findViewById(R.id.leftMenu);
+    }
+    
+    public void moveLeftMenu(double percent) {
+    	double delta = 100;
+    	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_leftMenu.getLayoutParams();
+    	lp.setMargins((int)(_model.dpToPx(-delta + delta * percent)), 0, 0, 0);
+    	_leftMenu.setLayoutParams(lp);
     }
     
     public void moveCameraToMyLocation() {

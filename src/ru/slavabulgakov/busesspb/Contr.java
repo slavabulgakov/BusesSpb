@@ -299,6 +299,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onHold(Boolean hold) {
 		((MainActivity)_currentActivity).enableMapGestures(!hold);
 	}
+	
+	@Override
+	public void onMove(double percent) {
+		((MainActivity)_currentActivity).moveLeftMenu(percent);
+	}
 
 	@Override
 	public void onInternetAccessDeny() {

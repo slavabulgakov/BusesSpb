@@ -767,7 +767,7 @@ public class Model extends Application {
 		_shareModel = shareModel;
 	}
 	
-	public int dpToPx(int dp) {
+	public int dpToPx(double dp) {
 		return (int)(getResources().getDisplayMetrics().density * dp);
 	}
     
