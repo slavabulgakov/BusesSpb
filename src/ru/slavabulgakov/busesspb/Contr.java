@@ -302,7 +302,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	
 	@Override
 	public void onMove(double percent) {
-		((MainActivity)_currentActivity).moveLeftMenu(percent);
+		if (_currentActivity != null) {
+			if (_currentActivity.getClass() == MainActivity.class) {
+				((MainActivity)_currentActivity).moveLeftMenu(percent);
+			}
+		}
 	}
 
 	@Override

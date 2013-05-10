@@ -56,6 +56,7 @@ public class RootView extends RelativeLayout {
 		lp.leftMargin = (int)x;
 		lp.rightMargin = -(int)x - _shadowWidth;
 		setLayoutParams(lp);
+		_onMove();
 	}
 	
 	@SuppressLint("Override")
@@ -108,7 +109,6 @@ public class RootView extends RelativeLayout {
 					_lastDX = dX;
 					_prevX = ev.getRawX();
 				}
-				_onMove();
 			}
 			break;
 			
@@ -128,7 +128,6 @@ public class RootView extends RelativeLayout {
 			if (_hold) {
 				_setHolded(false);
 			}
-			_onMove();
 			break;
 
 		default:
@@ -205,8 +204,6 @@ public class RootView extends RelativeLayout {
 				} else {
 					_setX(currentX);
 				}
-				
-				_onMove();
 				
 				if (more) {
 					postDelayed(this, 16);
