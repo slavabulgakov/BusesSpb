@@ -597,7 +597,7 @@ public class MainActivity extends BaseActivity {
 		            .positionFromBounds(bounds));
 		        _model.setImgTransportOverlay(overlay);
 		        
-		        if (!_model.openAnimationIsShowed() && _timer != null && _countShows > 3 && !_model.menuIsOpenedOnce()) {
+		        if (!_model.openAnimationIsShowed() && _timer != null && _countShows > 3 && !_model.menuIsOpenedOnce() && !_rootView.hasTouches()) {
 					_model.setOpenAnimationIsShowed();
 					_rootView.animateOpen(_model.dpToPx(100));
 				}

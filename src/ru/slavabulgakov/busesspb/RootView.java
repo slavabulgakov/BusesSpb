@@ -95,6 +95,7 @@ public class RootView extends RelativeLayout {
 				_setHolded(true);
 			}
 			_prevX = ev.getRawX();
+			_hasTouches = true;
 			break;
 			
 		case MotionEvent.ACTION_MOVE:
@@ -128,6 +129,7 @@ public class RootView extends RelativeLayout {
 			if (_hold) {
 				_setHolded(false);
 			}
+			_hasTouches = false;
 			break;
 
 		default:
@@ -140,6 +142,11 @@ public class RootView extends RelativeLayout {
 	public void _setHolded(Boolean holded) {
 		_hold = holded;
 		_listener.onHold(holded);
+	}
+	
+	private boolean _hasTouches = false;
+	public boolean hasTouches() {
+		return _hasTouches;
 	}
 	
 	public void open() {
