@@ -69,19 +69,19 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			
 		case R.id.busFilter:
 			_model.setFilter(TransportKind.Bus);
-			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateTransportOffline();
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
 		case R.id.trolleyFilter:
 			_model.setFilter(TransportKind.Trolley);
-			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateTransportOffline();
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
 		case R.id.tramFilter:
 			_model.setFilter(TransportKind.Tram);
-			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateTransportOffline();
 			((MainActivity)_currentActivity).updateFilterButtons();
 			break;
 			
@@ -195,7 +195,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onCameraChange(CameraPosition cameraPosition) {
 		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).updateTransport();
+			((MainActivity)_currentActivity).updateTransportOffline();
 			_model.setZoom(cameraPosition.zoom);
 			_model.setLocation(cameraPosition.target);
 		}
@@ -214,7 +214,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			if(array == null) {
 				Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
 			}
-			((MainActivity)_currentActivity).showTransportList();
+			((MainActivity)_currentActivity).showMenuContent();
 		}
 	}
 
@@ -291,8 +291,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onMenuChangeState(boolean isOpen) {
 		((MainActivity)_currentActivity).menuChangeState(isOpen);
-		int resId = isOpen ? R.drawable.menu_close_icon : R.drawable.menu_open_icon;
-		((ImageView)_currentActivity.findViewById(R.id.menuIcon)).setImageResource(resId);
 	}
 
 	@Override

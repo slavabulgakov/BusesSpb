@@ -30,12 +30,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
+import android.R.bool;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -81,6 +83,15 @@ class Transport {
 		return transport;
 	}
 }
+ 
+ class SimpleTransportView {
+		BitmapDescriptor image;
+		LatLngBounds bounds;
+		SimpleTransportView(BitmapDescriptor image_, LatLngBounds bounds_) {
+			image = image_;
+			bounds = bounds_;
+		}
+	}
 
 public class Model extends Application {
 	
@@ -292,31 +303,37 @@ public class Model extends Application {
 		_saveToFile(_favoriteRoutes, "favoriteTransportList.ser");
 	}
 	
+	
+	
 	public ArrayList<Route> getAllRoutes() {
 		if (_allRoutes == null) {
 			_allRoutes = new ArrayList<Route>();
 		}
 		return _allRoutes;
 	}
-	
 	private void _setAllRoutes(ArrayList<Route> all) {
+		_allRoutesIsLoaded = true;
 		_allRoutes = all;
 		for (Route route : _favoriteRoutes) {
 			_removeRouteFromList(route, _allRoutes);
 		}
 	}
-	
-	public void changeListener(OnLoadCompleteListener listener) {
-		_listener = listener;
+	private boolean _allRoutesIsLoaded = false;
+	public boolean allRouteIsLoaded() {
+		return _allRoutesIsLoaded;
 	}
-	
+	static final int PARSER_ID_ALL_ROUTES = 3;
+	public boolean allRoutesIsLoading() {
+		boolean loading = _indexParserOfId(PARSER_ID_ALL_ROUTES) != -1;
+		return loading;
+	}
 	public void loadDataForAllRoutes(OnLoadCompleteListener listener) {
 		_listener = listener;
 		ArrayList<Route> routeList = getFavorite();
 		if (routeList.size() == 0) {
 			routeList = getAllRoutes();
 		}
-		final int requestId = 3;
+		final int requestId = PARSER_ID_ALL_ROUTES;
 		IRequest req = new IRequest() {
 			
 			int _step = 0;
@@ -424,6 +441,13 @@ public class Model extends Application {
 		
 		_startParserWithId(req, requestId);
 	}
+	
+	public void changeListener(OnLoadCompleteListener listener) {
+		_listener = listener;
+	}
+	
+	
+	
 	
 	private ArrayList<ParserWebPageTask> _getParsers() {
 		if (_parsers == null) {
@@ -661,18 +685,22 @@ public class Model extends Application {
 	}
 	
 	private void _removeParserById(int id) {
-		int i = 0;
+		int index = _indexParserOfId(id);
+		if (index != -1) {
+			_getParsers().remove(index);
+		}
+	}
+	private int _indexParserOfId(int id) {
+		int index = 0;
 		boolean exist = false;
 		for (ParserWebPageTask parser : _getParsers()) {
 			if (parser.getRequestId() == id) {
 				exist = true;
 				break;
 			}
-			i++;
+			index++;
 		}
-		if (exist) {
-			_getParsers().remove(i);
-		}
+		return exist ? index : -1;
 	}
 	
 	public void cancel() {
@@ -687,23 +715,31 @@ public class Model extends Application {
 		Marker marker;
 	}
 	
-	private ArrayList<TransportOverlay> _allTransportOverlay;
-	public ArrayList<TransportOverlay> getAllTransportOverlay() {
-		if (_allTransportOverlay == null) {
-			_allTransportOverlay = new ArrayList<Model.TransportOverlay>();
+	private ArrayList<TransportOverlay> _allTransportOverlays;
+	public ArrayList<TransportOverlay> getAllTransportOverlays() {
+		if (_allTransportOverlays == null) {
+			_allTransportOverlays = new ArrayList<Model.TransportOverlay>();
 		}
-		return _allTransportOverlay;
+		return _allTransportOverlays;
 	}
 	
-	private GroundOverlay _imgTransportOverlay = null;
-	public void setImgTransportOverlay(GroundOverlay overlay) {
-		_imgTransportOverlay = overlay;
+	private GroundOverlay _simpleTransportOverlay = null;
+	public void setSimpleTransportOverlay(GroundOverlay overlay) {
+		_simpleTransportOverlay = overlay;
 	}
-	public void removeImgTransportOverlay() {
-		if (_imgTransportOverlay != null) {
-			_imgTransportOverlay.remove();
-			_imgTransportOverlay = null;
+	public void removeSimpleTransportOverlay() {
+		if (_simpleTransportOverlay != null) {
+			_simpleTransportOverlay.remove();
+			_simpleTransportOverlay = null;
 		}
+	}
+	
+	private SimpleTransportView _lastSimpleTransportView;
+	public void setLastSimpleTransportView(SimpleTransportView last) {
+		_lastSimpleTransportView = last;
+	}
+	public SimpleTransportView getLastSimpleTransportView() {
+		return _lastSimpleTransportView;
 	}
 	
 	private boolean _menuIsOpened = false;
@@ -740,11 +776,15 @@ public class Model extends Application {
 			if (_lastNetErrorDate != null) {
 				if (now.getTime() - _lastNetErrorDate.getTime() > 10000) {
 					_lastNetErrorDate = now;
-					_listener.onInternetAccessDeny();
+					if (_listener != null) {
+						_listener.onInternetAccessDeny();
+					}
 				}
 			} else {
 				_lastNetErrorDate = now;
-				_listener.onInternetAccessDeny();
+				if (_listener != null) {
+					_listener.onInternetAccessDeny();
+				}
 			}
 		}
 	    

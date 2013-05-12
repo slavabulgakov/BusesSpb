@@ -6,8 +6,6 @@ import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,16 +19,11 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.OvershootInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -72,6 +65,7 @@ public class MainActivity extends BaseActivity {
 	private ImageButton _clearButton;
 	LinearLayout _ticketsLayout;
 	private LinearLayout _leftMenu;
+	private ImageView _menuIcon;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -161,6 +155,7 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		_leftMenu = (LinearLayout)findViewById(R.id.leftMenu);
+		_menuIcon = ((ImageView)findViewById(R.id.menuIcon));
     }
     
     public void moveLeftMenu(double percent) {
@@ -314,51 +309,46 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
-    private void _updateTimer() {
+    public void updateTimer() {
     	if (_timer != null) {
 			_timer.cancel();
 			_timer = null;
 		}
-		if (!_model.menuIsOpened()) {
+    	if (_model.isOnline()) {
+    		if (_model.menuIsOpened() && !_model.allRouteIsLoaded()) {
+    			_timer = new Timer();
+    			_timer.schedule(new UpdateMenuContentTimerTask(this, _model), 0, 3000);
+			} else if (!_model.menuIsOpened()) {
+    			_timer = new Timer();
+    	    	_timer.schedule(new UpdateTransportTimerTask(this, _model), 0, 3000);
+			}
+		} else {
 			_timer = new Timer();
-	    	_timer.schedule(new TimerTask() {
-
-					@Override
-					public void run() {
-						MainActivity.this.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								updateTransport();
-							}
-						});
-					}
-				}, 0, 3000);
+	    	_timer.schedule(new CheckInternetConnectionTimerTask(this, _model), 5000, 5000);
 		}
+    }
+    
+    public void loadMenuContent() {
+    	_progressBar.setVisibility(View.VISIBLE);
+//		_listView.setVisibility(View.INVISIBLE);
+		_editText.setEnabled(false);
+		_menuBusFilter.setEnabled(false);
+		_menuTrolleyFilter.setEnabled(false);
+		_menuTramFilter.setEnabled(false);
+		_model.loadDataForAllRoutes(Contr.getInstance());
     }
     
     private void _updateControls() {
     	
-    	{// обновление контента меню
-    		if (_model.menuIsOpened()) {
-    			if (_model.getAllRoutes().size() == 0) {
-    				_progressBar.setVisibility(View.VISIBLE);
-    				_listView.setVisibility(View.INVISIBLE);
-    				_editText.setEnabled(false);
-    				_menuBusFilter.setEnabled(false);
-    				_menuTrolleyFilter.setEnabled(false);
-    				_menuTramFilter.setEnabled(false);
-    				_model.loadDataForAllRoutes(Contr.getInstance());
-    			} else {
-    				showTransportList();
-    			}
-    		}
-    	}
+    	int resId = _model.menuIsOpened() ? R.drawable.menu_close_icon : R.drawable.menu_open_icon;
+		_menuIcon.setImageResource(resId);
+    	
+    	if (_model.allRouteIsLoaded()) {
+    		showMenuContent();
+		}
     	
     	
-    	
-    	
-    	_updateTimer();
+    	updateTimer();
     	
     	
     	
@@ -435,6 +425,7 @@ public class MainActivity extends BaseActivity {
 			if (!isOpen) {
 				if (_map != null) {
 					_map.clear();
+					updateTransportOffline();
 				}
 			}
 		}
@@ -444,7 +435,7 @@ public class MainActivity extends BaseActivity {
     	_rootView.toggle();
 	}
     
-    public void showTransportList() {
+    public void showMenuContent() {
 		_progressBar.setVisibility(View.INVISIBLE);
 		_listView.setVisibility(View.VISIBLE);
 		_editText.setEnabled(true);
@@ -476,7 +467,7 @@ public class MainActivity extends BaseActivity {
 	
 	@SuppressLint("NewApi")
 	public void updateTransport() {
-    	if (_model.getFavorite().size() == 0) {
+		if (_model.getFavorite().size() == 0) {
     		if (_map != null) {
     			View mainFrame = findViewById(R.id.mainFrame);
         		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
@@ -484,6 +475,22 @@ public class MainActivity extends BaseActivity {
 			}
 		} else {
 			_model.showFavoriteRoutes(Contr.getInstance());
+		}
+	}
+	
+	public void updateTransportOffline() {
+    	if (_model.getFavorite().size() == 0) {
+    		if (_map != null) {
+    			if (_model.isOnline()) {
+    				View mainFrame = findViewById(R.id.mainFrame);
+            		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
+                    _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+				} else {
+					showTransportImgOnMap();
+				}
+			}
+		} else {
+			showTransportListOnMap();
 		}
 	}
 	
@@ -496,7 +503,7 @@ public class MainActivity extends BaseActivity {
 	
 	private TransportOverlay _getTransportOverlayById(int id) {
 		TransportOverlay findTransportOverlay = null;
-		for (TransportOverlay transportOverlay : _model.getAllTransportOverlay()) {
+		for (TransportOverlay transportOverlay : _model.getAllTransportOverlays()) {
 			if (transportOverlay.transport.id == id) {
 				findTransportOverlay = transportOverlay;
 				break;
@@ -573,7 +580,7 @@ public class MainActivity extends BaseActivity {
 						transportOverlay.transport = transport;
 						transportOverlay.groundOverlay = groundOverlay;
 						transportOverlay.marker = marker;
-						_model.getAllTransportOverlay().add(transportOverlay);
+						_model.getAllTransportOverlays().add(transportOverlay);
 					} else {
 						transportOverlay.groundOverlay.remove();
 						transportOverlay.marker.remove();
@@ -584,18 +591,35 @@ public class MainActivity extends BaseActivity {
 			}
 		}
 	}
+	public void showTransportListOnMap() {
+		if (_map != null) {
+			for (TransportOverlay transportOverlay : _model.getAllTransportOverlays()) {
+				LatLng overlayPosition = transportOverlay.groundOverlay.getPosition();
+				Transport transport = transportOverlay.transport;
+				LatLng markerPostion = transportOverlay.marker.getPosition();
+				String velocity = transportOverlay.marker.getTitle();
+				transportOverlay.groundOverlay.remove();
+				transportOverlay.marker.remove();
+				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(overlayPosition, _getWidth()).bearing(transport.direction));
+				Marker marker = _map.addMarker(new MarkerOptions().position(markerPostion).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+				transportOverlay.groundOverlay = groundOverlay;
+				transportOverlay.marker = marker;
+			}
+		}
+	}
 	
 	private int _countShows = 0;
 	public void showTransportImgOnMap(Bitmap img) {
 		if (img != null) {
 			if (_map != null) {
-				_model.removeImgTransportOverlay();
+				_model.removeSimpleTransportOverlay();
 				BitmapDescriptor image = BitmapDescriptorFactory.fromBitmap(img);
 		        LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
 		        GroundOverlay overlay = _map.addGroundOverlay(new GroundOverlayOptions()
 		            .image(image)
 		            .positionFromBounds(bounds));
-		        _model.setImgTransportOverlay(overlay);
+		        _model.setSimpleTransportOverlay(overlay);
+		        _model.setLastSimpleTransportView(new SimpleTransportView(image, bounds));
 		        
 		        if (!_model.openAnimationIsShowed() && _timer != null && _countShows > 3 && !_model.menuIsOpenedOnce() && !_rootView.hasTouches()) {
 					_model.setOpenAnimationIsShowed();
@@ -603,6 +627,24 @@ public class MainActivity extends BaseActivity {
 				}
 		        _countShows++;
 			}
+		}
+	}
+	public void showTransportImgOnMap() {
+		if (_map != null) {
+			_model.removeSimpleTransportOverlay();
+			SimpleTransportView lastSimpleTransportView = _model.getLastSimpleTransportView();
+			if (lastSimpleTransportView != null) {
+				GroundOverlay overlay = _map.addGroundOverlay(new GroundOverlayOptions()
+	            .image(lastSimpleTransportView.image)
+	            .positionFromBounds(lastSimpleTransportView.bounds));
+				_model.setSimpleTransportOverlay(overlay);
+			}
+	        
+	        if (!_model.openAnimationIsShowed() && _timer != null && _countShows > 3 && !_model.menuIsOpenedOnce() && !_rootView.hasTouches()) {
+				_model.setOpenAnimationIsShowed();
+				_rootView.animateOpen(_model.dpToPx(100));
+			}
+	        _countShows++;
 		}
 	}
 }
