@@ -156,6 +156,12 @@ public class MainActivity extends BaseActivity {
 		
 		_leftMenu = (LinearLayout)findViewById(R.id.leftMenu);
 		_menuIcon = ((ImageView)findViewById(R.id.menuIcon));
+		
+		if (_listView.getAdapter() == null) {
+			Adapter adapter = new Adapter(this, _model);
+			_listView.setAdapter(adapter);
+			adapter.getFilter().filter(_editText.getText());
+		}
     }
     
     public void moveLeftMenu(double percent) {
@@ -442,11 +448,7 @@ public class MainActivity extends BaseActivity {
 		_menuBusFilter.setEnabled(true);
 		_menuTrolleyFilter.setEnabled(true);
 		_menuTramFilter.setEnabled(true);
-		if (_listView.getAdapter() == null) {
-			Adapter adapter = new Adapter(this, _model);
-			_listView.setAdapter(adapter);
-			adapter.getFilter().filter(_editText.getText());
-		}
+		updateListView();
 	}
     
 	@SuppressLint("UseValueOf")
