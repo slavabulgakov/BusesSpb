@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Model.TransportOverlay;
+import android.R.anim;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +20,10 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -66,6 +71,7 @@ public class MainActivity extends BaseActivity {
 	LinearLayout _ticketsLayout;
 	private LinearLayout _leftMenu;
 	private ImageView _menuIcon;
+	private ImageButton _internetDenyImageButton;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -161,6 +167,53 @@ public class MainActivity extends BaseActivity {
 			Adapter adapter = new Adapter(this, _model);
 			_listView.setAdapter(adapter);
 			adapter.getFilter().filter(_editText.getText());
+		}
+		
+		_internetDenyImageButton = (ImageButton)findViewById(R.id.internetDeny);
+		
+		_internetDenyImageButton.setVisibility(_internetDenyIconIsShowed() ? View.VISIBLE : View.INVISIBLE);
+    }
+    
+    private Boolean _internetDenyIconIsShowed() {
+    	Boolean showed = (Boolean)_model.getData("internetDenyIsShowed");
+    	if (showed == null) {
+			return false;
+		}
+    	return showed; 
+    }
+    private void _setInternetDenyIconShowed(Boolean showed) {
+    	_model.setData("internetDenyIsShowed", showed);
+    }
+    
+    public void showInternetDenyIcon(boolean animate) {
+    	if (!_internetDenyIconIsShowed()) {
+    		_setInternetDenyIconShowed(true);
+        	if (animate) {
+        		TranslateAnimation animation = new TranslateAnimation(_model.dpToPx(-100), 0, 0, 0);
+            	animation.setInterpolator(new BounceInterpolator());
+            	animation.setAnimationListener(new AnimationListener() {
+        			
+        			@Override
+        			public void onAnimationStart(Animation animation) {
+        				_internetDenyImageButton.setVisibility(View.VISIBLE);
+        			}
+        			
+        			@Override
+        			public void onAnimationRepeat(Animation animation) {}
+        			
+        			@Override
+        			public void onAnimationEnd(Animation animation) {}
+        		});
+            	_internetDenyImageButton.startAnimation(animation);
+    		} else {
+    			_internetDenyImageButton.setVisibility(View.VISIBLE);
+    		}
+		}
+    }
+    public void hideInternetDenyIcon() {
+    	if (_internetDenyIconIsShowed()) {
+    		_setInternetDenyIconShowed(false);
+        	_internetDenyImageButton.setVisibility(View.INVISIBLE);
 		}
     }
     

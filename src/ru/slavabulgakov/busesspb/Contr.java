@@ -180,10 +180,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 					        });
 							HorizontalScrollView ticketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
 							ticketsScrollView.setVisibility(View.GONE);
-							FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
+							LinearLayout listViewAndProgressBarLinearLayout = (LinearLayout)_currentActivity.findViewById(R.id.listViewAndProgressBarLinearLayout);
 							TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
 							animation.setDuration(Animations.ANIMATION_DURATION);
-							frameLayout.startAnimation(animation);
+							listViewAndProgressBarLinearLayout.startAnimation(animation);
 						}
 					});
 				}
@@ -281,10 +281,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		if (_model.getFavorite().size() == 0) {
 			HorizontalScrollView ticketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
 			ticketsScrollView.setVisibility(View.GONE);
-			FrameLayout frameLayout = (FrameLayout)_currentActivity.findViewById(R.id.selectRouteFrameLayout);
+			LinearLayout listViewAndProgressBarLinearLayout = (LinearLayout)_currentActivity.findViewById(R.id.listViewAndProgressBarLinearLayout);
 			TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
 			animation.setDuration(Animations.ANIMATION_DURATION);
-			frameLayout.startAnimation(animation);
+			listViewAndProgressBarLinearLayout.startAnimation(animation);
 		}
 	}
 
@@ -309,6 +309,15 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onInternetAccessDeny() {
-		Toast.makeText(_currentActivity, R.string.internet_access_deny, Toast.LENGTH_SHORT).show();
+		if (_currentActivity.getClass() == MainActivity.class) {
+			((MainActivity)_currentActivity).showInternetDenyIcon(true);
+		}
+	}
+
+	@Override
+	public void onInternetAcseesSuccess() {
+		if (_currentActivity.getClass() == MainActivity.class) {
+			((MainActivity)_currentActivity).hideInternetDenyIcon();
+		}
 	}
 }

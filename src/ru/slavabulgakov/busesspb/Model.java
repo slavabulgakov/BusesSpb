@@ -16,7 +16,10 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -100,6 +103,20 @@ public class Model extends Application {
 	private static final int TRAM_FILTER = 4;
 	
 	private static final String STORAGE_NAME = "busesspb";
+	
+	private Map<String, Object> _data;
+	public void setData(String key, Object value) {
+		if (_data == null) {
+			_data = new HashMap<String, Object>();
+		}
+		_data.put(key, value);
+	}
+	public Object getData(String key) {
+		if (_data != null) {
+			return _data.get(key);
+		}
+		return null;
+	}
 	
 	public int enumKindToInt(TransportKind kind) {
 		switch (kind) {
@@ -216,6 +233,7 @@ public class Model extends Application {
 		void onRouteKindsLoadComplete(ArrayList<Route> array);
 		void onImgLoadComplete(Bitmap img);
 		void onInternetAccessDeny();
+		void onInternetAcseesSuccess();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -765,24 +783,18 @@ public class Model extends Application {
 		editor.commit();
 	}
 	
+	private boolean _isOnline = true;
 	public boolean isOnline() {
-		boolean online = true;
 	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
-	    online = netInfo != null && netInfo.isConnectedOrConnecting();
+	    boolean online = netInfo != null && netInfo.isConnectedOrConnecting();
 	    
-	    if (!online) {
-	    	Date now = new Date();
-			if (_lastNetErrorDate != null) {
-				if (now.getTime() - _lastNetErrorDate.getTime() > 10000) {
-					_lastNetErrorDate = now;
-					if (_listener != null) {
-						_listener.onInternetAccessDeny();
-					}
-				}
-			} else {
-				_lastNetErrorDate = now;
-				if (_listener != null) {
+	    if (_isOnline != online) {
+	    	_isOnline = online;
+	    	if (_listener != null) {
+	    		if (online) {
+					_listener.onInternetAcseesSuccess();
+				} else {
 					_listener.onInternetAccessDeny();
 				}
 			}

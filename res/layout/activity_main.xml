@@ -133,21 +133,14 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <FrameLayout
-            android:id="@+id/selectRouteFrameLayout"
+        <LinearLayout
+            android:id="@+id/listViewAndProgressBarLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" >
-
-            <ProgressBar
-                android:id="@+id/selectRouteProgressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_margin="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center" />
-
+            android:layout_marginRight="10dp"
+            android:orientation="vertical" >
+            
             <ListView
                 android:id="@+id/selectRouteListView"
                 android:layout_width="match_parent"
@@ -156,7 +149,16 @@
                 android:dividerHeight="10dp" >
 
             </ListView>
-        </FrameLayout>
+
+            <ProgressBar
+                android:id="@+id/selectRouteProgressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_margin="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center" />
+            
+        </LinearLayout>
     </LinearLayout>
 
     <ru.slavabulgakov.busesspb.RootView

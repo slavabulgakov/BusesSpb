@@ -71,7 +71,7 @@ public class Animations {
 		final Model model = _getModel();
 		
 		final HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)mainActivity.findViewById(R.id.routeTicketsScrollView);
-		FrameLayout frameLayout = (FrameLayout)mainActivity.findViewById(R.id.selectRouteFrameLayout);
+		LinearLayout listViewAndProgressBarLinearLayout = (LinearLayout)mainActivity.findViewById(R.id.listViewAndProgressBarLinearLayout);
 		TranslateAnimation animation = null;
 		if (model.getFavorite().size() == 1) {
 			animation = new TranslateAnimation(0, 0, 0, model.dpToPx(60));
@@ -96,7 +96,7 @@ public class Animations {
 					}
 				}
 			});
-			frameLayout.startAnimation(animation);
+			listViewAndProgressBarLinearLayout.startAnimation(animation);
 		}
 	}
 	
