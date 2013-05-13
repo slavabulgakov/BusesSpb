@@ -1,13 +1,9 @@
 package ru.slavabulgakov.busesspb;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -15,7 +11,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +28,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
-import android.R.bool;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -56,7 +49,11 @@ enum TransportKind {
 	Tram,
 }
 
-class Transport {
+class Transport implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Integer id;
 	Integer routeId;
 	Integer cost;
@@ -87,13 +84,36 @@ class Transport {
 	}
 }
  
- class SimpleTransportView {
-		BitmapDescriptor image;
-		LatLngBounds bounds;
-		SimpleTransportView(BitmapDescriptor image_, LatLngBounds bounds_) {
-			image = image_;
-			bounds = bounds_;
+ class SimpleTransportView implements Serializable {
+	 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+		Bitmap image;
+		double northeastLat;
+		double northeastLng;
+		double southwestLat;
+		double southwestLng;
+		
+		public LatLngBounds getBounds() {
+			return new LatLngBounds(new LatLng(southwestLat, southwestLng), new LatLng(northeastLat, northeastLng));
 		}
+		
+		SimpleTransportView(Bitmap image_, LatLngBounds bounds_) {
+			image = image_;
+			northeastLat = bounds_.northeast.latitude;
+			northeastLng = bounds_.northeast.longitude;
+			southwestLat = bounds_.southwest.latitude;
+			southwestLng = bounds_.southwest.longitude;
+		}
+		
+		SimpleTransportView() {}
+}
+ 
+ class TransportOverlay {
+		Transport transport;
+		GroundOverlay groundOverlay;
+		Marker marker;
 	}
 
 public class Model extends Application {
@@ -226,65 +246,25 @@ public class Model extends Application {
 	private ArrayList<Route> _favoriteRoutes;
 	private ArrayList<Route> _allRoutes;
 	private OnLoadCompleteListener _listener;
-	private Date _lastNetErrorDate;
 	
 	public interface OnLoadCompleteListener {
 		void onTransportListOfRouteLoadComplete(ArrayList<Transport> array);
 		void onRouteKindsLoadComplete(ArrayList<Route> array);
 		void onImgLoadComplete(Bitmap img);
 		void onInternetAccessDeny();
-		void onInternetAcseesSuccess();
+		void onInternetAccessSuccess();
 	}
+	
+	
+	
 	
 	@SuppressWarnings("unchecked")
-	private ArrayList<Route> _loadFromFile(String fileName) {
-		ObjectInputStream in = null;
-		try {
-			in = new ObjectInputStream(openFileInput(fileName));
-			try {
-				return (ArrayList<Route>)in.readObject();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-		} catch (Exception e) {
-			if (!(e instanceof FileNotFoundException)) {
-				
-			}
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e2) {
-					// TODO: handle exception
-				}
-			}
-		}
-		return new ArrayList<Route>();
-	}
-	
-	private void _saveToFile(ArrayList<Route> transportList, String fileName) {
-		ObjectOutputStream out = null;
-		try {
-			FileOutputStream fout = openFileOutput(fileName, 0);
-			out = new ObjectOutputStream(fout);
-			out.writeObject(transportList);
-			fout.getFD().sync();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (Exception e2) {
-					// TODO: handle exception
-				}
-			}
-		}
-	}
-	
 	public ArrayList<Route> getFavorite() {
 		if (_favoriteRoutes == null) {
-			_favoriteRoutes = _loadFromFile("favoriteTransportList.ser");
+			_favoriteRoutes = (ArrayList<Route>)Files.loadFromFile("favoriteTransportList.ser", this);
+			if (_favoriteRoutes == null) {
+				_favoriteRoutes = new ArrayList<Route>();
+			}
 		}
 		return _favoriteRoutes;
 	}
@@ -318,7 +298,7 @@ public class Model extends Application {
 	}
 	
 	public void saveFavorite() {
-		_saveToFile(_favoriteRoutes, "favoriteTransportList.ser");
+		Files.saveToFile(_favoriteRoutes, "favoriteTransportList.ser", this);
 	}
 	
 	
@@ -421,16 +401,12 @@ public class Model extends Application {
 					}
 			        
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -727,18 +703,33 @@ public class Model extends Application {
 		}
 	}
 	
-	static class TransportOverlay {
-		Transport transport;
-		GroundOverlay groundOverlay;
-		Marker marker;
-	}
-	
 	private ArrayList<TransportOverlay> _allTransportOverlays;
+	@SuppressWarnings("unchecked")
 	public ArrayList<TransportOverlay> getAllTransportOverlays() {
 		if (_allTransportOverlays == null) {
-			_allTransportOverlays = new ArrayList<Model.TransportOverlay>();
+			ArrayList<Transport> array = (ArrayList<Transport>)Files.loadFromFile("allTransportOverlays.ser", this);
+			_allTransportOverlays = new ArrayList<TransportOverlay>();
+			if (array != null) {
+				for (Transport transport : array) {
+					TransportOverlay transportOverlay = new TransportOverlay();
+					transportOverlay.transport = transport;
+					_allTransportOverlays.add(transportOverlay);
+				}
+			}
+			if (_allTransportOverlays == null) {
+				_allTransportOverlays = new ArrayList<TransportOverlay>();
+			}
 		}
 		return _allTransportOverlays;
+	}
+	public void saveAllTransportOverlays() {
+		if (_allTransportOverlays != null) {
+			ArrayList<Transport> array = new ArrayList<Transport>();
+			for (TransportOverlay transportOverlay : _allTransportOverlays) {
+				array.add(transportOverlay.transport);
+			}
+			Files.saveToFile(array, "allTransportOverlays.ser", this);
+		}
 	}
 	
 	private GroundOverlay _simpleTransportOverlay = null;
@@ -757,7 +748,15 @@ public class Model extends Application {
 		_lastSimpleTransportView = last;
 	}
 	public SimpleTransportView getLastSimpleTransportView() {
+		if (_lastSimpleTransportView == null) {
+			_lastSimpleTransportView = (SimpleTransportView)Files.loadFromFile("lastSimpleTransportView.ser", true, this);
+		}
 		return _lastSimpleTransportView;
+	}
+	public void saveLastSimpleTransportView() {
+		if (_lastSimpleTransportView != null) {
+			Files.saveToFile(_lastSimpleTransportView, "lastSimpleTransportView.ser", this);
+		}
 	}
 	
 	private boolean _menuIsOpened = false;
@@ -793,7 +792,7 @@ public class Model extends Application {
 	    	_isOnline = online;
 	    	if (_listener != null) {
 	    		if (online) {
-					_listener.onInternetAcseesSuccess();
+					_listener.onInternetAccessSuccess();
 				} else {
 					_listener.onInternetAccessDeny();
 				}

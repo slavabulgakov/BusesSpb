@@ -5,8 +5,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
-import ru.slavabulgakov.busesspb.Model.TransportOverlay;
-import android.R.anim;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -255,6 +253,8 @@ public class MainActivity extends BaseActivity {
     
 	@Override
 	protected void onPause() {
+		_model.saveAllTransportOverlays();
+		_model.saveLastSimpleTransportView();
 		_model.saveFavorite();
 		_model.saveLocation();
 		_model.saveZoom();
@@ -490,6 +490,12 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
+    public void clearMap() {
+    	if (_map != null) {
+			_map.clear();
+		}
+    }
+    
     public void toggleLeftMenu() {
     	_rootView.toggle();
 	}
@@ -629,19 +635,19 @@ public class MainActivity extends BaseActivity {
 					TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
 					String velocity = getString(R.string.velocity) + Integer.toString(transport.velocity) + getString(R.string.km);
 					if (transportOverlay == null) {
-						GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
-						Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
 						transportOverlay = new TransportOverlay();
-						transportOverlay.transport = transport;
-						transportOverlay.groundOverlay = groundOverlay;
-						transportOverlay.marker = marker;
 						_model.getAllTransportOverlays().add(transportOverlay);
 					} else {
-						transportOverlay.groundOverlay.remove();
-						transportOverlay.marker.remove();
-						transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, _getWidth()).bearing(transport.direction));
-						transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+						if (transportOverlay.groundOverlay != null) {
+							transportOverlay.groundOverlay.remove();
+						}
+						if (transportOverlay.marker != null) {
+							transportOverlay.marker.remove();
+						}
 					}
+					transportOverlay.groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
+					transportOverlay.marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+					transportOverlay.transport = transport;
 				}
 			}
 		}
@@ -649,14 +655,17 @@ public class MainActivity extends BaseActivity {
 	public void showTransportListOnMap() {
 		if (_map != null) {
 			for (TransportOverlay transportOverlay : _model.getAllTransportOverlays()) {
-				LatLng overlayPosition = transportOverlay.groundOverlay.getPosition();
 				Transport transport = transportOverlay.transport;
-				LatLng markerPostion = transportOverlay.marker.getPosition();
-				String velocity = transportOverlay.marker.getTitle();
-				transportOverlay.groundOverlay.remove();
-				transportOverlay.marker.remove();
-				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(overlayPosition, _getWidth()).bearing(transport.direction));
-				Marker marker = _map.addMarker(new MarkerOptions().position(markerPostion).title(velocity).icon(_getRouteNumberBitMap(transport.routeNumber)));
+				LatLng position = new LatLng(transport.Lat, transport.Lng);
+				if (transportOverlay.groundOverlay != null) {
+					transportOverlay.groundOverlay.remove();
+				}
+				if (transportOverlay.marker != null) {
+					transportOverlay.marker.remove();
+				}
+				
+				GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transport.kind)).position(position, _getWidth()).bearing(transport.direction));
+				Marker marker = _map.addMarker(new MarkerOptions().position(position).title("").icon(_getRouteNumberBitMap(transport.routeNumber)));
 				transportOverlay.groundOverlay = groundOverlay;
 				transportOverlay.marker = marker;
 			}
@@ -674,7 +683,7 @@ public class MainActivity extends BaseActivity {
 		            .image(image)
 		            .positionFromBounds(bounds));
 		        _model.setSimpleTransportOverlay(overlay);
-		        _model.setLastSimpleTransportView(new SimpleTransportView(image, bounds));
+		        _model.setLastSimpleTransportView(new SimpleTransportView(img, bounds));
 		        
 		        if (!_model.openAnimationIsShowed() && _timer != null && _countShows > 3 && !_model.menuIsOpenedOnce() && !_rootView.hasTouches()) {
 					_model.setOpenAnimationIsShowed();
@@ -690,8 +699,8 @@ public class MainActivity extends BaseActivity {
 			SimpleTransportView lastSimpleTransportView = _model.getLastSimpleTransportView();
 			if (lastSimpleTransportView != null) {
 				GroundOverlay overlay = _map.addGroundOverlay(new GroundOverlayOptions()
-	            .image(lastSimpleTransportView.image)
-	            .positionFromBounds(lastSimpleTransportView.bounds));
+	            .image(BitmapDescriptorFactory.fromBitmap(lastSimpleTransportView.image))
+	            .positionFromBounds(lastSimpleTransportView.getBounds()));
 				_model.setSimpleTransportOverlay(overlay);
 			}
 	        

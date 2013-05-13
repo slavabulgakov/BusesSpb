@@ -21,10 +21,8 @@ import android.view.View.OnClickListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -315,9 +313,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public void onInternetAcseesSuccess() {
+	public void onInternetAccessSuccess() {
 		if (_currentActivity.getClass() == MainActivity.class) {
 			((MainActivity)_currentActivity).hideInternetDenyIcon();
+			((MainActivity)_currentActivity).clearMap();
 		}
 	}
 }
