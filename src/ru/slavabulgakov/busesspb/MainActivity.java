@@ -19,6 +19,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnticipateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
@@ -183,35 +184,60 @@ public class MainActivity extends BaseActivity {
     	_model.setData("internetDenyIsShowed", showed);
     }
     
-    public void showInternetDenyIcon(boolean animate) {
+    public void showInternetDenyIcon() {
     	if (!_internetDenyIconIsShowed()) {
     		_setInternetDenyIconShowed(true);
-        	if (animate) {
-        		TranslateAnimation animation = new TranslateAnimation(_model.dpToPx(-100), 0, 0, 0);
-            	animation.setInterpolator(new BounceInterpolator());
-            	animation.setAnimationListener(new AnimationListener() {
-        			
-        			@Override
-        			public void onAnimationStart(Animation animation) {
-        				_internetDenyImageButton.setVisibility(View.VISIBLE);
-        			}
-        			
-        			@Override
-        			public void onAnimationRepeat(Animation animation) {}
-        			
-        			@Override
-        			public void onAnimationEnd(Animation animation) {}
-        		});
-            	_internetDenyImageButton.startAnimation(animation);
-    		} else {
-    			_internetDenyImageButton.setVisibility(View.VISIBLE);
-    		}
+    		runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					TranslateAnimation animation = new TranslateAnimation(_model.dpToPx(-100), 0, 0, 0);
+		        	animation.setInterpolator(new BounceInterpolator());
+		        	_internetDenyImageButton.setVisibility(View.VISIBLE);
+		        	animation.setDuration(2000);
+		        	animation.setAnimationListener(new AnimationListener() {
+		    			
+		    			@Override
+		    			public void onAnimationStart(Animation animation) {}
+		    			
+		    			@Override
+		    			public void onAnimationRepeat(Animation animation) {}
+		    			
+		    			@Override
+		    			public void onAnimationEnd(Animation animation) {}
+		    		});
+		        	_internetDenyImageButton.startAnimation(animation);
+				}
+			});
+    		
 		}
     }
     public void hideInternetDenyIcon() {
     	if (_internetDenyIconIsShowed()) {
     		_setInternetDenyIconShowed(false);
-        	_internetDenyImageButton.setVisibility(View.INVISIBLE);
+    		runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					TranslateAnimation animation = new TranslateAnimation(0, _model.dpToPx(-100), 0, 0);
+		        	animation.setInterpolator(new AnticipateInterpolator());
+		        	animation.setDuration(2000);
+		        	animation.setAnimationListener(new AnimationListener() {
+		    			
+		    			@Override
+		    			public void onAnimationStart(Animation animation) {}
+		    			
+		    			@Override
+		    			public void onAnimationRepeat(Animation animation) {}
+		    			
+		    			@Override
+		    			public void onAnimationEnd(Animation animation) {
+		    				_internetDenyImageButton.setVisibility(View.INVISIBLE);
+		    			}
+		    		});
+		        	_internetDenyImageButton.startAnimation(animation);
+				}
+			});
 		}
     }
     
@@ -394,7 +420,7 @@ public class MainActivity extends BaseActivity {
 		_menuBusFilter.setEnabled(false);
 		_menuTrolleyFilter.setEnabled(false);
 		_menuTramFilter.setEnabled(false);
-		_model.loadDataForAllRoutes(Contr.getInstance());
+		_model.loadDataForAllRoutes();
     }
     
     private void _updateControls() {
@@ -532,10 +558,10 @@ public class MainActivity extends BaseActivity {
     		if (_map != null) {
     			View mainFrame = findViewById(R.id.mainFrame);
         		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-                _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+                _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight());
 			}
 		} else {
-			_model.showFavoriteRoutes(Contr.getInstance());
+			_model.showFavoriteRoutes();
 		}
 	}
 	
@@ -545,7 +571,7 @@ public class MainActivity extends BaseActivity {
     			if (_model.isOnline()) {
     				View mainFrame = findViewById(R.id.mainFrame);
             		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-                    _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight(), Contr.getInstance());
+                    _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight());
 				} else {
 					showTransportImgOnMap();
 				}

@@ -23,6 +23,7 @@ public class BaseActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_model = (Model)getApplicationContext();
+		_model.setListener(Contr.getInstance());
 	}
 	
 	

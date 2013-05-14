@@ -255,7 +255,9 @@ public class Model extends Application {
 		void onInternetAccessSuccess();
 	}
 	
-	
+	public void setListener(OnLoadCompleteListener listener) {
+		_listener = listener;
+	}
 	
 	
 	@SuppressWarnings("unchecked")
@@ -325,8 +327,7 @@ public class Model extends Application {
 		boolean loading = _indexParserOfId(PARSER_ID_ALL_ROUTES) != -1;
 		return loading;
 	}
-	public void loadDataForAllRoutes(OnLoadCompleteListener listener) {
-		_listener = listener;
+	public void loadDataForAllRoutes() {
 		ArrayList<Route> routeList = getFavorite();
 		if (routeList.size() == 0) {
 			routeList = getAllRoutes();
@@ -436,10 +437,6 @@ public class Model extends Application {
 		_startParserWithId(req, requestId);
 	}
 	
-	public void changeListener(OnLoadCompleteListener listener) {
-		_listener = listener;
-	}
-	
 	
 	
 	
@@ -450,17 +447,16 @@ public class Model extends Application {
 		return _parsers;
 	}
 	
-	public void showFavoriteRoutes(OnLoadCompleteListener listener) {
+	public void showFavoriteRoutes() {
 		for (Route route : getFavorite()) {
-			_loadDataForRoute(route, listener);
+			_loadDataForRoute(route);
 		}
 	}
 	
 	private String _cookie = null;
 	private String _scope = null;
 	private boolean _scopeCookieIsLoading = false;
-	private void _loadDataForRoute(final Route route, final OnLoadCompleteListener listener) {
-		_listener = listener;
+	private void _loadDataForRoute(final Route route) {
 		final int requestId = route.id;
 		IRequest req = new IRequest() {
 			
@@ -565,7 +561,7 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				if (isOnline()) {
-					listener.onTransportListOfRouteLoadComplete(_array);
+					_listener.onTransportListOfRouteLoadComplete(_array);
 				}
 				_removeParserById(requestId);
 			}
@@ -594,8 +590,7 @@ public class Model extends Application {
 		}
 	}
 	
-	public void loadImg(LatLngBounds bounds, final int width, final int height, final OnLoadCompleteListener listener) {
-		_listener = listener;
+	public void loadImg(LatLngBounds bounds, final int width, final int height) {
 		Mercator m = new Mercator();
 		final double left_lon = m.mer(bounds.southwest.longitude, AxisType.LNG);
 		final double left_lat = m.mer(bounds.southwest.latitude, AxisType.LAT);
@@ -664,7 +659,7 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				if (isOnline()) {
-					listener.onImgLoadComplete(_img);
+					_listener.onImgLoadComplete(_img);
 				}
 				_removeParserById(requestId);
 			}

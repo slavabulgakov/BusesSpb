@@ -308,7 +308,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onInternetAccessDeny() {
 		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).showInternetDenyIcon(true);
+			((MainActivity)_currentActivity).showInternetDenyIcon();
 		}
 	}
 
