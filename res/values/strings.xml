@@ -54,6 +54,7 @@
     <color name="blue">#7F33b5e5</color>
     <color name="trans">#00ffffff</color>
     <color name="menu_bg">#454545</color>
+    <color name="internet_deny">#d02424</color>
     <color name="bus" >#00adef</color>
     <color name="trolley" >#70cca1</color>
     <color name="tram" >#f17171</color>

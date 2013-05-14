@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
+import android.R.bool;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -777,7 +778,8 @@ public class Model extends Application {
 		editor.commit();
 	}
 	
-	private boolean _isOnline = true;
+	private boolean _isOnline = false;
+	private boolean _isFirstPerformIsOnlineMethod = true; 
 	public boolean isOnline() {
 	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -787,11 +789,15 @@ public class Model extends Application {
 	    	_isOnline = online;
 	    	if (_listener != null) {
 	    		if (online) {
+	    			getAllTransportOverlays().clear();
 					_listener.onInternetAccessSuccess();
 				} else {
 					_listener.onInternetAccessDeny();
 				}
 			}
+		} else if (_isOnline == false && _isFirstPerformIsOnlineMethod) {
+			_isFirstPerformIsOnlineMethod = false;
+			_listener.onInternetAccessDeny();
 		}
 	    
 	    return online;

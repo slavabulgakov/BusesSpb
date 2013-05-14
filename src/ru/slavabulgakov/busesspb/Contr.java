@@ -110,6 +110,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			_currentActivity.finish();
 			break;
 			
+		case R.id.internetDeny:
+			_currentActivity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+			break;
+			
+			
 		default:
 			break;
 		}

@@ -205,8 +205,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/mainRoutesBtn"
                 android:layout_alignLeft="@+id/mainRoutesBtn"
-                android:background="@drawable/btn_pressed_black"
-                android:src="@drawable/location"
+                android:background="@drawable/btn_pressed_red"
+                android:src="@drawable/internet_deny"
                 android:minHeight="40dp"
                 android:minWidth="40dp"
                 android:layout_marginTop="10dp" />

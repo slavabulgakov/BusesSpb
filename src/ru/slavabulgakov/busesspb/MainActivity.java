@@ -170,6 +170,7 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		_internetDenyImageButton = (ImageButton)findViewById(R.id.internetDeny);
+		_internetDenyImageButton.setOnClickListener(Contr.getInstance());
 		
 		_internetDenyImageButton.setVisibility(_internetDenyIconIsShowed() ? View.VISIBLE : View.INVISIBLE);
     }
