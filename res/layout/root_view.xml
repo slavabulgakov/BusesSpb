@@ -87,7 +87,8 @@
                         android:minHeight="35dp"
                         android:minWidth="40dp"
                         android:duplicateParentState="true"
-                        android:src="@drawable/bus_30_30" />
+                        android:src="@drawable/bus_30_30"
+                        android:scaleType="center" />
 
                 </LinearLayout>
                 
@@ -108,7 +109,8 @@
                     	android:minHeight="35dp"
                         android:minWidth="40dp"
                         android:duplicateParentState="true"
-                    	android:src="@drawable/trolley_30_30" />
+                    	android:src="@drawable/trolley_30_30"
+                    	android:scaleType="center" />
 
                 </LinearLayout>
                 
@@ -128,7 +130,8 @@
                     	android:minHeight="35dp"
                         android:minWidth="40dp"
                         android:duplicateParentState="true"
-                    	android:src="@drawable/tram_30_30" />
+                    	android:src="@drawable/tram_30_30"
+                    	android:scaleType="center" />
 
                 </LinearLayout>
 
