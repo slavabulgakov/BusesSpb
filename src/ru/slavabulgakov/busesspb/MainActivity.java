@@ -86,6 +86,7 @@ public class MainActivity extends BaseActivity {
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.addTextChangedListener(Contr.getInstance());
+		_editText.setOnKeyListener(Contr.getInstance());
 		
 		_clearButton = (ImageButton)findViewById(R.id.clearRouteText);
 		_clearButton.setOnClickListener(Contr.getInstance());
@@ -460,7 +461,7 @@ public class MainActivity extends BaseActivity {
 		}
 	}
     
-    private void _keyboardTurnOff() {
+    public void keyboardTurnOff() {
     	InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
     }
@@ -490,7 +491,7 @@ public class MainActivity extends BaseActivity {
 		
 		{// отключение клавиатуры
 			if (!isOpen) {
-				_keyboardTurnOff();
+				keyboardTurnOff();
 			}
 		}
 		

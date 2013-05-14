@@ -30,7 +30,8 @@
             	android:paddingLeft="10dp"
             	android:paddingRight="10dp"
             	android:paddingTop="5dp"
-            	android:layout_alignParentLeft="true" />
+            	android:layout_alignParentLeft="true"
+            	android:singleLine="true" />
             <ImageButton
                 android:id="@+id/clearRouteText"
                 android:layout_width="wrap_content"

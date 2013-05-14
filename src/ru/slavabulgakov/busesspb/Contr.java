@@ -15,7 +15,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.animation.TranslateAnimation;
@@ -28,7 +30,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener {
+public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -62,37 +64,37 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		ListView listView = (ListView)_currentActivity.findViewById(R.id.selectRouteListView);
 		switch (v.getId()) {
 		case R.id.mainRoutesBtn:
-			((MainActivity)_currentActivity).toggleLeftMenu();
+			_mainActivity().toggleLeftMenu();
 			break;
 			
 		case R.id.busFilter:
 			_model.setFilter(TransportKind.Bus);
-			((MainActivity)_currentActivity).updateTransportOffline();
-			((MainActivity)_currentActivity).updateFilterButtons();
+			_mainActivity().updateTransportOffline();
+			_mainActivity().updateFilterButtons();
 			break;
 			
 		case R.id.trolleyFilter:
 			_model.setFilter(TransportKind.Trolley);
-			((MainActivity)_currentActivity).updateTransportOffline();
-			((MainActivity)_currentActivity).updateFilterButtons();
+			_mainActivity().updateTransportOffline();
+			_mainActivity().updateFilterButtons();
 			break;
 			
 		case R.id.tramFilter:
 			_model.setFilter(TransportKind.Tram);
-			((MainActivity)_currentActivity).updateTransportOffline();
-			((MainActivity)_currentActivity).updateFilterButtons();
+			_mainActivity().updateTransportOffline();
+			_mainActivity().updateFilterButtons();
 			break;
 			
 		case R.id.location:
-			((MainActivity)_currentActivity).moveCameraToMyLocation();
+			_mainActivity().moveCameraToMyLocation();
 			break;
 			
 		case R.id.plus:
-			((MainActivity)_currentActivity).zoomCameraTo(1);
+			_mainActivity().zoomCameraTo(1);
 			break;
 			
 		case R.id.minus:
-			((MainActivity)_currentActivity).zoomCameraTo(-1);
+			_mainActivity().zoomCameraTo(-1);
 			break;
 			
 		case R.id.about:
@@ -133,20 +135,20 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 				}
 				if (kind != TransportKind.None) {
 					_model.setFilterMenu(kind);
-					((MainActivity)_currentActivity).updateListView();
-					((MainActivity)_currentActivity).updateFilterButtons();
+					_mainActivity().updateListView();
+					_mainActivity().updateFilterButtons();
 				}
 			}
 		}
 		
-		if (_currentActivity.getClass() == MainActivity.class && v.getClass() == CloseAllTickets.class) {
+		if (_isMainActivity() && v.getClass() == CloseAllTickets.class) {
 			LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
 			for (Route route : _model.getFavorite()) {
 				_model.getAllRoutes().add(route);
 			}
 			_model.getFavorite().clear();
 //			ticketsLayout.removeAllViews();
-			((MainActivity)_currentActivity).updateListView();
+			_mainActivity().updateListView();
 			
 			for (int i = 0; i < ticketsLayout.getChildCount(); i++) {
 				View view = ticketsLayout.getChildAt(i);
@@ -192,8 +194,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@SuppressLint("NewApi")
 	@Override
 	public void onCameraChange(CameraPosition cameraPosition) {
-		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).updateTransportOffline();
+		if (_isMainActivity()) {
+			_mainActivity().updateTransportOffline();
 			_model.setZoom(cameraPosition.zoom);
 			_model.setLocation(cameraPosition.target);
 		}
@@ -201,25 +203,25 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onTransportListOfRouteLoadComplete(ArrayList<Transport> array) {
-		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).showTransportListOnMap(array);
+		if (_isMainActivity()) {
+			_mainActivity().showTransportListOnMap(array);
 		}
 	}
 
 	@Override
 	public void onRouteKindsLoadComplete(ArrayList<Route> array) {
-		if (_currentActivity.getClass() == MainActivity.class) {
+		if (_isMainActivity()) {
 			if(array == null) {
 				Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
 			}
-			((MainActivity)_currentActivity).showMenuContent();
+			_mainActivity().showMenuContent();
 		}
 	}
 
 	@Override
 	public void onImgLoadComplete(Bitmap img) {
-		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).showTransportImgOnMap(img);
+		if (_isMainActivity()) {
+			_mainActivity().showTransportImgOnMap(img);
 		}
 		
 	}
@@ -268,8 +270,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void willRemove(Ticket ticket) {
 		_model.setRouteToAll(ticket.getRoute());
-		((MainActivity)_currentActivity).updateListView();
-		((MainActivity)_currentActivity).putCloseAllButtonToTicketsLayout();
+		_mainActivity().updateListView();
+		_mainActivity().putCloseAllButtonToTicketsLayout();
 		
 		Animations.removeTicket(ticket);
 	}
@@ -288,35 +290,54 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onMenuChangeState(boolean isOpen) {
-		((MainActivity)_currentActivity).menuChangeState(isOpen);
+		_mainActivity().menuChangeState(isOpen);
 	}
 
 	@Override
 	public void onHold(Boolean hold) {
-		((MainActivity)_currentActivity).enableMapGestures(!hold);
+		_mainActivity().enableMapGestures(!hold);
 	}
 	
 	@Override
 	public void onMove(double percent) {
 		if (_currentActivity != null) {
-			if (_currentActivity.getClass() == MainActivity.class) {
-				((MainActivity)_currentActivity).moveLeftMenu(percent);
+			if (_isMainActivity()) {
+				_mainActivity().moveLeftMenu(percent);
 			}
 		}
 	}
 
 	@Override
 	public void onInternetAccessDeny() {
-		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).showInternetDenyIcon();
+		if (_isMainActivity()) {
+			_mainActivity().showInternetDenyIcon();
 		}
 	}
 
 	@Override
 	public void onInternetAccessSuccess() {
-		if (_currentActivity.getClass() == MainActivity.class) {
-			((MainActivity)_currentActivity).hideInternetDenyIcon();
-			((MainActivity)_currentActivity).clearMap();
+		if (_isMainActivity()) {
+			_mainActivity().hideInternetDenyIcon();
+			_mainActivity().clearMap();
 		}
+	}
+	
+	private boolean _isMainActivity() {
+		return _currentActivity.getClass() == MainActivity.class;
+	}
+	
+	private MainActivity _mainActivity() {
+		if (_isMainActivity()) {
+			return (MainActivity)_currentActivity;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean onKey(View view, int arg1, KeyEvent arg2) {
+		if (view.getClass() == EditText.class && _isMainActivity()) {
+			_mainActivity().keyboardTurnOff();
+		}
+		return false;
 	}
 }
