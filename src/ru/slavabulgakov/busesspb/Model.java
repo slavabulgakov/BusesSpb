@@ -718,6 +718,12 @@ public class Model extends Application {
 		}
 		return _allTransportOverlays;
 	}
+	public void removeAllTransportOverlays() {
+		deleteFile("allTransportOverlays.ser");
+		if (_allTransportOverlays != null) {
+			_allTransportOverlays.clear();
+		}
+	}
 	public void saveAllTransportOverlays() {
 		if (_allTransportOverlays != null) {
 			ArrayList<Transport> array = new ArrayList<Transport>();
@@ -789,7 +795,7 @@ public class Model extends Application {
 	    	_isOnline = online;
 	    	if (_listener != null) {
 	    		if (online) {
-	    			getAllTransportOverlays().clear();
+	    			removeAllTransportOverlays();
 					_listener.onInternetAccessSuccess();
 				} else {
 					_listener.onInternetAccessDeny();

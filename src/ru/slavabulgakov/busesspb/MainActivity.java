@@ -512,7 +512,12 @@ public class MainActivity extends BaseActivity {
 			if (!isOpen) {
 				if (_map != null) {
 					_map.clear();
-					updateTransportOffline();
+					if (_model.isOnline()) {
+						_model.removeAllTransportOverlays();
+						updateTransport();
+					} else {
+						updateTransportOffline();
+					}
 				}
 			}
 		}
