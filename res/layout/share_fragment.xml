@@ -22,7 +22,7 @@
                 
                 
                 
-                <ImageButton android:id="@+id/shareEmailImageButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/share_email_btn_bg" android:background="@null" android:layout_marginLeft="5dp" android:contentDescription="@string/none" />
+                <ImageButton android:id="@+id/shareEmailImageButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/share_email_btn_bg" android:background="@null" android:layout_marginLeft="5dp" android:contentDescription="@string/none" android:visibility="gone" />
 
                 <ImageButton android:id="@+id/shareTwitterImageButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5dp" android:background="@null" android:src="@drawable/share_twitter_btn_bg" android:contentDescription="@string/none" />
                 

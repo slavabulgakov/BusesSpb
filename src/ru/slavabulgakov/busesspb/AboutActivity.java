@@ -2,6 +2,7 @@ package ru.slavabulgakov.busesspb;
 
 import com.google.ads.AdView;
 
+import ru.slavabulgakov.busesspb.ShareFragment.ShareFragmentListener;
 import ru.slavabulgakov.busesspb.util.IabHelper.OnIabPurchaseFinishedListener;
 import ru.slavabulgakov.busesspb.util.IabResult;
 import ru.slavabulgakov.busesspb.util.Purchase;
@@ -18,13 +19,16 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AboutActivity extends BaseActivity implements OnClickListener, OnIabPurchaseFinishedListener {
+public class AboutActivity extends BaseActivity implements OnClickListener, OnIabPurchaseFinishedListener, ShareFragmentListener {
 	
 	private ShareFragment _shareFragment;
 	private AdView _adView;
+	private ScrollView _scrollView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +46,10 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 		((Button)findViewById(R.id.aboutSendBtn)).setOnClickListener(this);
 		((Button)findViewById(R.id.aboutPurchaseAdsOff)).setOnClickListener(this);
 		_shareFragment = (ShareFragment)getSupportFragmentManager().findFragmentById(R.id.shareFragment);
+		_shareFragment.setListener(this);
 		
 		_adView = (AdView)findViewById(R.id.aboutAdView);
-		if (_hasPurchaseAdsOff) {
-			_adView.setVisibility(View.GONE);
-		}
+		_scrollView = (ScrollView)findViewById(R.id.aboutScrollView);
 	}
 	
 	@Override
@@ -98,15 +101,11 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	}
 	
 	@Override
-    protected void onPurñhaseChecked(boolean hasPurchase) {
-    	super.onPurñhaseChecked(hasPurchase);
-    	if (_hasPurchaseAdsOff) {
-			((ViewGroup)_adView.getParent()).removeView(_adView);
-		} else {
-			_adView.setVisibility(View.VISIBLE);
-		}
-    }
-	
+	protected void onResume() {
+		super.onResume();
+		_setAdViewVisible(!_hasPurchaseAdsOff);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -130,6 +129,21 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 		if (result.isSuccess()) {
 			_hasPurchaseAdsOff = true;
 			_model.setData("hasPurchaseAdsOff", true, true);
+			_setAdViewVisible(false);
 		}
 	}
+
+	@Override
+	public void onSuccessShared() {
+		_model.set5Days();
+		_setAdViewVisible(false);
+	}
+	
+	private void _setAdViewVisible(boolean visible) {
+		_adView.setVisibility(visible ? View.VISIBLE : View.GONE);
+		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_scrollView.getLayoutParams();
+		lp.setMargins(lp.leftMargin, lp.topMargin, lp.rightMargin, visible ? 50 : 0);
+		_scrollView.setLayoutParams(lp);
+	}
+	
 }

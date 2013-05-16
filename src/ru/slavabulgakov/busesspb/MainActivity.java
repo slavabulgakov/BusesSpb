@@ -167,32 +167,20 @@ public class MainActivity extends BaseActivity {
 		_internetDenyImageButton.setVisibility(_internetDenyIconIsShowed() ? View.VISIBLE : View.INVISIBLE);
 		
 		_adView = (AdView)findViewById(R.id.mainAdView);
-		if (_hasPurchaseAdsOff) {
-			_adView.setVisibility(View.GONE);
-		}
     }
     
-    private void _offsetBottomControls(boolean hasPurchase) {
+    private void _updateBottomControls() {
     	Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int width = display.getWidth();
 		width = _model.pxToDp(width);
 		if (width < 400) {
 			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
-			zoomLayoutParams.bottomMargin = _model.dpToPx(hasPurchase ? 0 : 60);
+			zoomLayoutParams.bottomMargin = _model.dpToPx(_hasPurchaseAdsOff ? 10 : 60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
-    }
-    
-    @Override
-    protected void onPurñhaseChecked(boolean hasPurchase) {
-    	super.onPurñhaseChecked(hasPurchase);
-    	_offsetBottomControls(hasPurchase);
-    	if (_hasPurchaseAdsOff) {
-			((ViewGroup)_adView.getParent()).removeView(_adView);
-		} else {
-			_adView.setVisibility(View.VISIBLE);
-		}
+		
+		_adView.setVisibility(_hasPurchaseAdsOff ? View.GONE : View.VISIBLE);
     }
     
     private Boolean _internetDenyIconIsShowed() {
@@ -316,7 +304,8 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	protected void onResume() {
-		_offsetBottomControls(_hasPurchaseAdsOff);
+		super.onResume();
+		_updateBottomControls();
 		
 		_map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		if (_map != null) {
@@ -361,7 +350,6 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		_updateControls();
-		super.onResume();
 	}
 
 	public void putCloseAllButtonToTicketsLayout() {

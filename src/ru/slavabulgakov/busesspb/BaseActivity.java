@@ -44,28 +44,24 @@ public class BaseActivity extends FragmentActivity {
 				}
 			}
 		});
-		
-		_hasPurchaseAdsOff = (Boolean)_model.getData("hasPurchaseAdsOff", Boolean.class, false);
 	}
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		_hasPurchaseAdsOff = (Boolean)_model.getData("hasPurchaseAdsOff", Boolean.class, false) || _model.is5days();
+	}
+
 	IabHelper.QueryInventoryFinishedListener _gotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		
 		@Override
 		public void onQueryInventoryFinished(IabResult result, Inventory inv) {
 			if (result.isSuccess()) {
 				_hasPurchaseAdsOff = inv.hasPurchase(SKU_ADS_OFF);
-				onPurñhaseChecked(_hasPurchaseAdsOff);
-				if (_hasPurchaseAdsOff) {
-					_model.setData("hasPurchaseAdsOff", true, true);
-				}
+				_model.setData("hasPurchaseAdsOff", _hasPurchaseAdsOff, true);
 			}
 		}
 	};
-	
-	protected void onPurñhaseChecked(boolean hasPurchase) {
-		
-	}
-	
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {

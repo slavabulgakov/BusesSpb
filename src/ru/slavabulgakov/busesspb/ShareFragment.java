@@ -32,6 +32,15 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	private LoginButton _fbLoginBtn;
 	private Model _model;
 	private ShareModel _shareModel;
+	private ShareFragmentListener _listener;
+	
+	public void setListener(ShareFragmentListener listener) {
+		_listener = listener;
+	}
+	
+	interface ShareFragmentListener {
+		void onSuccessShared();
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -135,6 +144,9 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	                        Toast.makeText(_model, 
 	                             R.string.share_success,
 	                             Toast.LENGTH_LONG).show();
+	                        if (_listener != null) {
+	                			_listener.onSuccessShared();
+	                		}
 	                }
 	            }
 	        };
@@ -193,6 +205,9 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	@Override
 	public void onVKSendSuccess() {
 		Toast.makeText(getActivity(), R.string.share_success, Toast.LENGTH_LONG).show();
+		if (_listener != null) {
+			_listener.onSuccessShared();
+		}
 	}
 
 	@Override
@@ -208,6 +223,9 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	@Override
 	public void onTwitterSuccesUpdating() {
 		Toast.makeText(getActivity(), R.string.share_success, Toast.LENGTH_LONG).show();
+		if (_listener != null) {
+			_listener.onSuccessShared();
+		}
 	}
 
 	@Override

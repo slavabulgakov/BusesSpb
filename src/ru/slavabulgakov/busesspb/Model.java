@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,6 +146,8 @@ public class Model extends Application {
 			editor.putLong(key, (Long)value);
 		} else if (value.getClass() == String.class) {
 			editor.putString(key, (String)value);
+		} else if (value.getClass() == Date.class) {
+			editor.putLong(key, ((Date)value).getTime());
 		}
 		editor.commit();
 	}
@@ -163,6 +166,9 @@ public class Model extends Application {
 				value = settings.getLong(key, (Long)defValue);
 			} else if (class_ == String.class) {
 				value = settings.getString(key, (String)defValue);
+			} else if (class_ == Date.class) {
+				Long ms = settings.getLong(key, 0);
+				value = ms == 0 ? null : new Date(ms);
 			}
 		}
 		
@@ -174,6 +180,18 @@ public class Model extends Application {
 			value = _data.get(key);
 		}
 		return value;
+	}
+	
+	public boolean is5days() {
+		Date date = (Date)getData("5days", Date.class, null);
+		if (date != null) {
+			Date now = new Date();
+			return now.getTime() - date.getTime() < 5 * 24 * 60 * 60 * 1000;
+		}
+		return false;
+	}
+	public void set5Days() {
+		setData("5days", new Date(), true);
 	}
 	
 	public int enumKindToInt(TransportKind kind) {
