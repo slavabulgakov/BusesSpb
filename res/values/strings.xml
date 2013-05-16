@@ -19,6 +19,7 @@
     <string name="about_text">Если вы обнаружите ошибку, то не стесняйтесь, пишите. У меня нет того многообразия устройств, которое есть у вас, чтобы потестировать на них Автобусы СПб :)</string>
     <string name="send_btn">Отправить отзыв или сообщить о проблеме</string>
     <string name="rate_btn">Оценить приложение</string>
+    <string name="purchase_ads_off">Купить версию без рекламы</string>
     <string name="none">none</string>
     <string name="share">Рассказать\nдрузьям:</string>
     <string name="admob_publisher_id">a15164a111d9a0f</string>

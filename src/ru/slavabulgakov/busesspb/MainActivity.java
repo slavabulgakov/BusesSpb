@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
+import com.google.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
@@ -71,6 +72,7 @@ public class MainActivity extends BaseActivity {
 	private LinearLayout _leftMenu;
 	private ImageView _menuIcon;
 	private ImageButton _internetDenyImageButton;
+	private AdView _adView;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -150,16 +152,6 @@ public class MainActivity extends BaseActivity {
 		
 		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
 		
-		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-		int width = display.getWidth();
-		width = _model.pxToDp(width);
-		if (width < 400) {
-			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
-			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
-			zoomLayoutParams.bottomMargin = _model.dpToPx(60);
-			zoom.setLayoutParams(zoomLayoutParams);
-		}
-		
 		_leftMenu = (LinearLayout)findViewById(R.id.leftMenu);
 		_menuIcon = ((ImageView)findViewById(R.id.menuIcon));
 		
@@ -173,6 +165,34 @@ public class MainActivity extends BaseActivity {
 		_internetDenyImageButton.setOnClickListener(Contr.getInstance());
 		
 		_internetDenyImageButton.setVisibility(_internetDenyIconIsShowed() ? View.VISIBLE : View.INVISIBLE);
+		
+		_adView = (AdView)findViewById(R.id.mainAdView);
+		if (_hasPurchaseAdsOff) {
+			_adView.setVisibility(View.GONE);
+		}
+    }
+    
+    private void _offsetBottomControls(boolean hasPurchase) {
+    	Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+		int width = display.getWidth();
+		width = _model.pxToDp(width);
+		if (width < 400) {
+			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
+			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
+			zoomLayoutParams.bottomMargin = _model.dpToPx(hasPurchase ? 0 : 60);
+			zoom.setLayoutParams(zoomLayoutParams);
+		}
+    }
+    
+    @Override
+    protected void onPurñhaseChecked(boolean hasPurchase) {
+    	super.onPurñhaseChecked(hasPurchase);
+    	_offsetBottomControls(hasPurchase);
+    	if (_hasPurchaseAdsOff) {
+			((ViewGroup)_adView.getParent()).removeView(_adView);
+		} else {
+			_adView.setVisibility(View.VISIBLE);
+		}
     }
     
     private Boolean _internetDenyIconIsShowed() {
@@ -296,6 +316,8 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	protected void onResume() {
+		_offsetBottomControls(_hasPurchaseAdsOff);
+		
 		_map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		if (_map != null) {
 			CameraUpdate center = CameraUpdateFactory.newLatLng(_model.getLocation());

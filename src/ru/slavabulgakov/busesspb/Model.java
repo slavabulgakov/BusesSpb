@@ -34,7 +34,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
-import android.R.bool;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -132,11 +131,49 @@ public class Model extends Application {
 		}
 		_data.put(key, value);
 	}
-	public Object getData(String key) {
-		if (_data != null) {
-			return _data.get(key);
+	public void setData(String key, Object value, boolean storage) {
+		setData(key, value);
+		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		if (value.getClass() == Integer.class) {
+			editor.putInt(key, (Integer)value);
+		} else if (value.getClass() == Boolean.class) {
+			editor.putBoolean(key, (Boolean)value);
+		} else if (value.getClass() == Float.class) {
+			editor.putFloat(key, (Float)value);
+		} else if (value.getClass() == Long.class) {
+			editor.putLong(key, (Long)value);
+		} else if (value.getClass() == String.class) {
+			editor.putString(key, (String)value);
 		}
-		return null;
+		editor.commit();
+	}
+	public Object getData(String key, Class<?>class_, Object defValue) {
+		Object value = getData(key);
+		
+		if (value == null) {
+			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+			if (class_ == Boolean.class) {
+				value = settings.getBoolean(key, (Boolean)defValue);
+			} else if (class_ == Integer.class) {
+				value = settings.getInt(key, (Integer)defValue);
+			} else if (class_ == Float.class) {
+				value = settings.getFloat(key, (Float)defValue);
+			} else if (class_ == Long.class) {
+				value = settings.getLong(key, (Long)defValue);
+			} else if (class_ == String.class) {
+				value = settings.getString(key, (String)defValue);
+			}
+		}
+		
+		return value;
+	}
+	public Object getData(String key) {
+		Object value = null;
+		if (_data != null) {
+			value = _data.get(key);
+		}
+		return value;
 	}
 	
 	public int enumKindToInt(TransportKind kind) {

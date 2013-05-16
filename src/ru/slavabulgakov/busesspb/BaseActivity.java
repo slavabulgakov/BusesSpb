@@ -1,5 +1,9 @@
 package ru.slavabulgakov.busesspb;
 
+import ru.slavabulgakov.busesspb.util.IabHelper;
+import ru.slavabulgakov.busesspb.util.IabResult;
+import ru.slavabulgakov.busesspb.util.Inventory;
+import ru.slavabulgakov.busesspb.util.IabHelper.OnIabSetupFinishedListener;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -17,6 +21,9 @@ import android.webkit.WebView;
 public class BaseActivity extends FragmentActivity {
 	protected ProgressDialog _progressDialog;
 	protected Model _model;
+	protected IabHelper _helper;
+	protected boolean _hasPurchaseAdsOff;
+	protected static String SKU_ADS_OFF = "SKU_ADS_OFF"; 
 	
 	
 	@Override
@@ -24,8 +31,40 @@ public class BaseActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		_model = (Model)getApplicationContext();
 		_model.setListener(Contr.getInstance());
+		
+		String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA26ADkNNKb3IcTfy7HT4ZOoumAZqj2xQ+OHUQuiliVukaq6gwhaLms6vMsDslCgsWhdc3II0c+lViuLcLRUQevPPZ0aVa0zdNbBQrMfbPSqlga1vE66iikcssdonrrL2S+uSqEu7Q8hlLP3Rbu+AV9vLdSUKfmG83EHecgRpyKeu0urhW2IXbVt8W61p5EykVCrcNpN8P2/8RhpOFv7iEMPGQEvX2VX+gLM6+bwH5jlFXcZusfv5sQTq5Kd5gcfk885LH21B3pZxXrhDIlVdryt+Bawk2zbeoANAGR9Gnk8B39uNU5EsMIFVFftElPayo4Gi4yVqVWRCPjYlTzgqMWQIDAQAB";
+		_helper = new IabHelper(this, base64EncodedPublicKey);
+		
+		_helper.startSetup(new OnIabSetupFinishedListener() {
+			
+			@Override
+			public void onIabSetupFinished(IabResult result) {
+				if (result.isSuccess()) {
+					_helper.queryInventoryAsync(_gotInventoryListener);
+				}
+			}
+		});
+		
+		_hasPurchaseAdsOff = (Boolean)_model.getData("hasPurchaseAdsOff", Boolean.class, false);
 	}
 	
+	IabHelper.QueryInventoryFinishedListener _gotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+		
+		@Override
+		public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+			if (result.isSuccess()) {
+				_hasPurchaseAdsOff = inv.hasPurchase(SKU_ADS_OFF);
+				onPurñhaseChecked(_hasPurchaseAdsOff);
+				if (_hasPurchaseAdsOff) {
+					_model.setData("hasPurchaseAdsOff", true, true);
+				}
+			}
+		}
+	};
+	
+	protected void onPurñhaseChecked(boolean hasPurchase) {
+		
+	}
 	
 	
 	@Override

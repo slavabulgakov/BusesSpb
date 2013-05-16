@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.slavabulgakov.busesspb"
-    android:versionCode="5"
+    android:versionCode="6"
     android:installLocation="preferExternal"
-    android:versionName="1.2" >
+    android:versionName="1.3" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -13,6 +13,7 @@
           android:name="ru.slavabulgakov.busesspb.permission.MAPS_RECEIVE"
           android:protectionLevel="signature"/>
     <uses-permission android:name="ru.slavabulgakov.busesspb.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.android.vending.BILLING" />
         
     <uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
