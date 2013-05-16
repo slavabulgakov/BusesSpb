@@ -43,7 +43,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 		((Button)findViewById(R.id.aboutPurchaseAdsOff)).setOnClickListener(this);
 		_shareFragment = (ShareFragment)getSupportFragmentManager().findFragmentById(R.id.shareFragment);
 		
-		_adView = (AdView)findViewById(R.id.mainAdView);
+		_adView = (AdView)findViewById(R.id.aboutAdView);
 		if (_hasPurchaseAdsOff) {
 			_adView.setVisibility(View.GONE);
 		}

@@ -23,7 +23,7 @@ public class BaseActivity extends FragmentActivity {
 	protected Model _model;
 	protected IabHelper _helper;
 	protected boolean _hasPurchaseAdsOff;
-	protected static String SKU_ADS_OFF = "SKU_ADS_OFF"; 
+	protected static String SKU_ADS_OFF = "ads_off"; 
 	
 	
 	@Override
@@ -182,6 +182,14 @@ public class BaseActivity extends FragmentActivity {
 	      }
 	}
 
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (!_helper.handleActivityResult(requestCode, resultCode, data)) {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 
 
 	public void update() {

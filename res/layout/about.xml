@@ -50,7 +50,7 @@
         android:padding="15dp"
         android:text="@string/purchase_ads_off"
         android:textSize="20sp"
-        android:drawableLeft="@drawable/ratestar"
+        android:drawableLeft="@drawable/ads_off"
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowColor="#000000"
@@ -110,6 +110,7 @@
     </ScrollView>
 
     <com.google.ads.AdView
+        android:id="@+id/aboutAdView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
