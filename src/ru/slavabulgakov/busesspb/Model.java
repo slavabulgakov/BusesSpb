@@ -181,6 +181,11 @@ public class Model extends Application {
 		}
 		return value;
 	}
+	public void removeData(String key) {
+		if (_data != null) {
+			_data.remove(key);
+		}
+	}
 	
 	public boolean is5days() {
 		Date date = (Date)getData("5days", Date.class, null);

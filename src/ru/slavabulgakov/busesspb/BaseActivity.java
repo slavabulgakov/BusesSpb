@@ -23,7 +23,7 @@ public class BaseActivity extends FragmentActivity {
 	protected Model _model;
 	protected IabHelper _helper;
 	protected boolean _hasPurchaseAdsOff;
-	protected static String SKU_ADS_OFF = "ads_off"; 
+	protected static String SKU_ADS_OFF = "android.test.purchased"; //"ads_off"; 
 	
 	
 	@Override

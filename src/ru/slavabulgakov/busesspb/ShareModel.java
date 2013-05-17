@@ -17,7 +17,6 @@ public class ShareModel {
 		public void onVKSendSuccess();
 		
 		public void onTwitterGetPin(ShareModel share, String url);
-		public void onTwitterEnterPin(ShareModel share);
 		public void onTwitterSuccesUpdating();
 		public void onTwitterErrorUpdating();
 		public void onTwitterErrorDuplicateUpdating();
@@ -37,19 +36,10 @@ public class ShareModel {
     	return localInstance;
     }
 	
-	private enum State {
-		NOTHING,
-		GET_PIN,
-		ENTER_PIN
-	};
-	
 	private IShareView _shareView;
-	private State _state;
-	
 	
 	public ShareModel() {
 		super();
-		_state = State.NOTHING;
 	}
 	
 	public void setShareView(IShareView shareView) {
@@ -151,10 +141,6 @@ public class ShareModel {
 	private Twitter _twitter;
 	private RequestToken _requestToken;
 	private String _url;
-	public void endSendMess2TW() {
-		_state = State.NOTHING;
-	}
-	
 	public void sendMess2TW() {
 		ParserWebPageTask task = new ParserWebPageTask(new IRequest() {
 			
@@ -179,7 +165,6 @@ public class ShareModel {
 				}
 				
 				_url = _requestToken.getAuthorizationURL();		
-				_state = State.GET_PIN;
 			}
 			
 			@Override
@@ -269,33 +254,6 @@ public class ShareModel {
 			}
 		});
 		task.execute((Void)null);
-	}
-	
-	public void updateAlerts() {
-		switch (_state) {
-		case GET_PIN:
-			_shareView.onTwitterGetPin(this, _url);
-			break;
-			
-		case ENTER_PIN:
-			_shareView.onTwitterEnterPin(this);
-			break;
-
-		default:
-			break;
-		}
-	}
-	
-	public void setGetPinState() {
-		_state = State.GET_PIN;
-	}
-	
-	public void setEnterPinState() {
-		_state = State.ENTER_PIN;
-	}
-	
-	public void setNothingState() {
-		_state = State.NOTHING;
 	}
 	//============
 	//////////////

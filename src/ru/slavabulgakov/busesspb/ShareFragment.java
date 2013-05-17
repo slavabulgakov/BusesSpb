@@ -61,7 +61,6 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 			_model.setShareModel(_shareModel);
 		}
 		_shareModel.setShareView(this);
-		_shareModel.updateAlerts();
 		
 		_fbUiLifecycleHelper = new UiLifecycleHelper(getActivity(), new Session.StatusCallback() {
     		@Override
@@ -189,6 +188,11 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 		super.onResume();
 		_isResumed = true;
   		_fbUiLifecycleHelper.onResume();
+  		String pin = (String)_model.getData("twitterPin"); 
+  		if (pin != null) {
+			_model.removeData("twitterPin");
+			_shareModel.setPin(pin, getActivity());
+		}
 	}
 
 	@Override
@@ -212,12 +216,8 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 
 	@Override
 	public void onTwitterGetPin(ShareModel share, String url) {
-		showGetPinDialog(share, url);
-	}
-
-	@Override
-	public void onTwitterEnterPin(ShareModel share) {
-		showEnterPinDialog(share);
+		_model.setData("twitterUrl", url);
+		getActivity().startActivity(new Intent(getActivity(), Browser.class));
 	}
 
 	@Override
@@ -267,76 +267,6 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 		
 	}
 
-	private Boolean _getPinDialogIsShowed = false;
-	private void showGetPinDialog(final ShareModel share, final String url) {
-		if (_getPinDialogIsShowed) {
-			return;
-		}
-		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());                 
-		alert.setTitle(R.string.twitter_get_pin_title);
-		alert.setMessage(R.string.twitter_get_pin_message);
-
-		alert.setPositiveButton(R.string.twitter_get_pin_continue_btn, new DialogInterface.OnClickListener() {  
-		    public void onClick(DialogInterface dialog, int whichButton) {
-		    	_getPinDialogIsShowed = false;
-		    	share.setEnterPinState();
-		    	showEnterPinDialog(share);
-			    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_FROM_BACKGROUND);
-			    startActivity(browserIntent);
-		        return;                  
-		    }  
-		});
-		
-		alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				_getPinDialogIsShowed = false;
-				Toast.makeText(getActivity(), R.string.share_cancel_title, Toast.LENGTH_LONG).show();
-				share.setNothingState();
-			}
-		});
-		
-		_getPinDialogIsShowed = true;
-	    alert.show();
-		
-    }
-	
-//	private Boolean _enterPinDialogIsShowed = false;
-	private void showEnterPinDialog(final ShareModel share) {
-//		if (_enterPinDialogIsShowed) {
-//			return;
-//		}
-		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());                 
-		alert.setTitle(R.string.twitter_enter_pin_title);
-		alert.setMessage(R.string.twitter_enter_pin_message);
-
-		final EditText input = new EditText(getActivity()); 
-		alert.setView(input);
-		
-		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {  
-		    public void onClick(DialogInterface dialog, int whichButton) {
-//		    	_enterPinDialogIsShowed = false;
-		        String pin = input.getText().toString();
-		        share.setPin(pin, getActivity());
-		        share.setNothingState();
-		    }  
-		});
-		
-		alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-//				_enterPinDialogIsShowed = false;
-				Toast.makeText(getActivity(), R.string.share_cancel_title, Toast.LENGTH_LONG).show();
-				share.setNothingState();
-			}
-		});
-		
-//		_enterPinDialogIsShowed = true;
-	    alert.show();
-		
-    }
 	
 	public void showAlertDialog(int titleId, int messageId, int iconId) {
     	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
