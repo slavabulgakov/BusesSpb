@@ -1,5 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
+import com.flurry.android.FlurryAgent;
 import com.google.ads.AdView;
 
 import ru.slavabulgakov.busesspb.ShareFragment.ShareFragmentListener;
@@ -77,6 +78,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " for Android " + Build.VERSION.RELEASE + " feedback");
 			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "\n\n" + "Info: " + Build.BRAND + " " + Build.MODEL);
 			startActivity(Intent.createChooser(emailIntent, null));
+			FlurryAgent.logEvent(FlurryConstants.sendReportBtnPressed);
 			break;
 			
 		case R.id.aboutRateBtn:
@@ -89,10 +91,12 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 		            Toast.makeText(this, getString(R.string.market_deny), Toast.LENGTH_LONG).show();
 		        }
 		    }
+		    FlurryAgent.logEvent(FlurryConstants.rateBtnPressed);
 			break;
 			
 		case R.id.aboutPurchaseAdsOff:
 			_helper.launchPurchaseFlow(this, SKU_ADS_OFF, 10001, this);
+			FlurryAgent.logEvent(FlurryConstants.purchaseAdsOffBtnPressed);
 			break;
 
 		default:
@@ -139,8 +143,10 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 			_model.setData("hasPurchaseAdsOff", true, true);
 			_setAdViewVisible(false);
 			_setPurchaseButtonVisible();
+			FlurryAgent.logEvent(FlurryConstants.purchaseAdsOffDidSuccess);
 		} else if (result.isFailure()) {
 			Toast.makeText(this, R.string.purchase_cancel, Toast.LENGTH_LONG).show();
+			FlurryAgent.logEvent(FlurryConstants.purchaseAdsOffDidDeny);
 		}
 	}
 

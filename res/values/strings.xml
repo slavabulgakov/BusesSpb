@@ -32,7 +32,7 @@
     <string name="share_message_twitter">Я установил Android-приложение Автобусы СПб! Оно показывает, где находятся автобусы/трамваи/троллейбусы Питера. http://goo.gl/IwseF</string>
     <string name="share_cancel_title">Сообщение не опубликовано</string>
     <string name="share_cancel_message">При публикации сообщение произошла ошибка. Проверьте ваше подключение к сети.</string>
-    <string name="share_success">Сообщение удачно опубликовано. Спасибо, что рассказываете друзьям о Автобусах СПб!</string>
+    <string name="share_success">Сообщение опубликовано. Спасибо, что рассказываете друзьям о Автобусах СПб! Реклама отключена на две недели.</string>
     <string name="twitter_get_pin_title">Получите номер</string>
     <string name="twitter_get_pin_message">Авторизируйтесь сайте Твиттера и скопируйте номер</string>
     <string name="twitter_get_pin_continue_btn">Далее</string>

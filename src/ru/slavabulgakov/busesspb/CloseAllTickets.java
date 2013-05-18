@@ -1,5 +1,3 @@
-
-
 package ru.slavabulgakov.busesspb;
 
 import android.content.Context;
@@ -19,6 +17,10 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	
 	interface OnAnimationEndListener {
 		void onAnimated(CloseAllTickets button);
+	}
+	
+	public CloseAllTickets(Context context) {
+		super(context);
 	}
 	
 	public CloseAllTickets(Context context, Model model) {

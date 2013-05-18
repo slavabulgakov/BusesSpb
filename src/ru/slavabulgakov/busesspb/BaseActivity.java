@@ -1,5 +1,7 @@
 package ru.slavabulgakov.busesspb;
 
+import com.flurry.android.FlurryAgent;
+
 import ru.slavabulgakov.busesspb.util.IabHelper;
 import ru.slavabulgakov.busesspb.util.IabResult;
 import ru.slavabulgakov.busesspb.util.Inventory;
@@ -103,6 +105,7 @@ public class BaseActivity extends FragmentActivity {
 	protected void onStart() {
 		super.onStart();
 		Contr.getInstance().setActivity(this);
+		FlurryAgent.onStartSession(this, FlurryConstants.API_KEY);
 	}
 
 
@@ -110,6 +113,7 @@ public class BaseActivity extends FragmentActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+		FlurryAgent.onEndSession(this);
 	}
 	
 	

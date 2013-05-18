@@ -8,6 +8,7 @@ import ru.slavabulgakov.busesspb.ShareModel.IShareView;
 
 import com.facebook.*;
 import com.facebook.widget.LoginButton;
+import com.flurry.android.FlurryAgent;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -136,10 +137,12 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	                    Toast.makeText(_model,
 	                         R.string.share_cancel_message,
 	                         Toast.LENGTH_SHORT).show();
+	                    FlurryAgent.logEvent(FlurryConstants.shareFBDeny);
 	                    } else {
 	                        Toast.makeText(_model, 
 	                             R.string.share_success,
 	                             Toast.LENGTH_LONG).show();
+	                        FlurryAgent.logEvent(FlurryConstants.shareFBSuccess);
 	                        if (_listener != null) {
 	                			_listener.onSuccessShared();
 	                		}
@@ -201,11 +204,13 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	@Override
 	public void onVKError() {
 		Toast.makeText(getActivity(), R.string.share_cancel_message, Toast.LENGTH_LONG).show();
+		FlurryAgent.logEvent(FlurryConstants.shareVKDeny);
 	}
 
 	@Override
 	public void onVKSendSuccess() {
 		Toast.makeText(getActivity(), R.string.share_success, Toast.LENGTH_LONG).show();
+		FlurryAgent.logEvent(FlurryConstants.shareVKSuccess);
 		if (_listener != null) {
 			_listener.onSuccessShared();
 		}
@@ -220,6 +225,7 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 	@Override
 	public void onTwitterSuccesUpdating() {
 		Toast.makeText(getActivity(), R.string.share_success, Toast.LENGTH_LONG).show();
+		FlurryAgent.logEvent(FlurryConstants.shareTwitterSuccess);
 		if (_listener != null) {
 			_listener.onSuccessShared();
 		}
@@ -227,6 +233,7 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 
 	@Override
 	public void onTwitterErrorUpdating() {
+		FlurryAgent.logEvent(FlurryConstants.shareTwitterDeny);
 		showAlertDialog(R.string.connection_error_title, R.string.connection_error_message, android.R.drawable.ic_dialog_alert);
 	}
 
@@ -240,10 +247,12 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 		switch (v.getId()) {
 		case R.id.shareFBImageButton:
 			publishStory();
+			FlurryAgent.logEvent(FlurryConstants.shareFBButtonPressed);
 			break;
 			
 		case R.id.shareVKImageButton:
 			_shareModel.sendMess2VK(getActivity());
+			FlurryAgent.logEvent(FlurryConstants.shareVKButtonPressed);
 			break;
 			
 		case R.id.shareEmailImageButton:
@@ -252,10 +261,12 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_message_title));
 			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.share_message));
 			startActivity(Intent.createChooser(emailIntent, getString(R.string.send_with)));
+			FlurryAgent.logEvent(FlurryConstants.shareEmailButtonPressed);
 			break;
 			
 		case R.id.shareTwitterImageButton:
 			_shareModel.sendMess2TW();
+			FlurryAgent.logEvent(FlurryConstants.shareTwitterButtonPressed);
 			break;
 
 		default:
