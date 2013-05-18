@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -29,6 +28,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	private ShareFragment _shareFragment;
 	private AdView _adView;
 	private ScrollView _scrollView;
+	private Button _purchaseButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 		
 		_adView = (AdView)findViewById(R.id.aboutAdView);
 		_scrollView = (ScrollView)findViewById(R.id.aboutScrollView);
+		_purchaseButton = (Button)findViewById(R.id.aboutPurchaseAdsOff);
 	}
 	
 	@Override
@@ -103,7 +104,15 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	@Override
 	protected void onResume() {
 		super.onResume();
-		_setAdViewVisible(!_hasPurchaseAdsOff);
+		_setAdViewVisible(!isAdsOff());
+		_setPurchaseButtonVisible();
+	}
+	
+	@Override
+	protected void purchaseDidCheck(boolean hasPurchase) {
+		super.purchaseDidCheck(hasPurchase);
+		_setAdViewVisible(!isAdsOff());
+		_setPurchaseButtonVisible();
 	}
 
 	@Override
@@ -127,23 +136,29 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	@Override
 	public void onIabPurchaseFinished(IabResult result, Purchase info) {
 		if (result.isSuccess()) {
-			_hasPurchaseAdsOff = true;
 			_model.setData("hasPurchaseAdsOff", true, true);
 			_setAdViewVisible(false);
+			_setPurchaseButtonVisible();
+		} else if (result.isFailure()) {
+			Toast.makeText(this, R.string.purchase_cancel, Toast.LENGTH_LONG).show();
 		}
 	}
 
 	@Override
 	public void onSuccessShared() {
-		_model.set5Days();
+		_model.setFreeDays();
 		_setAdViewVisible(false);
 	}
 	
 	private void _setAdViewVisible(boolean visible) {
 		_adView.setVisibility(visible ? View.VISIBLE : View.GONE);
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_scrollView.getLayoutParams();
-		lp.setMargins(lp.leftMargin, lp.topMargin, lp.rightMargin, visible ? 50 : 0);
+		lp.setMargins(lp.leftMargin, lp.topMargin, lp.rightMargin, visible ? _model.dpToPx(50) : 0);
 		_scrollView.setLayoutParams(lp);
 	}
 	
+	private void _setPurchaseButtonVisible() {
+		boolean visible = !(Boolean)_model.getData("hasPurchaseAdsOff");
+		_purchaseButton.setVisibility(visible ? View.VISIBLE : View.GONE);
+	}
 }

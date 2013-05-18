@@ -176,11 +176,17 @@ public class MainActivity extends BaseActivity {
 		if (width < 400) {
 			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
-			zoomLayoutParams.bottomMargin = _model.dpToPx(_hasPurchaseAdsOff ? 10 : 60);
+			zoomLayoutParams.bottomMargin = _model.dpToPx(isAdsOff() ? 10 : 60);
 			zoom.setLayoutParams(zoomLayoutParams);
 		}
 		
-		_adView.setVisibility(_hasPurchaseAdsOff ? View.GONE : View.VISIBLE);
+		_adView.setVisibility(isAdsOff() ? View.GONE : View.VISIBLE);
+    }
+    
+    @Override
+    protected void purchaseDidCheck(boolean hasPurchase) {
+    	super.purchaseDidCheck(hasPurchase);
+    	_updateBottomControls();
     }
     
     private Boolean _internetDenyIconIsShowed() {
@@ -311,7 +317,7 @@ public class MainActivity extends BaseActivity {
 		if (_map != null) {
 			CameraUpdate center = CameraUpdateFactory.newLatLng(_model.getLocation());
 	        _map.moveCamera(center);
-	        CameraUpdate zoom = CameraUpdateFactory.zoomTo(_model.getZoom());
+	        CameraUpdate zoom = CameraUpdateFactory.zoomTo((float)_model.getZoom());
 	        _map.animateCamera(zoom);
 	        _map.setMyLocationEnabled(true);
 	        _map.setOnCameraChangeListener(Contr.getInstance());

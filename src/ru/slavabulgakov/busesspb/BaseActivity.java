@@ -22,8 +22,7 @@ public class BaseActivity extends FragmentActivity {
 	protected ProgressDialog _progressDialog;
 	protected Model _model;
 	protected IabHelper _helper;
-	protected boolean _hasPurchaseAdsOff;
-	protected static String SKU_ADS_OFF = "android.test.purchased"; //"ads_off"; 
+	protected static String SKU_ADS_OFF = "ads_off"; 
 	
 	
 	@Override
@@ -49,7 +48,13 @@ public class BaseActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		_hasPurchaseAdsOff = (Boolean)_model.getData("hasPurchaseAdsOff", Boolean.class, false) || _model.is5days();
+	}
+	
+	protected boolean isAdsOff() {
+		boolean hasPurchase = (Boolean)_model.getData("hasPurchaseAdsOff", false);
+		boolean isFreeDays = _model.isFreeDays();
+		boolean off = hasPurchase || isFreeDays;
+		return off;
 	}
 
 	IabHelper.QueryInventoryFinishedListener _gotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
@@ -57,11 +62,14 @@ public class BaseActivity extends FragmentActivity {
 		@Override
 		public void onQueryInventoryFinished(IabResult result, Inventory inv) {
 			if (result.isSuccess()) {
-				_hasPurchaseAdsOff = inv.hasPurchase(SKU_ADS_OFF);
-				_model.setData("hasPurchaseAdsOff", _hasPurchaseAdsOff, true);
+				boolean hasPurchaseAdsOff = inv.hasPurchase(SKU_ADS_OFF);
+				_model.setData("hasPurchaseAdsOff", hasPurchaseAdsOff, true);
+				purchaseDidCheck(hasPurchaseAdsOff);
 			}
 		}
 	};
+	
+	protected void purchaseDidCheck(boolean hasPurchase) {}
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {

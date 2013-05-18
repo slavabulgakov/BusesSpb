@@ -339,9 +339,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public boolean onKey(View view, int arg1, KeyEvent arg2) {
+	public boolean onKey(View view, int keyCode, KeyEvent arg2) {
 		if (view.getClass() == EditText.class && _isMainActivity()) {
-			_mainActivity().keyboardTurnOff();
+			if (keyCode == KeyEvent.KEYCODE_ENTER) {
+				_mainActivity().keyboardTurnOff();
+			}
 		}
 		return false;
 	}

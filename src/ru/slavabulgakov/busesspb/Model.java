@@ -146,38 +146,25 @@ public class Model extends Application {
 			editor.putLong(key, (Long)value);
 		} else if (value.getClass() == String.class) {
 			editor.putString(key, (String)value);
-		} else if (value.getClass() == Date.class) {
-			editor.putLong(key, ((Date)value).getTime());
 		}
 		editor.commit();
-	}
-	public Object getData(String key, Class<?>class_, Object defValue) {
-		Object value = getData(key);
-		
-		if (value == null) {
-			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-			if (class_ == Boolean.class) {
-				value = settings.getBoolean(key, (Boolean)defValue);
-			} else if (class_ == Integer.class) {
-				value = settings.getInt(key, (Integer)defValue);
-			} else if (class_ == Float.class) {
-				value = settings.getFloat(key, (Float)defValue);
-			} else if (class_ == Long.class) {
-				value = settings.getLong(key, (Long)defValue);
-			} else if (class_ == String.class) {
-				value = settings.getString(key, (String)defValue);
-			} else if (class_ == Date.class) {
-				Long ms = settings.getLong(key, 0);
-				value = ms == 0 ? null : new Date(ms);
-			}
-		}
-		
-		return value;
 	}
 	public Object getData(String key) {
 		Object value = null;
 		if (_data != null) {
 			value = _data.get(key);
+		}
+		if (value == null) {
+			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+			Map<String, ?>map = settings.getAll();
+			value = map.get(key);
+		}
+		return value;
+	}
+	public Object getData(String key, Object defValue) {
+		Object value = getData(key);
+		if (value == null) {
+			value = defValue;
 		}
 		return value;
 	}
@@ -187,16 +174,18 @@ public class Model extends Application {
 		}
 	}
 	
-	public boolean is5days() {
-		Date date = (Date)getData("5days", Date.class, null);
-		if (date != null) {
+	public boolean isFreeDays() {
+		Long ms = (Long)getData("freeDays");
+		if (ms != null) {
+			Date date = new Date(ms);
 			Date now = new Date();
-			return now.getTime() - date.getTime() < 5 * 24 * 60 * 60 * 1000;
+			return now.getTime() - date.getTime() < 14 * 24 * 60 * 60 * 1000;
 		}
 		return false;
 	}
-	public void set5Days() {
-		setData("5days", new Date(), true);
+	public void setFreeDays() {
+		Date now = new Date();
+		setData("freeDays", now.getTime(), true);
 	}
 	
 	public int enumKindToInt(TransportKind kind) {
@@ -218,18 +207,14 @@ public class Model extends Application {
 	}
 	
 	private void _setFilterToStorage(TransportKind kind, String name) {
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		int filter = settings.getInt(name, 0);
+		int filter = (Integer)getData(name, 0);
 		int f = enumKindToInt(kind);
 		filter ^= f;
-		editor.putInt(name, filter);
-		editor.commit();
+		setData(name, filter, true);
 	}
 	
 	private boolean _isEnabledFilterFromStorage(TransportKind kind, String name) {
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		int filter = settings.getInt(name, 0);
+		int filter = (Integer)getData(name, 0);
 		int f = enumKindToInt(kind);
 		return (filter & f) > 0 || filter == 0;
 	}
@@ -273,22 +258,19 @@ public class Model extends Application {
 	}
 	
 	public boolean openAnimationIsShowed() {
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		boolean isShowed = settings.getBoolean("open_animation_is_showed", false);
+		boolean isShowed = (Boolean)getData("open_animation_is_showed", false);
 		return isShowed;
 	}
 	public void setOpenAnimationIsShowed() {
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean("open_animation_is_showed", true);
-		editor.commit();
+		setData("open_animation_is_showed", true, true);
 	}
 	
 	private float _zoom = 0;
-	public float getZoom() {
+	public double getZoom() {
 		if (_zoom == 0) {
 			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
 			_zoom = settings.getFloat("zoom", 10);
+
 		}
 		return _zoom;
 	}
@@ -297,6 +279,7 @@ public class Model extends Application {
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putFloat("zoom", _zoom == 0 ? 10 : _zoom);
 		editor.commit();
+
 	}
 	public void setZoom(float zoom) {
 		_zoom = zoom;
@@ -483,8 +466,12 @@ public class Model extends Application {
 			@Override
 			public void finish() {
 				if (isOnline()) {
-					_setAllRoutes(_array);
-					_listener.onRouteKindsLoadComplete(_array);
+					if (_array != null) {
+						if (_array.size() > 0) {
+							_setAllRoutes(_array);
+							_listener.onRouteKindsLoadComplete(_array);
+						}
+					}
 				}
 				_removeParserById(requestId);
 			}
@@ -833,15 +820,11 @@ public class Model extends Application {
 	}
 	
 	public boolean menuIsOpenedOnce() {
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		boolean isOpenedOnce = settings.getBoolean("menu_is_opened_once", false);
+		boolean isOpenedOnce = (Boolean)getData("menu_is_opened_once", false);
 		return isOpenedOnce;
 	}
 	private void _setMenuIsOpenedOnce() {
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean("menu_is_opened_once", true);
-		editor.commit();
+		setData("menu_is_opened_once", true, true);
 	}
 	
 	private boolean _isOnline = false;
@@ -869,12 +852,11 @@ public class Model extends Application {
 	    return online;
 	}
 
-	private boolean _fbIsLoggedInPressed;
 	public boolean fbIsLoggedInPressed() {
-		return _fbIsLoggedInPressed;
+		return (Boolean)getData("fbIsLoggedInPressed", false);
 	}
 	public void setfbLoggedInPressed(boolean l) {
-		_fbIsLoggedInPressed = l;
+		setData("fbIsLoggedInPressed", l);
 	}
 	
 	private ShareModel _shareModel;
