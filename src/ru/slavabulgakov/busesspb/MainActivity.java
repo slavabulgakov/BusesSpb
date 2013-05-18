@@ -361,7 +361,7 @@ public class MainActivity extends BaseActivity {
 	public void putCloseAllButtonToTicketsLayout() {
 		if (_model.getFavorite().size() > 1) {
 			if (_ticketsLayout.getChildAt(0).getClass() != CloseAllTickets.class) {
-				CloseAllTickets closeAllBtn = new CloseAllTickets(this);
+				CloseAllTickets closeAllBtn = new CloseAllTickets(this, _model);
 				_ticketsLayout.addView(closeAllBtn, 0);
 				closeAllBtn.animatedShow(_model.dpToPx(60));
 			}
@@ -473,8 +473,13 @@ public class MainActivity extends BaseActivity {
 			}
 	    	
 	    	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_mainRoutesBtn.getLayoutParams();
-			lp.setMargins(lp.leftMargin, lp.topMargin, _model.getFavorite().size() > 0 ? _model.dpToPx(50) : 0, lp.bottomMargin);
+			lp.setMargins(lp.leftMargin, lp.topMargin, (_model.getFavorite().size() > 0 ? _model.dpToPx(60) : 0), lp.bottomMargin);
 			_mainRoutesBtn.setLayoutParams(lp);
+			_mainRoutesBtn.setPadding(_mainRoutesBtn.getPaddingLeft(), _mainRoutesBtn.getPaddingTop(), (_model.getFavorite().size() > 0 ? _model.dpToPx(5) : 0), _mainRoutesBtn.getPaddingBottom());
+			
+			RelativeLayout.LayoutParams lpMenuIcon = (RelativeLayout.LayoutParams)_menuIcon.getLayoutParams();
+			lpMenuIcon.setMargins(lpMenuIcon.leftMargin, lpMenuIcon.topMargin, (_model.getFavorite().size() > 0 ? 0 : _model.dpToPx(8)), lpMenuIcon.bottomMargin);
+			_menuIcon.setLayoutParams(lpMenuIcon);
 		}
 	}
     
