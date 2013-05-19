@@ -35,4 +35,5 @@ public class FlurryConstants {
 	public static final String menuTramFilterBtnPressed = "menuTramFilterBtnPressed";
 	
 	public static final String textEditUsed = "textEditUsed";
+	public static final String aboutActivityOpened = "aboutActivityOpened";
 }
