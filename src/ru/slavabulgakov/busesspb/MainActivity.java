@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
+import com.flurry.android.FlurryAgent;
 import com.google.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -526,7 +527,15 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		
-		
+		if (isOpen) {
+			FlurryAgent.logEvent(FlurryConstants.menuIsOpen);
+		} else {
+			if (_model.getFavorite().size() > 0) {
+				FlurryAgent.logEvent(FlurryConstants.selectedTransportModeIsOn);
+			} else {
+				FlurryAgent.logEvent(FlurryConstants.selectedTransportModeIsOff);
+			}
+		}
 		
 		
 		{// очистка карты

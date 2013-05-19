@@ -21,4 +21,18 @@ public class FlurryConstants {
 	public static final String shareFBDeny = "shareFBDeny";
 	public static final String shareVKDeny = "shareVKDeny";
 	public static final String shareTwitterDeny = "shareTwitterDeny";
+	
+	public static final String menuIsOpen = "menuIsOpen";
+	public static final String selectedTransportModeIsOn = "selectedTransportModeIsOn";
+	public static final String selectedTransportModeIsOff = "selectedTransportModeIsOff";
+	
+	public static final String busFilterBtnPressed = "busFilterBtnPressed";
+	public static final String trolleyFilterBtnPressed = "trolleyFilterBtnPressed";
+	public static final String tramFilterBtnPressed = "tramFilterBtnPressed";
+	
+	public static final String menuBusFilterBtnPressed = "menuBusFilterBtnPressed";
+	public static final String menuTrolleyFilterBtnPressed = "menuTrolleyFilterBtnPressed";
+	public static final String menuTramFilterBtnPressed = "menuTramFilterBtnPressed";
+	
+	public static final String textEditUsed = "textEditUsed";
 }

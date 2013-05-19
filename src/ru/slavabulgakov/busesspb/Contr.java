@@ -7,6 +7,7 @@ import ru.slavabulgakov.busesspb.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 
+import com.flurry.android.FlurryAgent;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
 
@@ -71,18 +72,21 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			_model.setFilter(TransportKind.Bus);
 			_mainActivity().updateTransportOffline();
 			_mainActivity().updateFilterButtons();
+			FlurryAgent.logEvent(FlurryConstants.busFilterBtnPressed);
 			break;
 			
 		case R.id.trolleyFilter:
 			_model.setFilter(TransportKind.Trolley);
 			_mainActivity().updateTransportOffline();
 			_mainActivity().updateFilterButtons();
+			FlurryAgent.logEvent(FlurryConstants.trolleyFilterBtnPressed);
 			break;
 			
 		case R.id.tramFilter:
 			_model.setFilter(TransportKind.Tram);
 			_mainActivity().updateTransportOffline();
 			_mainActivity().updateFilterButtons();
+			FlurryAgent.logEvent(FlurryConstants.tramFilterBtnPressed);
 			break;
 			
 		case R.id.location:
@@ -125,14 +129,17 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 				switch (v.getId()) {
 				case R.id.menuBusFilter:
 					kind = TransportKind.Bus;
+					FlurryAgent.logEvent(FlurryConstants.menuBusFilterBtnPressed);
 					break;
 					
 				case R.id.menuTrolleyFilter:
 					kind = TransportKind.Trolley;
+					FlurryAgent.logEvent(FlurryConstants.menuTrolleyFilterBtnPressed);
 					break;
 					
 				case R.id.menuTramFilter:
 					kind = TransportKind.Tram;
+					FlurryAgent.logEvent(FlurryConstants.menuTramFilterBtnPressed);
 					break;
 
 				default:
@@ -244,6 +251,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			clearButton.setVisibility(View.VISIBLE);
 		} else {
 			clearButton.setVisibility(View.GONE);
+		}
+		
+		if (!(Boolean)_model.getData("TextEditUsed", false)) {
+			_model.setData("TextEditUsed", true, true);
+			FlurryAgent.logEvent(FlurryConstants.textEditUsed);
 		}
 	}
 
