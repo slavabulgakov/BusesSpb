@@ -541,9 +541,10 @@ public class MainActivity extends BaseActivity {
 		{// очистка карты
 			if (!isOpen) {
 				if (_map != null) {
-					_map.clear();
+					_model.removeSimpleTransportOverlay();
 					if (_model.isOnline()) {
 						_model.removeAllTransportOverlays();
+						_model.removeLastSimpleTransportView();
 						updateTransport();
 					} else {
 						updateTransportOffline();

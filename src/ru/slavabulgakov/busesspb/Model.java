@@ -770,6 +770,10 @@ public class Model extends Application {
 	public void removeAllTransportOverlays() {
 		deleteFile("allTransportOverlays.ser");
 		if (_allTransportOverlays != null) {
+			for (TransportOverlay transportOverlay : _allTransportOverlays) {
+				transportOverlay.groundOverlay.remove();
+				transportOverlay.marker.remove();
+			}
 			_allTransportOverlays.clear();
 		}
 	}
@@ -808,6 +812,9 @@ public class Model extends Application {
 		if (_lastSimpleTransportView != null) {
 			Files.saveToFile(_lastSimpleTransportView, "lastSimpleTransportView.ser", this);
 		}
+	}
+	public void removeLastSimpleTransportView() {
+		_lastSimpleTransportView = null;
 	}
 	
 	private boolean _menuIsOpened = false;
