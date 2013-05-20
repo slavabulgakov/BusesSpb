@@ -134,20 +134,22 @@ public class Model extends Application {
 	}
 	public void setData(String key, Object value, boolean storage) {
 		setData(key, value);
-		SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		if (value.getClass() == Integer.class) {
-			editor.putInt(key, (Integer)value);
-		} else if (value.getClass() == Boolean.class) {
-			editor.putBoolean(key, (Boolean)value);
-		} else if (value.getClass() == Float.class) {
-			editor.putFloat(key, (Float)value);
-		} else if (value.getClass() == Long.class) {
-			editor.putLong(key, (Long)value);
-		} else if (value.getClass() == String.class) {
-			editor.putString(key, (String)value);
+		if (storage) {
+			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			if (value.getClass() == Integer.class) {
+				editor.putInt(key, (Integer)value);
+			} else if (value.getClass() == Boolean.class) {
+				editor.putBoolean(key, (Boolean)value);
+			} else if (value.getClass() == Float.class) {
+				editor.putFloat(key, (Float)value);
+			} else if (value.getClass() == Long.class) {
+				editor.putLong(key, (Long)value);
+			} else if (value.getClass() == String.class) {
+				editor.putString(key, (String)value);
+			}
+			editor.commit();
 		}
-		editor.commit();
 	}
 	public Object getData(String key) {
 		Object value = null;

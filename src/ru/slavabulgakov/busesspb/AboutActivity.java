@@ -113,12 +113,6 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	}
 	
 	@Override
-	protected void onStart() {
-		super.onStart();
-		FlurryAgent.logEvent(FlurryConstants.aboutActivityOpened);
-	}
-
-	@Override
 	protected void purchaseDidCheck(boolean hasPurchase) {
 		super.purchaseDidCheck(hasPurchase);
 		_setAdViewVisible(!isAdsOff());

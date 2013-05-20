@@ -103,6 +103,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			
 		case R.id.about:
 			_currentActivity.startActivity(new Intent(_currentActivity, AboutActivity.class));
+			FlurryAgent.logEvent(FlurryConstants.aboutBtnPressed);
 			break;
 			
 		case R.id.clearRouteText:
@@ -253,8 +254,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			clearButton.setVisibility(View.GONE);
 		}
 		
-		if (!(Boolean)_model.getData("TextEditUsed", false)) {
-			_model.setData("TextEditUsed", true, true);
+		if (!(Boolean)_model.getData("TextEditUsed2", false)) {
+			_model.setData("TextEditUsed2", true, false);
 			FlurryAgent.logEvent(FlurryConstants.textEditUsed);
 		}
 	}
