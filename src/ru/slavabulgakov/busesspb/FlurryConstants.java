@@ -36,4 +36,6 @@ public class FlurryConstants {
 	
 	public static final String textEditUsed = "textEditUsed";
 	public static final String aboutBtnPressed = "aboutBtnPressed";
+	
+	public static final String lowMemory = "lowMemory";
 }

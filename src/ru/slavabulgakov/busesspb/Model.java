@@ -29,6 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.flurry.android.FlurryAgent;
+import com.flurry.org.codehaus.jackson.map.PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -175,7 +177,15 @@ public class Model extends Application {
 			_data.remove(key);
 		}
 	}
-	
+
+	private boolean _isLowMemory = false;
+	@Override
+	public void onLowMemory() {
+		super.onLowMemory();
+		_isLowMemory = true;
+		_lastSimpleTransportView = null;
+		FlurryAgent.logEvent(FlurryConstants.lowMemory);
+	}
 	public boolean isFreeDays() {
 		Long ms = (Long)getData("freeDays");
 		if (ms != null) {
@@ -800,10 +810,12 @@ public class Model extends Application {
 	
 	private SimpleTransportView _lastSimpleTransportView;
 	public void setLastSimpleTransportView(SimpleTransportView last) {
-		_lastSimpleTransportView = last;
+		if (!_isLowMemory) {
+			_lastSimpleTransportView = last;
+		}
 	}
 	public SimpleTransportView getLastSimpleTransportView() {
-		if (_lastSimpleTransportView == null) {
+		if (_lastSimpleTransportView == null && !_isLowMemory) {
 			_lastSimpleTransportView = (SimpleTransportView)Files.loadFromFile("lastSimpleTransportView.ser", true, this);
 		}
 		return _lastSimpleTransportView;

@@ -32,10 +32,12 @@ class Adapter extends ArrayAdapter<Route> {
 				_filtredList.clear();
 				@SuppressWarnings("unchecked")
 				ArrayList<Route>objects = (ArrayList<Route>)results.values;
-				for (Route route : objects) {
-					_filtredList.add(route);
+				if (objects != null) {
+					for (Route route : objects) {
+						_filtredList.add(route);
+					}
+					notifyDataSetChanged();
 				}
-				notifyDataSetChanged();
 			}
 		}
 		
