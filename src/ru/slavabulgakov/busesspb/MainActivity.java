@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity {
         _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
+		_editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
 		_editText.addTextChangedListener(Contr.getInstance());
 		_editText.setOnKeyListener(Contr.getInstance());
 		
@@ -670,7 +672,22 @@ public class MainActivity extends BaseActivity {
 		
 		
 		Paint paintHighlight = new Paint(Paint.ANTI_ALIAS_FLAG);
-		paintHighlight.setColor(Color.argb(0xff, 0x45, 0x45, 0x45));
+		int color = 0;
+		if (routeNumber.equalsIgnoreCase("1ì")) {
+			color = Color.argb(0xff, 0xD7, 0x17, 0x36);
+		} else if (routeNumber.equalsIgnoreCase("2ì")) {
+			color = Color.argb(0xff, 0x1, 0x96, 0xFF);
+		} else if (routeNumber.equalsIgnoreCase("3ì")) {
+			color = Color.argb(0xff, 0x4, 0x9F, 0x5C);
+		} else if (routeNumber.equalsIgnoreCase("4ì")) {
+			color = Color.argb(0xff, 0xE0, 0x72, 0x5);
+		} else if (routeNumber.equalsIgnoreCase("5ì")) {
+			color = Color.argb(0xff, 0x72, 0x5, 0x7C);
+		} else {
+			color = Color.argb(0xff, 0x45, 0x45, 0x45);
+		}
+		
+		paintHighlight.setColor(color);
 		int textWidth = Math.round(_model.dpToPx((int)paintHighlight.measureText(routeNumber)));
 		int leftRightMargin = 0;
 		Bitmap bitmap = Bitmap.createBitmap(textWidth + leftRightMargin * 2, height, Config.ARGB_8888);
