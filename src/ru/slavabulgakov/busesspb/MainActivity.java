@@ -555,9 +555,15 @@ public class MainActivity extends BaseActivity {
 	}
     
     public void clearMap() {
-    	if (_map != null) {
-			_map.clear();
-		}
+    	runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (_map != null) {
+					_map.clear();
+				}
+			}
+		});
     }
     
     public void toggleLeftMenu() {

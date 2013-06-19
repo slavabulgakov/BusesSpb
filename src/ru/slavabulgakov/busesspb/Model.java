@@ -859,7 +859,6 @@ public class Model extends Application {
 	    	_isOnline = online;
 	    	if (_listener != null) {
 	    		if (online) {
-	    			removeAllTransportOverlays();
 					_listener.onInternetAccessSuccess();
 				} else {
 					_listener.onInternetAccessDeny();
