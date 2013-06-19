@@ -31,7 +31,8 @@
             	android:paddingRight="10dp"
             	android:paddingTop="5dp"
             	android:layout_alignParentLeft="true"
-            	android:singleLine="true" />
+            	android:singleLine="true"
+            	android:inputType="number" />
             <ImageButton
                 android:id="@+id/clearRouteText"
                 android:layout_width="wrap_content"
