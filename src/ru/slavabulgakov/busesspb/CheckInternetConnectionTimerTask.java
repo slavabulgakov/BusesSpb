@@ -2,6 +2,9 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.TimerTask;
 
+import ru.slavabulgakov.busesspb.model.Model;
+
+
 public class CheckInternetConnectionTimerTask extends TimerTask {
 	
 	private MainActivity _mainActivity;

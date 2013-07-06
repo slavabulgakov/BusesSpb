@@ -2,10 +2,17 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 
-import ru.slavabulgakov.busesspb.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Route;
+import ru.slavabulgakov.busesspb.model.Transport;
+import ru.slavabulgakov.busesspb.model.TransportKind;
+import ru.slavabulgakov.busesspb.model.Model.OnLoadCompleteListener;
+import ru.slavabulgakov.busesspb.paths.ModelPaths.OnPathLoaded;
+import ru.slavabulgakov.busesspb.paths.Path;
+import ru.slavabulgakov.busesspb.paths.Stations;
 
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -31,7 +38,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener {
+public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -119,6 +126,9 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			_currentActivity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
 			break;
 			
+		case R.id.paths:
+			_model.getModelPaths().setPathsOn(_mainActivity().pathsButton().checked());
+			break;
 			
 		default:
 			break;
@@ -359,5 +369,15 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void onPathLoaded(Path path) {
+		_mainActivity().showPath(path);
+	}
+
+	@Override
+	public void onStationsLoaded(Stations stations) {
+		_mainActivity().showStations(stations);
 	}
 }

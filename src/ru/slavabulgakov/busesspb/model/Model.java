@@ -1,10 +1,9 @@
-package ru.slavabulgakov.busesspb;
+package ru.slavabulgakov.busesspb.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,13 +29,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.flurry.android.FlurryAgent;
-import com.flurry.org.codehaus.jackson.map.PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
+import ru.slavabulgakov.busesspb.Files;
+import ru.slavabulgakov.busesspb.FlurryConstants;
+import ru.slavabulgakov.busesspb.LoadTaskException;
+import ru.slavabulgakov.busesspb.Mercator;
+import ru.slavabulgakov.busesspb.ParserWebPageTask;
+import ru.slavabulgakov.busesspb.ShareModel;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
+import ru.slavabulgakov.busesspb.paths.ModelPaths;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -45,81 +49,16 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-enum TransportKind {
-	None,
-	Bus,
-	Trolley,
-	Tram,
-}
-
-class Transport implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	Integer id;
-	Integer routeId;
-	Integer cost;
-	String routeNumber;
-	Double Lng;
-	Double Lat;
-	float direction;
-	int velocity;
-	TransportKind kind;
-}
-
- class Route implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	Integer id;
-	Integer cost;
-	String routeNumber;
-	TransportKind kind;
-	Transport creatTransport() {
-		Transport transport = new Transport();
-		transport.routeNumber = this.routeNumber;
-		transport.cost = this.cost;
-		transport.kind = this.kind;
-		transport.routeId = this.id;
-		return transport;
-	}
-}
- 
- class SimpleTransportView implements Serializable {
-	 	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-		Bitmap image;
-		double northeastLat;
-		double northeastLng;
-		double southwestLat;
-		double southwestLng;
-		
-		public LatLngBounds getBounds() {
-			return new LatLngBounds(new LatLng(southwestLat, southwestLng), new LatLng(northeastLat, northeastLng));
-		}
-		
-		SimpleTransportView(Bitmap image_, LatLngBounds bounds_) {
-			image = image_;
-			northeastLat = bounds_.northeast.latitude;
-			northeastLng = bounds_.northeast.longitude;
-			southwestLat = bounds_.southwest.latitude;
-			southwestLng = bounds_.southwest.longitude;
-		}
-		
-		SimpleTransportView() {}
-}
- 
- class TransportOverlay {
-		Transport transport;
-		GroundOverlay groundOverlay;
-		Marker marker;
-	}
-
 public class Model extends Application {
+	
+	private ModelPaths _paths;
+	public Model() {
+		_paths = new ModelPaths(this);
+	}
+	
+	public ModelPaths getModelPaths() {
+		return _paths;
+	}
 	
 	private static final int BUS_FILTER = 1;
 	private static final int TROLLEY_FILTER = 2;
@@ -452,6 +391,8 @@ public class Model extends Application {
 							route.kind = TransportKind.Tram;
 						} else if (kind.equals("trolley")) {
 							route.kind = TransportKind.Trolley;
+						} else if (kind.equals("ship")) {
+							route.kind = TransportKind.Ship;
 						}
 						
 						_array.add(route);
@@ -485,7 +426,7 @@ public class Model extends Application {
 						}
 					}
 				}
-				_removeParserById(requestId);
+				removeParserById(requestId);
 			}
 
 			@Override
@@ -494,7 +435,7 @@ public class Model extends Application {
 			}
 		};
 		
-		_startParserWithId(req, requestId);
+		startParserWithId(req, requestId);
 	}
 	
 	
@@ -623,7 +564,7 @@ public class Model extends Application {
 				if (isOnline()) {
 					_listener.onTransportListOfRouteLoadComplete(_array);
 				}
-				_removeParserById(requestId);
+				removeParserById(requestId);
 			}
 
 			@Override
@@ -632,10 +573,10 @@ public class Model extends Application {
 			}
 		};
 		
-		_startParserWithId(req, requestId);
+		startParserWithId(req, requestId);
 	}
 	
-	private void _startParserWithId(IRequest req, int id) {
+	public void startParserWithId(IRequest req, int id) {
 		boolean exist = false;
 		for (ParserWebPageTask parser : _getParsers()) {
 			if (parser.getRequestId() == id) {
@@ -721,7 +662,7 @@ public class Model extends Application {
 				if (isOnline()) {
 					_listener.onImgLoadComplete(_img);
 				}
-				_removeParserById(requestId);
+				removeParserById(requestId);
 			}
 
 			@Override
@@ -730,10 +671,10 @@ public class Model extends Application {
 			}
 		};
 		
-		_startParserWithId(req, requestId);
+		startParserWithId(req, requestId);
 	}
 	
-	private void _removeParserById(int id) {
+	public void removeParserById(int id) {
 		int index = _indexParserOfId(id);
 		if (index != -1) {
 			_getParsers().remove(index);
@@ -827,6 +768,45 @@ public class Model extends Application {
 	}
 	public void removeLastSimpleTransportView() {
 		_lastSimpleTransportView = null;
+	}
+	
+	public String getCookie() throws IOException {
+		if (_scope == null || _cookie == null) {
+			if (_scopeCookieIsLoading) {
+				return null;
+			}
+			_scopeCookieIsLoading = true;
+			URL url = new URL("http://transport.orgp.spb.ru/Portal/transport/route/1329");
+			URLConnection conn = url.openConnection();
+			conn.connect();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String line = "";
+			
+			String headerName=null;
+			for (int i=1; (headerName = conn.getHeaderFieldKey(i))!=null; i++) {
+			 	if (headerName.equals("Set-Cookie")) {                  
+			 		_cookie = conn.getHeaderField(i).split(";")[0];
+			 		break;
+			 	}
+			}
+  
+			int index =  0;
+			while ((line = rd.readLine()) != null) {
+				if ((index = line.indexOf("scope")) != -1) {
+					break;
+				}
+			}
+			
+			index += 8;
+			int end = index;
+			while (line.charAt(end) != '"') {
+				end++;
+			}
+			_scope = URLEncoder.encode(line.substring(index, end));
+			_scopeCookieIsLoading = false;
+		}
+		
+		return _cookie;
 	}
 	
 	private boolean _menuIsOpened = false;

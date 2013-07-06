@@ -1,5 +1,7 @@
 package ru.slavabulgakov.busesspb;
 
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Route;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;

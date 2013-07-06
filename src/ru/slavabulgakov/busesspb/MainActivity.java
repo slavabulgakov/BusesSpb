@@ -5,6 +5,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
+import ru.slavabulgakov.busesspb.model.Route;
+import ru.slavabulgakov.busesspb.model.SimpleTransportView;
+import ru.slavabulgakov.busesspb.model.Transport;
+import ru.slavabulgakov.busesspb.model.TransportKind;
+import ru.slavabulgakov.busesspb.model.TransportOverlay;
+import ru.slavabulgakov.busesspb.paths.Path;
+import ru.slavabulgakov.busesspb.paths.Point;
+import ru.slavabulgakov.busesspb.paths.Station;
+import ru.slavabulgakov.busesspb.paths.Stations;
+import ru.slavabulgakov.busesspb.paths.SubPath;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -51,6 +61,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.SupportMapFragment;
 import android.view.WindowManager;
 
@@ -75,6 +87,7 @@ public class MainActivity extends BaseActivity {
 	private ImageView _menuIcon;
 	private ImageButton _internetDenyImageButton;
 	private AdView _adView;
+	private CheckButton _pathsButton;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -170,6 +183,14 @@ public class MainActivity extends BaseActivity {
 		_internetDenyImageButton.setVisibility(_internetDenyIconIsShowed() ? View.VISIBLE : View.INVISIBLE);
 		
 		_adView = (AdView)findViewById(R.id.mainAdView);
+		
+		_pathsButton = (CheckButton)findViewById(R.id.paths);
+		_pathsButton.setOnClickListener(Contr.getInstance());
+		_pathsButton.setChecked(_model.getModelPaths().pathsIsOn());
+    }
+    
+    public CheckButton pathsButton() {
+    	return _pathsButton;
     }
     
     private void _updateBottomControls() {
@@ -298,6 +319,7 @@ public class MainActivity extends BaseActivity {
     
 	@Override
 	protected void onPause() {
+		_model.getModelPaths().save();
 		_model.saveAllTransportOverlays();
 		_model.saveLastSimpleTransportView();
 		_model.saveFavorite();
@@ -483,6 +505,10 @@ public class MainActivity extends BaseActivity {
 			RelativeLayout.LayoutParams lpMenuIcon = (RelativeLayout.LayoutParams)_menuIcon.getLayoutParams();
 			lpMenuIcon.setMargins(lpMenuIcon.leftMargin, lpMenuIcon.topMargin, (_model.getFavorite().size() > 0 ? 0 : _model.dpToPx(8)), lpMenuIcon.bottomMargin);
 			_menuIcon.setLayoutParams(lpMenuIcon);
+		}
+    	
+    	if (!_model.menuIsOpened()) {
+    		_model.getModelPaths().loadPaths();
 		}
 	}
     
@@ -796,6 +822,26 @@ public class MainActivity extends BaseActivity {
 				_rootView.animateOpen(_model.dpToPx(100));
 			}
 	        _countShows++;
+		}
+	}
+	
+	public void showPath(Path path) {
+		for (SubPath subPath : path) {
+			PolylineOptions polylineOptions = new PolylineOptions();
+			for (Point point : subPath) {
+				polylineOptions.add(point.getLatlng());
+			}
+			Polyline polyline = _map.addPolyline(polylineOptions.width(2).color(Color.rgb(220, 60, 0)).zIndex(-2));
+			_model.getModelPaths().addMapItem(polyline);
+		}
+	}
+	
+	public void showStations(Stations stations) {
+		for (Station station : stations) {
+			BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.station);
+			MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name).icon(icon).anchor((float).5, (float).5);
+			Marker marker = _map.addMarker(markerOptions);
+			_model.getModelPaths().addMapItem(marker);
 		}
 	}
 }

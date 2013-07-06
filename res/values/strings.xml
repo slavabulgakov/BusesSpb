@@ -61,10 +61,12 @@
     <color name="internet_deny">#d02424</color>
     <color name="bus" >#00adef</color>
     <color name="trolley" >#70cca1</color>
+    <color name="ship" >#ff6600</color>
     <color name="tram" >#f17171</color>
     <color name="tram_ticket" >#f08a8a</color>
     <color name="trolley_ticket" >#8fd9b6</color>
     <color name="bus_ticket" >#44bdeb</color>
+    <color name="ship_ticket" >#fc7f2b</color>
     <color name="yellow">#f9d278</color>
 
 </resources>

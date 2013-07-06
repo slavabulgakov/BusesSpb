@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import ru.slavabulgakov.busesspb.ShareModel.IShareView;
+import ru.slavabulgakov.busesspb.model.Model;
 
 import com.facebook.*;
 import com.facebook.widget.LoginButton;

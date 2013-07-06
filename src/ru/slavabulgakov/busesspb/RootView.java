@@ -1,5 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
+import ru.slavabulgakov.busesspb.model.Model;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;

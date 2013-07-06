@@ -1,5 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
+import ru.slavabulgakov.busesspb.model.Route;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -104,6 +105,12 @@ public class Ticket extends LinearLayout implements AnimationListener {
 			resId = R.color.tram;
 			closeButton = R.drawable.ticket_close_btn_bg_tram;
 			icon = R.drawable.tram_30_30;
+			break;
+			
+		case Ship:
+			resId = R.color.ship;
+			closeButton = R.drawable.ticket_close_btn_bg_ship;
+			icon = R.drawable.ship_30_30;
 			break;
 
 		default:

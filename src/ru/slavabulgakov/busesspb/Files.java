@@ -7,6 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 
+import ru.slavabulgakov.busesspb.model.SimpleTransportView;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/btn_selected_black"
+    android:minHeight="40dp"
+    android:minWidth="40dp"
+    android:orientation="vertical" >
+
+	<ImageView
+	    android:id="@+id/checkButtonIcon"
+	    android:layout_width="wrap_content"
+       	android:layout_height="wrap_content"
+        android:background="@drawable/ticket_bg_bus"
+        android:minHeight="35dp"
+        android:minWidth="40dp"
+        android:duplicateParentState="true"
+        android:src="@drawable/bus_30_30"
+        android:scaleType="center" />
+
+</LinearLayout>

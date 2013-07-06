@@ -123,7 +123,7 @@ public class Mercator {
 		return Phi;
 	}
     
-    enum AxisType {
+    public enum AxisType {
     	LNG,
     	LAT
     };

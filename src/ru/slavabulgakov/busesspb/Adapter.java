@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Route;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -182,6 +186,11 @@ class Adapter extends ArrayAdapter<Route> {
 		case Tram:
 			bgResId = R.drawable.listitem_bg_tram;
 			iconResId = R.drawable.tram_30_30;
+			break;
+			
+		case Ship:
+			bgResId = R.drawable.listitem_bg_ship;
+			iconResId = R.drawable.ship_30_30;
 			break;
 
 		default:

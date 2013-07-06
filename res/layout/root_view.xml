@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -198,6 +198,17 @@
                 android:src="@drawable/location"
                 android:minHeight="40dp"
                 android:minWidth="40dp" />
+            
+            <ru.slavabulgakov.busesspb.CheckButton 
+                android:id="@+id/paths"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/zoomControls"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/paths"
+                app:iconBackground="@drawable/btn_pressed_black"
+                app:background="@drawable/btn_selected_black"
+                app:checked="false" />
             
             <ImageButton
                 android:id="@+id/internetDeny"
