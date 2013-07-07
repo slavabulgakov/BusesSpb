@@ -29,13 +29,17 @@ public class FlurryConstants {
 	public static final String busFilterBtnPressed = "busFilterBtnPressed";
 	public static final String trolleyFilterBtnPressed = "trolleyFilterBtnPressed";
 	public static final String tramFilterBtnPressed = "tramFilterBtnPressed";
+	public static final String shipFilterBtnPressed = "shipFilterBtnPressed";
 	
 	public static final String menuBusFilterBtnPressed = "menuBusFilterBtnPressed";
 	public static final String menuTrolleyFilterBtnPressed = "menuTrolleyFilterBtnPressed";
 	public static final String menuTramFilterBtnPressed = "menuTramFilterBtnPressed";
+	public static final String menuShipFilterBtnPressed = "menuShipFilterBtnPressed";
 	
 	public static final String textEditUsed = "textEditUsed";
 	public static final String aboutBtnPressed = "aboutBtnPressed";
+	
+	public static final String pathBtnPressed = "pathBtnPressed";
 	
 	public static final String lowMemory = "lowMemory";
 }

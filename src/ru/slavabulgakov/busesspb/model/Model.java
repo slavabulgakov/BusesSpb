@@ -63,6 +63,7 @@ public class Model extends Application {
 	private static final int BUS_FILTER = 1;
 	private static final int TROLLEY_FILTER = 2;
 	private static final int TRAM_FILTER = 4;
+	private static final int SHIP_FILTER = 8;
 	
 	private static final String STORAGE_NAME = "busesspb";
 	
@@ -149,6 +150,9 @@ public class Model extends Application {
 			
 		case Tram:
 			return Model.TRAM_FILTER;
+			
+		case Ship:
+			return Model.SHIP_FILTER;
 
 		default:
 			break;
@@ -613,7 +617,7 @@ public class Model extends Application {
 			public void nextExecute() {
 				try {
 					String filters = "";
-					if (!isEnabledFilter(TransportKind.Bus) && !isEnabledFilter(TransportKind.Trolley) && !isEnabledFilter(TransportKind.Tram)) {
+					if (!isEnabledFilter(TransportKind.Bus) && !isEnabledFilter(TransportKind.Trolley) && !isEnabledFilter(TransportKind.Tram) && !isEnabledFilter(TransportKind.Ship)) {
 						filters = "vehicle_bus%2Cvehicle_ship%2Cvehicle_tram%2Cvehicle_trolley";
 					} else {
 						boolean more = false;
@@ -635,7 +639,13 @@ public class Model extends Application {
 							more = true;
 							filters += "vehicle_tram"; 
 						}
-						filters += "%2Cvehicle_ship";
+						if (isEnabledFilter(TransportKind.Ship)) {
+							if (more) {
+								filters += "%2C";
+							}
+							more = true;
+							filters += "vehicle_ship"; 
+						}
 					}
 					
 					String src = "http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&LAYERS=" + filters + "&WHEELCHAIRONLY=false&SRS=EPSG%3A900913&BBOX=" + Double.toString(left_lon) + "," + Double.toString(left_lat) + "," + Double.toString(right_lon) + "," + Double.toString(right_lat) + "&WIDTH=" + Integer.toString(width) + "&HEIGHT=" + Integer.toString(height);

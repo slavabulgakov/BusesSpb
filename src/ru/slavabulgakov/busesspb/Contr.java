@@ -96,6 +96,13 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			FlurryAgent.logEvent(FlurryConstants.tramFilterBtnPressed);
 			break;
 			
+		case R.id.shipFilter:
+			_model.setFilter(TransportKind.Ship);
+			_mainActivity().updateTransportOffline();
+			_mainActivity().updateFilterButtons();
+			FlurryAgent.logEvent(FlurryConstants.shipFilterBtnPressed);
+			break;
+			
 		case R.id.location:
 			_mainActivity().moveCameraToMyLocation();
 			break;
@@ -128,6 +135,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			
 		case R.id.paths:
 			_model.getModelPaths().setPathsOn(_mainActivity().pathsButton().checked());
+			FlurryAgent.logEvent(FlurryConstants.pathBtnPressed);
 			break;
 			
 		default:
@@ -151,6 +159,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 				case R.id.menuTramFilter:
 					kind = TransportKind.Tram;
 					FlurryAgent.logEvent(FlurryConstants.menuTramFilterBtnPressed);
+					break;
+					
+				case R.id.menuShipFilter:
+					kind = TransportKind.Ship;
+					FlurryAgent.logEvent(FlurryConstants.menuShipFilterBtnPressed);
 					break;
 
 				default:

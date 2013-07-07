@@ -74,12 +74,14 @@ public class MainActivity extends BaseActivity {
 	private EditText _editText;
 	private ProgressBar _progressBar;
 	private RootView _rootView;
-	private LinearLayout _busFilter;
-	private LinearLayout _trolleyFilter;
-	private LinearLayout _tramFilter;
-	private LinearLayout _menuBusFilter;
-	private LinearLayout _menuTrolleyFilter;
-	private LinearLayout _menuTramFilter;
+	private CheckButton _busFilter;
+	private CheckButton _trolleyFilter;
+	private CheckButton _tramFilter;
+	private CheckButton _shipFilter;
+	private CheckButton _menuBusFilter;
+	private CheckButton _menuTrolleyFilter;
+	private CheckButton _menuTramFilter;
+	private CheckButton _menuShipFilter;
 	private RelativeLayout _mainRoutesBtn;
 	private ImageButton _clearButton;
 	LinearLayout _ticketsLayout;
@@ -138,23 +140,34 @@ public class MainActivity extends BaseActivity {
 		
 		
 		
-		_busFilter = (LinearLayout)findViewById(R.id.busFilter);
+		_busFilter = (CheckButton)findViewById(R.id.busFilter);
 		_busFilter.setOnClickListener(Contr.getInstance());
 		
-		_trolleyFilter = (LinearLayout)findViewById(R.id.trolleyFilter);
+		_trolleyFilter = (CheckButton)findViewById(R.id.trolleyFilter);
 		_trolleyFilter.setOnClickListener(Contr.getInstance());
 		
-		_tramFilter = (LinearLayout)findViewById(R.id.tramFilter);
+		_tramFilter = (CheckButton)findViewById(R.id.tramFilter);
 		_tramFilter.setOnClickListener(Contr.getInstance());
 		
-		_menuBusFilter = (LinearLayout)findViewById(R.id.menuBusFilter);
+		_shipFilter = (CheckButton)findViewById(R.id.shipFilter);
+		_shipFilter.setOnClickListener(Contr.getInstance());
+		
+		_menuBusFilter = (CheckButton)findViewById(R.id.menuBusFilter);
     	_menuBusFilter.setOnClickListener(Contr.getInstance());
     	
-    	_menuTrolleyFilter = (LinearLayout)findViewById(R.id.menuTrolleyFilter);
+    	_menuTrolleyFilter = (CheckButton)findViewById(R.id.menuTrolleyFilter);
 		_menuTrolleyFilter.setOnClickListener(Contr.getInstance());
 		
-		_menuTramFilter = (LinearLayout)findViewById(R.id.menuTramFilter);
+		_menuTramFilter = (CheckButton)findViewById(R.id.menuTramFilter);
 		_menuTramFilter.setOnClickListener(Contr.getInstance());
+		
+		_menuShipFilter = (CheckButton)findViewById(R.id.menuShipFilter);
+		_menuShipFilter.setOnClickListener(Contr.getInstance());
+		
+		_pathsButton = (CheckButton)findViewById(R.id.paths);
+		_pathsButton.setOnClickListener(Contr.getInstance());
+		_pathsButton.setChecked(_model.getModelPaths().pathsIsOn());
+		
 		updateFilterButtons();
 		
 		
@@ -183,10 +196,6 @@ public class MainActivity extends BaseActivity {
 		_internetDenyImageButton.setVisibility(_internetDenyIconIsShowed() ? View.VISIBLE : View.INVISIBLE);
 		
 		_adView = (AdView)findViewById(R.id.mainAdView);
-		
-		_pathsButton = (CheckButton)findViewById(R.id.paths);
-		_pathsButton.setOnClickListener(Contr.getInstance());
-		_pathsButton.setChecked(_model.getModelPaths().pathsIsOn());
     }
     
     public CheckButton pathsButton() {
@@ -305,16 +314,20 @@ public class MainActivity extends BaseActivity {
     	LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
     	if (_model.getFavorite().size() > 0) {
 			kindBtns.setVisibility(View.INVISIBLE);
+			_pathsButton.setVisibility(View.VISIBLE);
 		} else {
 			kindBtns.setVisibility(View.VISIBLE);
+			_pathsButton.setVisibility(View.INVISIBLE);
 		}
-    	_busFilter.setSelected(_model.isEnabledFilter(TransportKind.Bus));
-    	_trolleyFilter.setSelected(_model.isEnabledFilter(TransportKind.Trolley));
-    	_tramFilter.setSelected(_model.isEnabledFilter(TransportKind.Tram));
+    	_busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
+    	_trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
+    	_tramFilter.setChecked(_model.isEnabledFilter(TransportKind.Tram));
+    	_shipFilter.setChecked(_model.isEnabledFilter(TransportKind.Ship));
 		
-		_menuBusFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Bus));
-		_menuTrolleyFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Trolley));
-		_menuTramFilter.setSelected(_model.isEnabledFilterMenu(TransportKind.Tram));
+		_menuBusFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Bus));
+		_menuTrolleyFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Trolley));
+		_menuTramFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Tram));
+		_menuShipFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Ship));
     }
     
 	@Override
@@ -356,9 +369,11 @@ public class MainActivity extends BaseActivity {
 			_busFilter.setVisibility(View.GONE);
 			_trolleyFilter.setVisibility(View.GONE);
 			_tramFilter.setVisibility(View.GONE);
+			_shipFilter.setVisibility(View.GONE);
 			_menuBusFilter.setVisibility(View.GONE);
 			_menuTrolleyFilter.setVisibility(View.GONE);
 			_menuTramFilter.setVisibility(View.GONE);
+			_menuShipFilter.setVisibility(View.GONE);
 			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.GONE);
 			_editText.setVisibility(View.GONE);
 			((ImageButton)findViewById(R.id.about)).setVisibility(View.GONE);
@@ -369,9 +384,11 @@ public class MainActivity extends BaseActivity {
 			_busFilter.setVisibility(View.VISIBLE);
 			_trolleyFilter.setVisibility(View.VISIBLE);
 			_tramFilter.setVisibility(View.VISIBLE);
+			_shipFilter.setVisibility(View.VISIBLE);
 			_menuBusFilter.setVisibility(View.VISIBLE);
 			_menuTrolleyFilter.setVisibility(View.VISIBLE);
 			_menuTramFilter.setVisibility(View.VISIBLE);
+			_menuShipFilter.setVisibility(View.VISIBLE);
 			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.VISIBLE);
 			_editText.setVisibility(View.VISIBLE);
 			((ImageButton)findViewById(R.id.about)).setVisibility(View.VISIBLE);
@@ -463,6 +480,7 @@ public class MainActivity extends BaseActivity {
 		_menuBusFilter.setEnabled(false);
 		_menuTrolleyFilter.setEnabled(false);
 		_menuTramFilter.setEnabled(false);
+		_menuShipFilter.setEnabled(true);
 		_model.loadDataForAllRoutes();
     }
     
@@ -630,7 +648,7 @@ public class MainActivity extends BaseActivity {
     		if (_map != null) {
     			View mainFrame = findViewById(R.id.mainFrame);
         		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-                _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight());
+                _model.loadImg(bounds, _model.pxToDp(mainFrame.getWidth()), _model.pxToDp(mainFrame.getHeight()));
 			}
 		} else {
 			_model.showFavoriteRoutes();
@@ -643,7 +661,7 @@ public class MainActivity extends BaseActivity {
     			if (_model.isOnline()) {
     				View mainFrame = findViewById(R.id.mainFrame);
             		LatLngBounds bounds = _map.getProjection().getVisibleRegion().latLngBounds;
-                    _model.loadImg(bounds, mainFrame.getWidth(), mainFrame.getHeight());
+                    _model.loadImg(bounds,_model.pxToDp(mainFrame.getWidth()), _model.pxToDp(mainFrame.getHeight()));
 				} else {
 					showTransportImgOnMap();
 				}

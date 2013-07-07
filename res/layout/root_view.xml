@@ -67,74 +67,45 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/mainRoutesBtn"
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@+id/mainRoutesBtn" >
 
-                <LinearLayout
+                <ru.slavabulgakov.busesspb.CheckButton 
                     android:id="@+id/busFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/btn_selected_black"
-                    android:minHeight="40dp"
-                    android:minWidth="40dp"
-                    android:orientation="vertical" >
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/ticket_bg_bus"
-                        android:minHeight="35dp"
-                        android:minWidth="40dp"
-                        android:duplicateParentState="true"
-                        android:src="@drawable/bus_30_30"
-                        android:scaleType="center" />
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    app:iconBackground="@drawable/ticket_bg_bus"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/bus_30_30"
+                    app:checked="true" />
                 
-                <LinearLayout
+                <ru.slavabulgakov.busesspb.CheckButton 
                     android:id="@+id/trolleyFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/btn_selected_black"
-                    android:minHeight="40dp"
-                    android:minWidth="40dp"
-                    android:orientation="vertical" >
-
-                    <ImageView
-                    	android:layout_width="wrap_content"
-                    	android:layout_height="wrap_content"
-                    	android:background="@drawable/ticket_bg_trolley"
-                    	android:minHeight="35dp"
-                        android:minWidth="40dp"
-                        android:duplicateParentState="true"
-                    	android:src="@drawable/trolley_30_30"
-                    	android:scaleType="center" />
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    app:iconBackground="@drawable/ticket_bg_trolley"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/trolley_30_30"
+                    app:checked="true" />
                 
-                <LinearLayout
+                <ru.slavabulgakov.busesspb.CheckButton 
                     android:id="@+id/tramFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/btn_selected_black"
-                    android:minHeight="40dp"
-                    android:minWidth="40dp"
-                    android:orientation="vertical" >
-
-                    <ImageView
-                    	android:layout_width="wrap_content"
-                    	android:layout_height="wrap_content"
-                    	android:background="@drawable/ticket_bg_tram"
-                    	android:minHeight="35dp"
-                        android:minWidth="40dp"
-                        android:duplicateParentState="true"
-                    	android:src="@drawable/tram_30_30"
-                    	android:scaleType="center" />
-
-                </LinearLayout>
-
+                    android:layout_height="wrap_content"
+                    app:iconBackground="@drawable/ticket_bg_tram"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/tram_30_30"
+                    app:checked="true" />
+                
+                <ru.slavabulgakov.busesspb.CheckButton 
+                    android:id="@+id/shipFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:iconBackground="@drawable/ticket_bg_ship"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/ship_30_30"
+                    app:checked="true" />
+                
             </LinearLayout>
 
             <ImageButton

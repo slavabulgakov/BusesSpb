@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    xmlns:app="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb"
     android:id="@+id/mainFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -44,82 +45,55 @@
                 android:layout_margin="5dp" />
         </RelativeLayout>
         
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/menuKindBtns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
             android:gravity="center" >
             
-            	<LinearLayout
+            	<ru.slavabulgakov.busesspb.CheckButton 
                     android:id="@+id/menuBusFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_selected_black"
-                    android:layout_alignParentLeft="true"
-                    android:minHeight="40dp"
-                    android:minWidth="40dp"
-                    android:orientation="vertical" >
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/ticket_bg_bus"
-                        android:minHeight="35dp"
-                        android:minWidth="40dp"
-                        android:duplicateParentState="true"
-                        android:src="@drawable/bus_30_30"
-                        android:scaleType="center" />
-
-                </LinearLayout>
-                
-            	<LinearLayout
+                    app:iconBackground="@drawable/ticket_bg_bus"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/bus_30_30"
+                    app:checked="true"
+                    android:layout_marginRight="12dp" />
+            	
+            	<ru.slavabulgakov.busesspb.CheckButton 
                     android:id="@+id/menuTrolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_selected_black"
-                    android:layout_centerHorizontal="true"
-                    android:minHeight="40dp"
-                    android:minWidth="40dp"
-                    android:orientation="vertical" >
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/ticket_bg_trolley"
-                        android:minHeight="35dp"
-                        android:minWidth="40dp"
-                        android:duplicateParentState="true"
-                        android:src="@drawable/trolley_30_30"
-                        android:scaleType="center" />
-
-                </LinearLayout>
-                
-            	<LinearLayout
+                    app:iconBackground="@drawable/ticket_bg_trolley"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/trolley_30_30"
+                    app:checked="true"
+                    android:layout_marginRight="12dp" />
+            	
+            	<ru.slavabulgakov.busesspb.CheckButton 
                     android:id="@+id/menuTramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_selected_black"
-                    android:layout_alignParentRight="true"
-                    android:minHeight="40dp"
-                    android:minWidth="40dp"
-                    android:orientation="vertical" >
+                    app:iconBackground="@drawable/ticket_bg_tram"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/tram_30_30"
+                    app:checked="true"
+                    android:layout_marginRight="12dp" />
+                
+            	<ru.slavabulgakov.busesspb.CheckButton 
+                    android:id="@+id/menuShipFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:iconBackground="@drawable/ticket_bg_ship"
+                    app:background="@drawable/btn_selected_black"
+                    android:src="@drawable/ship_30_30"
+                    app:checked="true" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/ticket_bg_tram"
-                        android:minHeight="35dp"
-                        android:minWidth="40dp"
-                        android:duplicateParentState="true"
-                        android:src="@drawable/tram_30_30"
-                        android:scaleType="center" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
+            </LinearLayout>
 
         <HorizontalScrollView
             android:id="@+id/routeTicketsScrollView"
