@@ -74,6 +74,7 @@ public class ModelPaths {
 			}
 			
 			removeMapItems();
+			removeMapShortTimeItems();
 			for (Integer routeId : routeIds) {
 				Path path = _getPaths().get(routeId);
 				if (path == null) {
@@ -283,6 +284,28 @@ public class ModelPaths {
 		_getMapItems().add(item);
 	}
 	
+	private ArrayList<Object>_mapShortTimeItems;
+	private ArrayList<Object> _getMapShortTimeItems() {
+		if (_mapShortTimeItems == null) {
+			_mapShortTimeItems = new ArrayList<Object>();
+		}
+		return _mapShortTimeItems;
+	}
+	public void removeMapShortTimeItems() {
+		for (Object item : _getMapShortTimeItems()) {
+			if (item.getClass() == Marker.class) {
+				((Marker)item).remove();
+			} else if (item.getClass() == Polyline.class) {
+				((Polyline)item).remove();
+			} else if (item.getClass() == GroundOverlay.class) {
+				((GroundOverlay)item).remove();
+			}
+		}
+	}
+	public void addMapShortTimeItem(Object item) {
+		_getMapShortTimeItems().add(item);
+	}
+	
 	public boolean pathsIsOn() {
 		Boolean on = (Boolean)_model.getData("pathsIsOn");
 		if (on != null) {
@@ -296,6 +319,24 @@ public class ModelPaths {
 			loadPaths();
 		} else {
 			removeMapItems();
+			removeMapShortTimeItems();
+		}
+	}
+	
+	public void updateStations() {
+		if (pathsIsOn()) {
+			ArrayList<Integer> routeIds = new ArrayList<Integer>();
+			for (Route route : _model.getFavorite()) {
+				routeIds.add(route.id);
+			}
+			
+			removeMapShortTimeItems();
+			for (Integer routeId : routeIds) {
+				Stations stations = _getStations().get(routeId);
+				if (stations != null) {
+					_listener.onStationsLoaded(stations);
+				}
+			}
 		}
 	}
 }

@@ -231,7 +231,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onCameraChange(CameraPosition cameraPosition) {
 		if (_isMainActivity()) {
-			_mainActivity().updateTransportOffline();
+			if (Math.abs(_model.getZoom() - cameraPosition.zoom) > .1 || _model.isFirstCameraChange()) {
+				_mainActivity().updateTransportOffline();
+				_model.getModelPaths().updateStations();
+			}
 			_model.setZoom(cameraPosition.zoom);
 			_model.setLocation(cameraPosition.target);
 		}

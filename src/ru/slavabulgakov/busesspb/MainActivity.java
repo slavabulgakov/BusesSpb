@@ -749,6 +749,11 @@ public class MainActivity extends BaseActivity {
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
 	}
 	
+	private BitmapDescriptor _getEmptyBitMap() {
+		Bitmap bitmap = Bitmap.createBitmap(5, 5, Config.ARGB_8888);
+		return BitmapDescriptorFactory.fromBitmap(bitmap);
+	}
+	
 	private float _getWidth() {
 		float zoom = 0;
 		if (_map != null) {
@@ -854,12 +859,24 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 	
+	private float _getStationWidth() {
+		float zoom = 0;
+		if (_map != null) {
+			zoom = _map.getCameraPosition().zoom;
+		}
+		double w = .3 * Math.pow(2, Math.max(.0, 21.0 - zoom));
+		return (float)w;
+	}
 	public void showStations(Stations stations) {
 		for (Station station : stations) {
-			BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.station);
-			MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name).icon(icon).anchor((float).5, (float).5);
+			MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name).icon(_getEmptyBitMap()).anchor((float).5, (float).5);
 			Marker marker = _map.addMarker(markerOptions);
 			_model.getModelPaths().addMapItem(marker);
+			
+			BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.station);
+			GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(-1);
+			GroundOverlay groundOverlay = _map.addGroundOverlay(groundOverlayOptions);
+			_model.getModelPaths().addMapShortTimeItem(groundOverlay);
 		}
 	}
 }

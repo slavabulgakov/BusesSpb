@@ -884,4 +884,13 @@ public class Model extends Application {
     public int pxToDp(int px) {
 		return (int)(px / getResources().getDisplayMetrics().density);
 	}
+    
+    private boolean _isFirstCameraChange = true;
+    public boolean isFirstCameraChange() {
+    	if (_isFirstCameraChange) {
+			_isFirstCameraChange = false;
+			return true;
+		}
+		return false;
+	}
 }

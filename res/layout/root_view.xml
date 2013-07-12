@@ -77,6 +77,7 @@
                     app:iconBackground="@drawable/ticket_bg_bus"
                     app:background="@drawable/btn_selected_black"
                     android:src="@drawable/bus_30_30"
+                    android:layout_marginRight="10dp"
                     app:checked="true" />
                 
                 <ru.slavabulgakov.busesspb.CheckButton 
@@ -86,6 +87,7 @@
                     app:iconBackground="@drawable/ticket_bg_trolley"
                     app:background="@drawable/btn_selected_black"
                     android:src="@drawable/trolley_30_30"
+                    android:layout_marginRight="10dp"
                     app:checked="true" />
                 
                 <ru.slavabulgakov.busesspb.CheckButton 
@@ -95,6 +97,7 @@
                     app:iconBackground="@drawable/ticket_bg_tram"
                     app:background="@drawable/btn_selected_black"
                     android:src="@drawable/tram_30_30"
+                    android:layout_marginRight="10dp"
                     app:checked="true" />
                 
                 <ru.slavabulgakov.busesspb.CheckButton 
@@ -172,10 +175,11 @@
             
             <ru.slavabulgakov.busesspb.CheckButton 
                 android:id="@+id/paths"
+                android:layout_alignRight="@+id/about"
+                android:layout_marginRight="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/zoomControls"
-                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:src="@drawable/paths"
                 app:iconBackground="@drawable/btn_pressed_black"
                 app:background="@drawable/btn_selected_black"
