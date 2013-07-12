@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.slavabulgakov.busesspb"
-    android:versionCode="9"
+    android:versionCode="10"
     android:installLocation="preferExternal"
-    android:versionName="1.4" >
+    android:versionName="1.5" >
 
     <uses-sdk
         android:minSdkVersion="8"
