@@ -703,6 +703,10 @@ public class MainActivity extends BaseActivity {
 		case Tram:
 			resId = R.drawable.tram;
 			break;
+			
+		case Ship:
+			resId = R.drawable.ship;
+			break;
 
 		default:
 			break;
