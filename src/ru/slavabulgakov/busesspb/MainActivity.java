@@ -607,6 +607,9 @@ public class MainActivity extends BaseActivity {
 			public void run() {
 				if (_map != null) {
 					_map.clear();
+					if (!_model.menuIsOpened()) {
+			    		_model.getModelPaths().loadPaths();
+					}
 				}
 			}
 		});

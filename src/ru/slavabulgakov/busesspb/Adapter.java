@@ -27,7 +27,7 @@ class Adapter extends ArrayAdapter<Route> {
 	
 	class MyFilter extends Filter {
 
-		ArrayList<Route> _data = new ArrayList<Route>();
+		ArrayList<Route> _data = null;
 		CharSequence _constraint;
 		
 		@Override
@@ -68,7 +68,7 @@ class Adapter extends ArrayAdapter<Route> {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
 			_constraint = constraint;
-			_data.clear();
+			_data = new ArrayList<Route>();
 			FilterResults filterResults = new FilterResults();
 			if (constraint != null) {
 				synchronized (this) {
