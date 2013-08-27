@@ -1,8 +1,11 @@
 package ru.slavabulgakov.busesspb;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
@@ -13,6 +16,23 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 public class Files {
+	
+	public static String stringFromFile(String fileName, Context context) {
+		String str = null;
+		try {
+			InputStream inputStream = context.getAssets().open(fileName);
+			BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+			StringBuilder total = new StringBuilder();
+			String line;
+			while ((line = r.readLine()) != null) {
+			    total.append(line);
+			}
+			str = total.toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return str;
+	}
 	
 	public static Object loadFromFile(String fileName, Context context) {
 		return loadFromFile(fileName, false, context);

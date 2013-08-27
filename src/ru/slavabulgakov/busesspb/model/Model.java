@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -341,74 +342,73 @@ public class Model extends Application {
 			public void setCanceled() {
 			}
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public void nextExecute() {
-				HttpClient httpClient = new DefaultHttpClient();
-				HttpPost httpPost = new HttpPost("http://transport.orgp.spb.ru/Portal/transport/routes/list");
-				
 				try {
-					List<NameValuePair> nameValuesPairs = new ArrayList<NameValuePair>(24);
-					nameValuesPairs.add(new BasicNameValuePair("sEcho", "10"));
-					nameValuesPairs.add(new BasicNameValuePair("iColumns", "11"));
-					nameValuesPairs.add(new BasicNameValuePair("sColumns", "id,transportType,routeNumber,name,urban,poiStart,poiFinish,cost,forDisabled,scheduleLinkColumn,mapLinkColumn"));
-					nameValuesPairs.add(new BasicNameValuePair("iDisplayStart", "0"));
-					nameValuesPairs.add(new BasicNameValuePair("iDisplayLength", "1000"));
-					nameValuesPairs.add(new BasicNameValuePair("sNames", "id,transportType,routeNumber,name,urban,poiStart,poiFinish,cost,forDisabled,scheduleLinkColumn,mapLinkColumn"));
-					nameValuesPairs.add(new BasicNameValuePair("iSortingCols", "1"));
-					nameValuesPairs.add(new BasicNameValuePair("iSortCol_0", "2"));
-					nameValuesPairs.add(new BasicNameValuePair("sSortDir_0", "asc"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_0", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_1", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_2", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_3", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_4", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_5", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_6", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_7", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_8", "true"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_9", "false"));
-					nameValuesPairs.add(new BasicNameValuePair("bSortable_10", "false"));
-					nameValuesPairs.add(new BasicNameValuePair("transport-type", "1"));
-					nameValuesPairs.add(new BasicNameValuePair("transport-type", "46"));
-					nameValuesPairs.add(new BasicNameValuePair("transport-type", "2"));
-					nameValuesPairs.add(new BasicNameValuePair("transport-type", "0"));
-					httpPost.setEntity(new UrlEncodedFormEntity(nameValuesPairs));
-					
-					ResponseHandler<String> responseHandler=new BasicResponseHandler();
-			        String responseBody = httpClient.execute(httpPost, responseHandler);
-			        JSONObject response = new JSONObject(responseBody);
-			        
-			        JSONArray aaData = response.getJSONArray("aaData");
-			        _array = new ArrayList<Route>();
-			        for (int i = 0; i < aaData.length(); i++) {
-						JSONArray data = aaData.getJSONArray(i);
-						Route route = new Route();
-						route.id = data.getInt(0);
-						route.routeNumber = data.getString(2);
-						if (!data.getString(7).equals("null")) {
-							route.cost = data.getInt(7);
-						}
-						String kind = data.getJSONObject(1).getString("systemName");
-						if (kind.equals("bus")) {
-							route.kind = TransportKind.Bus;
-						} else if (kind.equals("tram")) {
-							route.kind = TransportKind.Tram;
-						} else if (kind.equals("trolley")) {
-							route.kind = TransportKind.Trolley;
-						} else if (kind.equals("ship")) {
-							route.kind = TransportKind.Ship;
+					Integer version = (Integer)getData("allRoutesVersion");
+					URL url = new URL("http://futbix.ru/busesspb/version/");
+					URLConnection conn = url.openConnection();
+					conn.connect();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+					String line = rd.readLine();
+					Integer serverVersion = Integer.parseInt(line);
+					if (version == null || serverVersion > version) {
+						String json = "";
+						if (serverVersion == 1) {
+							json = Files.stringFromFile("allRoutes.json", Model.this);
+						} else {
+							url = new URL("http://futbix.ru/busesspb/echo/");
+							conn = url.openConnection();
+							conn.setRequestProperty("Cookie", _cookie);
+							conn.connect();
+							rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+							line = "";
+				  
+							while ((line = rd.readLine()) != null) {
+								json += line;
+							}
 						}
 						
-						_array.add(route);
+						
+						JSONObject response = new JSONObject(json);
+				        
+				        JSONArray aaData = response.getJSONArray("aaData");
+				        _array = new ArrayList<Route>();
+				        for (int i = 0; i < aaData.length(); i++) {
+							JSONArray data = aaData.getJSONArray(i);
+							Route route = new Route();
+							route.id = data.getInt(0);
+							route.routeNumber = data.getString(2);
+							if (!data.getString(7).equals("null")) {
+								route.cost = data.getInt(7);
+							}
+							String kind = data.getJSONObject(1).getString("systemName");
+							if (kind.equals("bus")) {
+								route.kind = TransportKind.Bus;
+							} else if (kind.equals("tram")) {
+								route.kind = TransportKind.Tram;
+							} else if (kind.equals("trolley")) {
+								route.kind = TransportKind.Trolley;
+							} else if (kind.equals("ship")) {
+								route.kind = TransportKind.Ship;
+							}
+							
+							_array.add(route);
+						}
+				        Files.saveToFile(_array, "allRoutes.ser", Model.this);
+						setData("allRoutesVersion", serverVersion, true);
+					} else {
+						_array = (ArrayList<Route>)Files.loadFromFile("allRoutes.ser", Model.this);
 					}
-			        
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
+				} catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JSONException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
