@@ -397,6 +397,10 @@ public class MainActivity extends BaseActivity {
 			((ImageButton)findViewById(R.id.location)).setVisibility(View.VISIBLE);
 		}
 		
+		if (_model.isOnline()) {
+			_model.removeAllTransportOverlays();
+		}
+		
 		_updateControls();
 	}
 
@@ -499,7 +503,7 @@ public class MainActivity extends BaseActivity {
     	
     	
     	
-    	{// обновление тикетов выбранных маршрутов
+    	{// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
 	    	ticketsLayout.removeAllViews();
 			for (Route route : _model.getFavorite()) {
@@ -558,7 +562,7 @@ public class MainActivity extends BaseActivity {
 		updateFilterButtons();
 		
 		
-		{// отключение клавиатуры
+		{// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			if (!isOpen) {
 				keyboardTurnOff();
 			}
@@ -568,7 +572,7 @@ public class MainActivity extends BaseActivity {
 		
 		
 		
-		{// отключение/включение вертелки карты
+		{// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			_toggleRotateMap(isOpen);
 		}
 		
@@ -584,7 +588,7 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		
-		{// очистка карты
+		{// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			if (!isOpen) {
 				if (_map != null) {
 					_model.removeSimpleTransportOverlay();
@@ -724,15 +728,15 @@ public class MainActivity extends BaseActivity {
 		
 		Paint paintHighlight = new Paint(Paint.ANTI_ALIAS_FLAG);
 		int color = 0;
-		if (routeNumber.equalsIgnoreCase("1м")) {
+		if (routeNumber.equalsIgnoreCase("1Рњ")) {
 			color = Color.argb(0xff, 0xD7, 0x17, 0x36);
-		} else if (routeNumber.equalsIgnoreCase("2м")) {
+		} else if (routeNumber.equalsIgnoreCase("2Рњ")) {
 			color = Color.argb(0xff, 0x1, 0x96, 0xFF);
-		} else if (routeNumber.equalsIgnoreCase("3м")) {
+		} else if (routeNumber.equalsIgnoreCase("3Рњ")) {
 			color = Color.argb(0xff, 0x4, 0x9F, 0x5C);
-		} else if (routeNumber.equalsIgnoreCase("4м")) {
+		} else if (routeNumber.equalsIgnoreCase("4Рњ")) {
 			color = Color.argb(0xff, 0xE0, 0x72, 0x5);
-		} else if (routeNumber.equalsIgnoreCase("5м")) {
+		} else if (routeNumber.equalsIgnoreCase("5Рњ")) {
 			color = Color.argb(0xff, 0x72, 0x5, 0x7C);
 		} else {
 			color = Color.argb(0xff, 0x45, 0x45, 0x45);
