@@ -1,6 +1,7 @@
 package ru.slavabulgakov.busesspb;
 
 import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -20,14 +21,15 @@ public class RootView extends RelativeLayout {
 		void onMove(double percent);
 	}
 	private OnActionListener _listener;
-	private Boolean _hold = false;
+	private Boolean _leftHold = false;
+	private Boolean _rightHold = false;
 	private float _prevX = 0;
 	private float _lastDX = 0;
-	private final int _shadowWidth = 0;
 	private final int _menuWidth = 250;
 	private final int _touchWidth = 30;
-	private final int _xClose = -_shadowWidth;
-	private final int _xOpen = _menuWidth - _shadowWidth;
+	private final int _xClose = 0;
+	private final int _xLeftOpen = _menuWidth;
+	private final int _xRightOpen = -_menuWidth;
 	private Model _model;
 	public void setOnOpenListener(OnActionListener listener) {
 		_listener = listener;
@@ -44,8 +46,10 @@ public class RootView extends RelativeLayout {
 	@SuppressLint("NewApi")
 	public void setModel(Model model) {
 		_model = model;
-		if (_model.menuIsOpened()) {
-			_setX(_model.dpToPx(_xOpen));
+		if (_model.menuIsOpened(MenuKind.Left)) {
+			_setX(_model.dpToPx(_xLeftOpen));
+		} else if (_model.menuIsOpened(MenuKind.Right)) {
+			_setX(_model.dpToPx(_xRightOpen));
 		} else {
 			_setX(_model.dpToPx(_xClose));
 		}
@@ -55,7 +59,7 @@ public class RootView extends RelativeLayout {
 	private void _setX(float x) {
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
 		lp.leftMargin = (int)x;
-		lp.rightMargin = -(int)x - _shadowWidth;
+		lp.rightMargin = -(int)x;
 		setLayoutParams(lp);
 		_onMove();
 	}
@@ -91,9 +95,13 @@ public class RootView extends RelativeLayout {
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			if (ev.getRawX() - _getX() <= _model.dpToPx(_touchWidth)) {
-				_setHolded(true);
-			} else if (ev.getRawX() - _getX() > _model.dpToPx(_touchWidth) && _model.menuIsOpened()) {
-				_setHolded(true);
+				_setLeftHolded(true);
+			} else if (ev.getRawX() - _getX() > _model.dpToPx(_touchWidth) && _model.menuIsOpened(MenuKind.Left)) {
+				_setLeftHolded(true);
+			} else if (ev.getRawX() - _getX() > getWidth() - _model.dpToPx(_touchWidth)) {
+				_setRightHolded(true);
+			} else if ((ev.getRawX() - _getX() < getWidth() - _model.dpToPx(_touchWidth)) && _model.menuIsOpened(MenuKind.Right)) {
+				_setRightHolded(true);
 			}
 			_prevX = ev.getRawX();
 			_hasTouches = true;
@@ -101,11 +109,21 @@ public class RootView extends RelativeLayout {
 			
 		case MotionEvent.ACTION_MOVE:
 			float dX = ev.getRawX() - _prevX;
-			if (_hold) {
-				if (_getX() + dX > _model.dpToPx(_xOpen)) {
-					_setX(_model.dpToPx(_xOpen));
+			if (_leftHold) {
+				if (_getX() + dX > _model.dpToPx(_xLeftOpen)) {
+					_setX(_model.dpToPx(_xLeftOpen));
 				} else if (_getX() + dX < 0) {
 					_setX(_model.dpToPx(_xClose));
+				} else {
+					_setX(_getX() + dX);
+					_lastDX = dX;
+					_prevX = ev.getRawX();
+				}
+			} else if (_rightHold) {
+				if (_getX() + dX < _model.dpToPx(_xRightOpen)) {
+					_setX(_model.dpToPx(_xRightOpen));
+				} else if (_getX() + dX > 0) {
+					_setX(_model.dpToPx(_xRightOpen));
 				} else {
 					_setX(_getX() + dX);
 					_lastDX = dX;
@@ -116,19 +134,36 @@ public class RootView extends RelativeLayout {
 			
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
-			if (_getX() <= _model.dpToPx(_shadowWidth)) {
-				_setOpened(false);
-				_setX(_model.dpToPx(_xClose));
-			} else if (_getX() > _model.dpToPx(_xOpen) && _model.menuIsOpened()) {
-				_animateMove(-1);
-			} else if (_getX() > _model.dpToPx(_xOpen)) {
-				_setOpened(true);
-				_setX(_model.dpToPx(_xOpen));
-			} else {
-				_animateMove(0);
-			}
-			if (_hold) {
-				_setHolded(false);
+			if (_leftHold) {
+				if (_getX() <= _model.dpToPx(0)) {
+					_setOpened(false, MenuKind.Left);
+					_setX(_model.dpToPx(_xClose));
+				} else if (_getX() > _model.dpToPx(_xLeftOpen) && _model.menuIsOpened(MenuKind.Left)) {
+					_animateMoveLeftMenu(MenuAnimates.CloseMenu);
+				} else if (_getX() > _model.dpToPx(_xLeftOpen)) {
+					_setOpened(true, MenuKind.Left);
+					_setX(_model.dpToPx(_xLeftOpen));
+				} else if (_lastDX > 0) {
+					_animateMoveLeftMenu(MenuAnimates.OpenMenu);
+				} else if (_lastDX < 0) {
+					_animateMoveLeftMenu(MenuAnimates.CloseMenu);
+				}
+				_setLeftHolded(false);
+			} else if (_rightHold) {
+				if (_getX() >= _model.dpToPx(0)) {
+					_setOpened(false, MenuKind.Right);
+					_setX(_model.dpToPx(_xClose));
+				} else if (_getX() < _model.dpToPx(_xRightOpen) && _model.menuIsOpened(MenuKind.Right)) {
+					_animateMoveRightMenu(MenuAnimates.CloseMenu);
+				} else if (_getX() < _model.dpToPx(_xRightOpen)) {
+					_setOpened(true, MenuKind.Right);
+					_setX(_model.dpToPx(_xRightOpen));
+				} else if (_lastDX < 0) {
+					_animateMoveRightMenu(MenuAnimates.OpenMenu);
+				} else if (_lastDX > 0) {
+					_animateMoveRightMenu(MenuAnimates.CloseMenu);
+				}
+				_setRightHolded(false);
 			}
 			_hasTouches = false;
 			break;
@@ -140,8 +175,13 @@ public class RootView extends RelativeLayout {
 	}
 	
 	
-	public void _setHolded(Boolean holded) {
-		_hold = holded;
+	private void _setLeftHolded(Boolean holded) {
+		_leftHold = holded;
+		_listener.onHold(holded);
+	}
+	
+	private void _setRightHolded(Boolean holded) {
+		_rightHold = holded;
 		_listener.onHold(holded);
 	}
 	
@@ -150,43 +190,52 @@ public class RootView extends RelativeLayout {
 		return _hasTouches;
 	}
 	
-	public void open() {
-		if (!_model.menuIsOpened()) {
-			_animateMove(1);
+	public void open(MenuKind kind) {
+		if (!_model.menuIsOpened(kind)) {
+			_animateMove(MenuAnimates.OpenMenu, kind);
 		}
 	}
 	
-	public void close() {
-		if (_model.menuIsOpened()) {
-			_animateMove(-1);
+	public void close(MenuKind kind) {
+		if (_model.menuIsOpened(kind)) {
+			_animateMove(MenuAnimates.CloseMenu, kind);
 		}
 	}
 	
-	public void toggle() {
-		if (_model.menuIsOpened()) {
-			_animateMove(-1);
+	public void toggleMenu(MenuKind kind) {
+		if (_model.menuIsOpened(kind)) {
+			_animateMove(MenuAnimates.CloseMenu, kind);
 		} else {
-			_animateMove(1);
+			_animateMove(MenuAnimates.OpenMenu, kind);
 		}
 	}
 	
-	private void _setOpened(Boolean opened) {
-		if (_listener != null && opened != _model.menuIsOpened()) {
-			_model.setMenuOpened(opened);
-			_listener.onMenuChangeState(_model.menuIsOpened());
+	private void _setOpened(Boolean opened, MenuKind kind) {
+		if (_listener != null && opened != _model.menuIsOpened(kind)) {
+			_model.setMenuOpened(kind, opened);
+			_listener.onMenuChangeState(_model.menuIsOpened(kind));
+		}
+	}
+	
+	enum MenuAnimates {
+		OpenMenu,
+		CloseMenu
+	}
+	
+	private void _animateMove(MenuAnimates direction, MenuKind kind) {
+		if (kind == MenuKind.Left) {
+			_animateMoveLeftMenu(direction);
+		} else {
+			_animateMoveRightMenu(direction);
 		}
 	}
 
 	@SuppressLint("NewApi")
-	private void _animateMove(int direction) {
-		if (direction > 0) {
-			_scroller.startScroll((int)_getX(), 0, _model.dpToPx(_xOpen) - (int)_getX(), 0, 500);
-		} else if (direction < 0) {
-			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0, 500);
-		} else if (_lastDX > 0) {
-			_scroller.startScroll((int)_getX(), 0, _model.dpToPx(_xOpen) - (int)_getX(), 0, 500);
-		} else if (_lastDX < 0) {
-			_scroller.startScroll((int)_getX(), 0, -_shadowWidth - (int)_getX(), 0, 500);
+	private void _animateMoveLeftMenu(MenuAnimates direction) {
+		if (direction == MenuAnimates.OpenMenu) {
+			_scroller.startScroll((int)_getX(), 0, _model.dpToPx(_xLeftOpen) - (int)_getX(), 0, 500);
+		} else if (direction == MenuAnimates.CloseMenu) {
+			_scroller.startScroll((int)_getX(), 0, - (int)_getX(), 0, 500);
 		}
 		
 		post(new Runnable() {
@@ -197,17 +246,56 @@ public class RootView extends RelativeLayout {
 				if (_scroller.isFinished()) {
 					_scroller.forceFinished(true);
 					if ((int)_getX() < 100) {
-						_setOpened(false);
+						_setOpened(false, MenuKind.Left);
 					} else {
-						_setOpened(true);
+						_setOpened(true, MenuKind.Left);
 					}
 					return;
 				}
 				Boolean more = _scroller.computeScrollOffset();
 				int currentX = _scroller.getCurrX();
-				if (currentX > _model.dpToPx(_xOpen)) {
-					_setX(_model.dpToPx(_xOpen));
+				if (currentX > _model.dpToPx(_xLeftOpen)) {
+					_setX(_model.dpToPx(_xLeftOpen));
 				} else if (currentX < 0) {
+					_setX(_model.dpToPx(_xClose));
+				} else {
+					_setX(currentX);
+				}
+				
+				if (more) {
+					postDelayed(this, 16);
+				}
+			}
+		});
+	}
+	
+	private void _animateMoveRightMenu(MenuAnimates direction) {
+		final int notNegativeValuesOffset = 10000;
+		if (direction == MenuAnimates.OpenMenu) {
+			_scroller.startScroll((int)_getX() + notNegativeValuesOffset, 0, _model.dpToPx(_xRightOpen) - (int)_getX(), 0, 500);
+		} else if (direction == MenuAnimates.CloseMenu) {
+			_scroller.startScroll((int)_getX() + notNegativeValuesOffset, 0, -(int)_getX(), 0, 500);
+		}
+		
+		post(new Runnable() {
+			
+			@SuppressLint("NewApi")
+			@Override
+			public void run() {
+				if (_scroller.isFinished()) {
+					_scroller.forceFinished(true);
+					if ((int)_getX() > -100) {
+						_setOpened(false, MenuKind.Right);
+					} else {
+						_setOpened(true, MenuKind.Right);
+					}
+					return;
+				}
+				Boolean more = _scroller.computeScrollOffset();
+				int currentX = _scroller.getCurrX() - notNegativeValuesOffset;
+				if (currentX < _model.dpToPx(_xRightOpen)) {
+					_setX(_model.dpToPx(_xRightOpen));
+				} else if (currentX > 0) {
 					_setX(_model.dpToPx(_xClose));
 				} else {
 					_setX(currentX);

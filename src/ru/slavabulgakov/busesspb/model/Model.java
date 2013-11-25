@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,23 +12,14 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.flurry.android.FlurryAgent;
+import com.flurry.org.apache.avro.io.parsing.Symbol.Kind;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -51,6 +41,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class Model extends Application {
+	
+ 	public enum MenuKind {
+		Left,
+		Right
+	};
 	
 	private ModelPaths _paths;
 	public Model() {
@@ -819,15 +814,24 @@ public class Model extends Application {
 		return _cookie;
 	}
 	
-	private boolean _menuIsOpened = false;
-	public void setMenuOpened(boolean opened) {
-		_menuIsOpened = opened;
-		if (_menuIsOpened) {
-			_setMenuIsOpenedOnce();
+	private boolean _leftMenuIsOpened = false;
+	private boolean _rightMenuIsOpened = false;
+	public void setMenuOpened(MenuKind kind, boolean opened) {
+		if (kind == MenuKind.Left) {
+			_leftMenuIsOpened = opened;
+			if (_leftMenuIsOpened) {
+				_setMenuIsOpenedOnce();
+			}
+		} else {
+			_rightMenuIsOpened = opened;
 		}
+		
 	}
-	public boolean menuIsOpened() {
-		return _menuIsOpened;
+	public boolean menuIsOpened(MenuKind kind) {
+		if (kind == MenuKind.Left) {
+			return _leftMenuIsOpened;
+		}
+		return _rightMenuIsOpened;
 	}
 	
 	public boolean menuIsOpenedOnce() {

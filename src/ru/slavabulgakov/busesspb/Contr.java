@@ -9,6 +9,7 @@ import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.Transport;
 import ru.slavabulgakov.busesspb.model.TransportKind;
+import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.paths.ModelPaths.OnPathLoaded;
 import ru.slavabulgakov.busesspb.paths.Path;
@@ -16,7 +17,9 @@ import ru.slavabulgakov.busesspb.paths.Stations;
 
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Marker;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -38,7 +41,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded {
+public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded, OnInfoWindowClickListener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -72,7 +75,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 		ListView listView = (ListView)_currentActivity.findViewById(R.id.selectRouteListView);
 		switch (v.getId()) {
 		case R.id.mainRoutesBtn:
-			_mainActivity().toggleLeftMenu();
+			_mainActivity().toggleMenu(MenuKind.Left);
 			break;
 			
 		case R.id.busFilter:
@@ -395,5 +398,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onStationsLoaded(Stations stations) {
 		_mainActivity().showStations(stations);
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker arg0) {
+		_model.getModelPaths().isStationMarker(arg0);
+		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
 	}
 }

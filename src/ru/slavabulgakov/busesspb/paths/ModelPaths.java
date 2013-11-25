@@ -283,6 +283,11 @@ public class ModelPaths {
 	public void addMapItem(Object item) {
 		_getMapItems().add(item);
 	}
+	public boolean isStationMarker(Object item) {
+		boolean exist = _getMapItems().contains(item);
+		boolean isMarker = item.getClass() == Marker.class;
+		return exist && isMarker;
+	}
 	
 	private ArrayList<Object>_mapShortTimeItems;
 	private ArrayList<Object> _getMapShortTimeItems() {

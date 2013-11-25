@@ -3,6 +3,7 @@ package ru.slavabulgakov.busesspb;
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 
 
 public class UpdateMenuContentTimerTask extends TimerTask {
@@ -22,7 +23,7 @@ public class UpdateMenuContentTimerTask extends TimerTask {
 			
 			@Override
 			public void run() {
-				if (_model.isOnline() && _model.menuIsOpened() && !_model.allRouteIsLoaded()) {
+				if (_model.isOnline() && _model.menuIsOpened(MenuKind.Left) && !_model.allRouteIsLoaded()) {
 					if (!_model.allRoutesIsLoading()) {
 						_mainActivity.loadMenuContent();
 					}

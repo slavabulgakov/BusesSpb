@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
+import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.SimpleTransportView;
 import ru.slavabulgakov.busesspb.model.Transport;
@@ -361,9 +362,10 @@ public class MainActivity extends BaseActivity {
 	        _map.setOnCameraChangeListener(Contr.getInstance());
 	        _map.getUiSettings().setMyLocationButtonEnabled(false);
 	        _map.getUiSettings().setZoomControlsEnabled(false);
+	        _map.setOnInfoWindowClickListener(Contr.getInstance());
 		}
 		
-		_toggleRotateMap(_model.menuIsOpened());
+		_toggleRotateMap(_model.menuIsOpened(MenuKind.Left));
 		
 		if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
 			_busFilter.setVisibility(View.GONE);
@@ -464,10 +466,10 @@ public class MainActivity extends BaseActivity {
 			_timer = null;
 		}
     	if (_model.isOnline()) {
-    		if (_model.menuIsOpened() && !_model.allRouteIsLoaded()) {
+    		if (_model.menuIsOpened(MenuKind.Left) && !_model.allRouteIsLoaded()) {
     			_timer = new Timer();
     			_timer.schedule(new UpdateMenuContentTimerTask(this, _model), 0, 3000);
-			} else if (!_model.menuIsOpened()) {
+			} else if (!_model.menuIsOpened(MenuKind.Left)) {
     			_timer = new Timer();
     	    	_timer.schedule(new UpdateTransportTimerTask(this, _model), 0, 3000);
 			}
@@ -490,7 +492,7 @@ public class MainActivity extends BaseActivity {
     
     private void _updateControls() {
     	
-    	int resId = _model.menuIsOpened() ? R.drawable.menu_close_icon : R.drawable.menu_open_icon;
+    	int resId = _model.menuIsOpened(MenuKind.Left) ? R.drawable.menu_close_icon : R.drawable.menu_open_icon;
 		_menuIcon.setImageResource(resId);
     	
     	if (_model.allRouteIsLoaded()) {
@@ -529,7 +531,7 @@ public class MainActivity extends BaseActivity {
 			_menuIcon.setLayoutParams(lpMenuIcon);
 		}
     	
-    	if (!_model.menuIsOpened()) {
+    	if (!_model.menuIsOpened(MenuKind.Left)) {
     		_model.getModelPaths().loadPaths();
 		}
 	}
@@ -611,7 +613,7 @@ public class MainActivity extends BaseActivity {
 			public void run() {
 				if (_map != null) {
 					_map.clear();
-					if (!_model.menuIsOpened()) {
+					if (!_model.menuIsOpened(MenuKind.Left)) {
 			    		_model.getModelPaths().loadPaths();
 					}
 				}
@@ -619,8 +621,12 @@ public class MainActivity extends BaseActivity {
 		});
     }
     
-    public void toggleLeftMenu() {
-    	_rootView.toggle();
+    public void toggleMenu(MenuKind kind) {
+    	_rootView.toggleMenu(kind);
+	}
+    
+    public void showMenu(MenuKind kind) {
+		_rootView.open(kind);
 	}
     
     public void showMenuContent() {
