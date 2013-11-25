@@ -123,7 +123,7 @@ public class RootView extends RelativeLayout {
 				if (_getX() + dX < _model.dpToPx(_xRightOpen)) {
 					_setX(_model.dpToPx(_xRightOpen));
 				} else if (_getX() + dX > 0) {
-					_setX(_model.dpToPx(_xRightOpen));
+					_setX(_model.dpToPx(_xClose));
 				} else {
 					_setX(_getX() + dX);
 					_lastDX = dX;
@@ -143,9 +143,9 @@ public class RootView extends RelativeLayout {
 				} else if (_getX() > _model.dpToPx(_xLeftOpen)) {
 					_setOpened(true, MenuKind.Left);
 					_setX(_model.dpToPx(_xLeftOpen));
-				} else if (_lastDX > 0) {
+				} else if (_getX() > _model.dpToPx(5) && _lastDX > 0) {
 					_animateMoveLeftMenu(MenuAnimates.OpenMenu);
-				} else if (_lastDX < 0) {
+				} else if (_getX() < _model.dpToPx(_xLeftOpen - 5)) {
 					_animateMoveLeftMenu(MenuAnimates.CloseMenu);
 				}
 				_setLeftHolded(false);
@@ -158,9 +158,9 @@ public class RootView extends RelativeLayout {
 				} else if (_getX() < _model.dpToPx(_xRightOpen)) {
 					_setOpened(true, MenuKind.Right);
 					_setX(_model.dpToPx(_xRightOpen));
-				} else if (_lastDX < 0) {
+				} else if (_getX() < _model.dpToPx(-5) && _lastDX < 0) {
 					_animateMoveRightMenu(MenuAnimates.OpenMenu);
-				} else if (_lastDX > 0) {
+				} else if (_getX() > _model.dpToPx(_xRightOpen + 5)) {
 					_animateMoveRightMenu(MenuAnimates.CloseMenu);
 				}
 				_setRightHolded(false);

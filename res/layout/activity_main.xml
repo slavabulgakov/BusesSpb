@@ -1,144 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-    xmlns:app="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb"
     android:id="@+id/mainFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/menu_bg" >
 
-    <LinearLayout
+    <ru.slavabulgakov.busesspb.LeftMenu 
         android:id="@+id/leftMenu"
         android:layout_width="250dp"
+        android:layout_height="match_parent"/>
+    
+    <ru.slavabulgakov.busesspb.RightMenu
+        android:id="@+id/rightMenu"
+        android:layout_width="250dp"
         android:layout_height="match_parent"
-        android:background="@color/menu_bg"
-        android:orientation="vertical" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp" >
-            <EditText
-            	android:id="@+id/selectRouteText"
-            	android:layout_width="match_parent"
-            	android:layout_height="wrap_content"
-            	android:background="@drawable/text_view"
-            	android:ems="10"
-            	android:enabled="false"
-            	android:hint="@string/routes_placeholder"
-            	android:minHeight="40dp"
-            	android:paddingBottom="5dp"
-            	android:paddingLeft="10dp"
-            	android:paddingRight="10dp"
-            	android:paddingTop="5dp"
-            	android:layout_alignParentLeft="true"
-            	android:singleLine="true" />
-            <ImageButton
-                android:id="@+id/clearRouteText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/close"
-                android:background="@drawable/btn_pressed_black"
-                android:minHeight="30dp"
-                android:minWidth="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_margin="5dp" />
-        </RelativeLayout>
-        
-        <LinearLayout
-            android:id="@+id/menuKindBtns"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal"
-            android:gravity="center" >
-            
-            	<ru.slavabulgakov.busesspb.CheckButton 
-                    android:id="@+id/menuBusFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:iconBackground="@drawable/ticket_bg_bus"
-                    app:background="@drawable/btn_selected_black"
-                    android:src="@drawable/bus_30_30"
-                    app:checked="true"
-                    android:layout_marginRight="22dp" />
-            	
-            	<ru.slavabulgakov.busesspb.CheckButton 
-                    android:id="@+id/menuTrolleyFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:iconBackground="@drawable/ticket_bg_trolley"
-                    app:background="@drawable/btn_selected_black"
-                    android:src="@drawable/trolley_30_30"
-                    app:checked="true"
-                    android:layout_marginRight="22dp" />
-            	
-            	<ru.slavabulgakov.busesspb.CheckButton 
-                    android:id="@+id/menuTramFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:iconBackground="@drawable/ticket_bg_tram"
-                    app:background="@drawable/btn_selected_black"
-                    android:src="@drawable/tram_30_30"
-                    app:checked="true"
-                    android:layout_marginRight="22dp" />
-                
-            	<ru.slavabulgakov.busesspb.CheckButton 
-                    android:id="@+id/menuShipFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:iconBackground="@drawable/ticket_bg_ship"
-                    app:background="@drawable/btn_selected_black"
-                    android:src="@drawable/ship_30_30"
-                    app:checked="true" />
-
-            </LinearLayout>
-
-        <HorizontalScrollView
-            android:id="@+id/routeTicketsScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp" >
-
-            <LinearLayout
-                android:id="@+id/selectRouteTickets"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:minWidth="250dp" >
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <LinearLayout
-            android:id="@+id/listViewAndProgressBarLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:orientation="vertical" >
-            
-            <ListView
-                android:id="@+id/selectRouteListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="#474747"
-                android:dividerHeight="10dp"
-                android:layoutAnimation="@anim/layout_bottom_to_top_slide" >
-
-            </ListView>
-
-            <ProgressBar
-                android:id="@+id/selectRouteProgressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_margin="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center" />
-            
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_alignParentRight="true" />
 
     <ru.slavabulgakov.busesspb.RootView
         android:id="@+id/mainMapLayout"

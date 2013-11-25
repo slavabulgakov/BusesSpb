@@ -87,6 +87,7 @@ public class MainActivity extends BaseActivity {
 	private ImageButton _clearButton;
 	LinearLayout _ticketsLayout;
 	private LinearLayout _leftMenu;
+	private LinearLayout _rightMenu;
 	private ImageView _menuIcon;
 	private ImageButton _internetDenyImageButton;
 	private AdView _adView;
@@ -183,6 +184,7 @@ public class MainActivity extends BaseActivity {
 		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
 		
 		_leftMenu = (LinearLayout)findViewById(R.id.leftMenu);
+		_rightMenu = (LinearLayout)findViewById(R.id.rightMenu);
 		_menuIcon = ((ImageView)findViewById(R.id.menuIcon));
 		
 		if (_listView.getAdapter() == null) {
@@ -293,9 +295,19 @@ public class MainActivity extends BaseActivity {
     
     public void moveLeftMenu(double percent) {
     	double delta = 100;
-    	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_leftMenu.getLayoutParams();
-    	lp.setMargins((int)(_model.dpToPx(-delta + delta * percent)), 0, 0, 0);
-    	_leftMenu.setLayoutParams(lp);
+    	if (percent > 0) {
+    		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_leftMenu.getLayoutParams();
+        	lp.setMargins((int)(_model.dpToPx(-delta + delta * percent)), 0, 0, 0);
+        	_leftMenu.setLayoutParams(lp);
+        	
+        	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)_rightMenu.getLayoutParams();
+        	lpRight.setMargins(0, 0, (int)(_model.dpToPx(-200)), 0);
+	    	_rightMenu.setLayoutParams(lpRight);
+		} else {
+			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_rightMenu.getLayoutParams();
+	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(percent))), 0);
+	    	_rightMenu.setLayoutParams(lp);
+		}
     }
     
     public void moveCameraToMyLocation() {
