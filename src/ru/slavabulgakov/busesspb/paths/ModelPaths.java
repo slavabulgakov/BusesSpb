@@ -18,7 +18,13 @@ import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
 import android.annotation.SuppressLint;
+import android.util.Pair;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -28,6 +34,7 @@ public class ModelPaths {
 	private static String PATH_FILE_NAME = "paths.ser";
 	private static String STATIONS_FILE_NAME = "stations.ser";
 	private Model _model;
+	private RequestQueue _queue;
 	public ModelPaths(Model model) {
 		_model = model;
 	}
@@ -93,6 +100,7 @@ public class ModelPaths {
 		}
 	}
 	private void _loadPathForRoute(final Integer routeId) {
+		
 		final int requestId = routeId + 100000;
 		IRequest req = new IRequest() {
 			
@@ -175,6 +183,26 @@ public class ModelPaths {
 		_model.startParserWithId(req, requestId);
 	}
 	
+	public void loadStationForId(String stationId) {
+		if (_queue == null) {
+			_queue = Volley.newRequestQueue(_model);
+		}
+		JsonObjectRequest request = new JsonObjectRequest("http://transport.orgp.spb.ru/Portal/transport/internalapi/forecast/bystop?stopID=" + stationId, null, new Response.Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject response) {
+				int sx = 0;
+			}
+		}, new Response.ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				int z = 0;
+			}
+		});
+		_queue.add(request);
+	}
+	
 	public void save() {
 		Files.saveToFile(_getPaths(), PATH_FILE_NAME, _model);
 		Files.saveToFile(_getStations(), STATIONS_FILE_NAME, _model);
@@ -224,8 +252,10 @@ public class ModelPaths {
 						JSONArray coordinates = ja.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates");
 						LatLng latlng = new LatLng(m.deg(coordinates.getDouble(1), AxisType.LAT), m.deg(coordinates.getDouble(0), AxisType.LNG));
 						String name = ja.getJSONObject(i).getJSONObject("properties").getString("name");
+						String id = ja.getJSONObject(i).getJSONObject("properties").getString("id");
 						station.point = new Point(latlng);
 						station.name = name;
+						station.id = id;
 						_stations.add(station);
 						if (_canceled) {
 							throw new LoadTaskException();
@@ -285,8 +315,21 @@ public class ModelPaths {
 	}
 	public boolean isStationMarker(Object item) {
 		boolean exist = _getMapItems().contains(item);
-		boolean isMarker = item.getClass() == Marker.class;
+		boolean isMarker = item.getClass() == Pair.class;
 		return exist && isMarker;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Station getStationByMarker(Marker marker) {
+		for (Object object : _getMapItems()) {
+			if (object.getClass() == Pair.class) {
+				Pair<Marker, Station> pair = (Pair<Marker, Station>)object;
+				if (pair.first.equals(marker)) {
+					return pair.second;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private ArrayList<Object>_mapShortTimeItems;

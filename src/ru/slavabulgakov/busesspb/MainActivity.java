@@ -27,6 +27,7 @@ import android.graphics.Paint.Align;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Pair;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,7 @@ public class MainActivity extends BaseActivity {
 	private ImageButton _clearButton;
 	LinearLayout _ticketsLayout;
 	private LinearLayout _leftMenu;
-	private LinearLayout _rightMenu;
+	private RightMenu _rightMenu;
 	private ImageView _menuIcon;
 	private ImageButton _internetDenyImageButton;
 	private AdView _adView;
@@ -184,7 +185,8 @@ public class MainActivity extends BaseActivity {
 		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
 		
 		_leftMenu = (LinearLayout)findViewById(R.id.leftMenu);
-		_rightMenu = (LinearLayout)findViewById(R.id.rightMenu);
+		_rightMenu = (RightMenu)findViewById(R.id.rightMenu);
+		_rightMenu.setModel(_model);
 		_menuIcon = ((ImageView)findViewById(R.id.menuIcon));
 		
 		if (_listView.getAdapter() == null) {
@@ -900,12 +902,17 @@ public class MainActivity extends BaseActivity {
 		for (Station station : stations) {
 			MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name).icon(_getEmptyBitMap()).anchor((float).5, (float).5);
 			Marker marker = _map.addMarker(markerOptions);
-			_model.getModelPaths().addMapItem(marker);
+			Pair<Marker, Station> pair = new Pair<Marker, Station>(marker, station);
+			_model.getModelPaths().addMapItem(pair);
 			
 			BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.station);
 			GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(-1);
 			GroundOverlay groundOverlay = _map.addGroundOverlay(groundOverlayOptions);
 			_model.getModelPaths().addMapShortTimeItem(groundOverlay);
 		}
+	}
+	
+	public void loadRightMenuByStation(Station station) {
+		_rightMenu.loadByStation(station);
 	}
 }

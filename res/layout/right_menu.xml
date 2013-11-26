@@ -5,23 +5,10 @@
         android:background="@color/menu_bg"
         android:orientation="vertical" >
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp" >
-            <EditText
-            	android:layout_width="match_parent"
-            	android:layout_height="wrap_content"
-            	android:background="@drawable/text_view"
-            	android:ems="10"
-            	android:enabled="false"
-            	android:hint="@string/routes_placeholder"
-            	android:minHeight="40dp"
-            	android:paddingBottom="5dp"
-            	android:paddingLeft="10dp"
-            	android:paddingRight="10dp"
-            	android:paddingTop="5dp"
-            	android:layout_alignParentLeft="true"
-            	android:singleLine="true" />
-        </RelativeLayout>
+    <TextView
+        android:id="@+id/rightMenuTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
     </LinearLayout>

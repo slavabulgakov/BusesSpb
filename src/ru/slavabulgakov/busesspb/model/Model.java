@@ -23,6 +23,8 @@ import com.flurry.org.apache.avro.io.parsing.Symbol.Kind;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+
 import ru.slavabulgakov.busesspb.Files;
 import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.LoadTaskException;
@@ -32,6 +34,7 @@ import ru.slavabulgakov.busesspb.ShareModel;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import ru.slavabulgakov.busesspb.paths.ModelPaths;
+import ru.slavabulgakov.busesspb.paths.Station;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -39,6 +42,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Pair;
 
 public class Model extends Application {
 	

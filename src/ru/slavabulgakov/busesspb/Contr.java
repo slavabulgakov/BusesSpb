@@ -13,6 +13,7 @@ import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.paths.ModelPaths.OnPathLoaded;
 import ru.slavabulgakov.busesspb.paths.Path;
+import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
 import com.flurry.android.FlurryAgent;
@@ -402,7 +403,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onInfoWindowClick(Marker arg0) {
-		_model.getModelPaths().isStationMarker(arg0);
 		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
+		Station station = _model.getModelPaths().getStationByMarker(arg0);
+		((MainActivity)_currentActivity).loadRightMenuByStation(station);
 	}
 }
