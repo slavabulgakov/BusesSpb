@@ -11,6 +11,7 @@ import ru.slavabulgakov.busesspb.model.Transport;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.Model.OnLoadCompleteListener;
+import ru.slavabulgakov.busesspb.paths.Forecasts;
 import ru.slavabulgakov.busesspb.paths.ModelPaths.OnPathLoaded;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Station;
@@ -405,6 +406,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onInfoWindowClick(Marker arg0) {
 		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
 		Station station = _model.getModelPaths().getStationByMarker(arg0);
-		((MainActivity)_currentActivity).loadRightMenuByStation(station);
+		((MainActivity)_currentActivity).getRightMenu().loadByStation(station);
+	}
+
+	@Override
+	public void onForecastLoaded(Forecasts forecasts) {
+		((MainActivity)_currentActivity).getRightMenu().loadForecasts(forecasts);
 	}
 }

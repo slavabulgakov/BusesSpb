@@ -11,6 +11,7 @@ import ru.slavabulgakov.busesspb.model.SimpleTransportView;
 import ru.slavabulgakov.busesspb.model.Transport;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.model.TransportOverlay;
+import ru.slavabulgakov.busesspb.paths.Forecasts;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Point;
 import ru.slavabulgakov.busesspb.paths.Station;
@@ -912,7 +913,7 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 	
-	public void loadRightMenuByStation(Station station) {
-		_rightMenu.loadByStation(station);
+	public RightMenu getRightMenu() {
+		return _rightMenu;
 	}
 }

@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import ru.slavabulgakov.busesspb.Files;
@@ -42,6 +46,7 @@ public class ModelPaths {
 	public interface OnPathLoaded {
 		void onPathLoaded(Path path);
 		void onStationsLoaded(Stations stations);
+		void onForecastLoaded(Forecasts forecasts);
 	}
 	private OnPathLoaded _listener;
 	public void setListener(OnPathLoaded listener) {
@@ -183,7 +188,7 @@ public class ModelPaths {
 		_model.startParserWithId(req, requestId);
 	}
 	
-	public void loadStationForId(String stationId) {
+	public void loadForecastForStationId(String stationId) {
 		if (_queue == null) {
 			_queue = Volley.newRequestQueue(_model);
 		}
@@ -191,7 +196,23 @@ public class ModelPaths {
 
 			@Override
 			public void onResponse(JSONObject response) {
-				int sx = 0;
+				SimpleDateFormat format = new SimpleDateFormat("yyyyy-mm-dd hh:mm:ss", Locale.US);
+				Forecasts forecasts = new Forecasts();
+				try {
+					JSONArray array = response.getJSONArray("result");
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject item = array.getJSONObject(i);
+						Forecast forecast = new Forecast();
+						forecast.time = format.parse(item.getString("arrivingTime"));
+						forecasts.add(forecast);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				_listener.onForecastLoaded(forecasts);
 			}
 		}, new Response.ErrorListener() {
 
