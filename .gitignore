@@ -20,3 +20,4 @@ local.properties
 .project
 .idea
 org.eclipse.core.resources.prefs
+__otherFiles
