@@ -7,6 +7,7 @@ import ru.slavabulgakov.busesspb.util.IabHelper;
 import ru.slavabulgakov.busesspb.util.IabResult;
 import ru.slavabulgakov.busesspb.util.Inventory;
 import ru.slavabulgakov.busesspb.util.IabHelper.OnIabSetupFinishedListener;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -49,6 +50,25 @@ public class BaseActivity extends FragmentActivity {
 		});
 	}
 	
+	
+	
+	@SuppressLint("NewApi")
+	@Override
+	public void startActivity(Intent intent, Bundle options) {
+		super.startActivity(intent, options);
+		overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+	}
+
+
+
+	@Override
+	public void finish() {
+		super.finish();
+		overridePendingTransition(R.anim.animation_enter_back, R.anim.animation_leave_back);
+	}
+
+
+
 	@Override
 	protected void onResume() {
 		super.onResume();
