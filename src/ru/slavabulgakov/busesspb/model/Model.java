@@ -42,6 +42,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.util.Pair;
 
 public class Model extends Application {
@@ -302,8 +303,39 @@ public class Model extends Application {
 		Files.saveToFile(_favoriteRoutes, "favoriteTransportList.ser", this);
 	}
 	
-	
-	
+	private ArrayList<Route> _routesFromString(String json) {
+		JSONObject response;
+		ArrayList<Route> array = new ArrayList<Route>();
+		try {
+			response = new JSONObject(json);
+			JSONArray aaData = response.getJSONArray("aaData");
+	        for (int i = 0; i < aaData.length(); i++) {
+				JSONArray data = aaData.getJSONArray(i);
+				Route route = new Route();
+				route.id = data.getInt(0);
+				route.routeNumber = data.getString(2);
+				if (!data.getString(7).equals("null")) {
+					route.cost = data.getInt(7);
+				}
+				String kind = data.getJSONObject(1).getString("systemName");
+				if (kind.equals("bus")) {
+					route.kind = TransportKind.Bus;
+				} else if (kind.equals("tram")) {
+					route.kind = TransportKind.Tram;
+				} else if (kind.equals("trolley")) {
+					route.kind = TransportKind.Trolley;
+				} else if (kind.equals("ship")) {
+					route.kind = TransportKind.Ship;
+				}
+				
+				array.add(route);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+        
+        return array;
+	}
 	public ArrayList<Route> getAllRoutes() {
 		if (_allRoutes == null) {
 			_allRoutes = new ArrayList<Route>();
@@ -311,7 +343,6 @@ public class Model extends Application {
 		return _allRoutes;
 	}
 	private void _setAllRoutes(ArrayList<Route> all) {
-		_allRoutesIsLoaded = true;
 		_allRoutes = all;
 		for (Route route : _favoriteRoutes) {
 			_removeRouteFromList(route, _allRoutes);
@@ -321,29 +352,35 @@ public class Model extends Application {
 	public boolean allRouteIsLoaded() {
 		return _allRoutesIsLoaded;
 	}
-	static final int PARSER_ID_ALL_ROUTES = 3;
+	private boolean _allRoutesIsLoading;
 	public boolean allRoutesIsLoading() {
-		boolean loading = _indexParserOfId(PARSER_ID_ALL_ROUTES) != -1;
-		return loading;
+		return _allRoutesIsLoading;
 	}
 	public void loadDataForAllRoutes() {
 		ArrayList<Route> routeList = getFavorite();
 		if (routeList.size() == 0) {
 			routeList = getAllRoutes();
 		}
-		final int requestId = PARSER_ID_ALL_ROUTES;
-		IRequest req = new IRequest() {
-			
-			int _step = 0;
-			ArrayList<Route> _array;
+		
+		_allRoutesIsLoading = true;
+		
+		new Thread(new Runnable() {
 			
 			@Override
-			public void setCanceled() {
-			}
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public void nextExecute() {
+			public void run() {
+				Log.d("routes", "try load");
+				@SuppressWarnings("unchecked")
+				ArrayList<Route> arrayFromCache = (ArrayList<Route>)Files.loadFromFile("allRoutes.ser", Model.this);
+				if (arrayFromCache == null) {
+					String json = Files.stringFromFile("allRoutes.json", Model.this);
+					arrayFromCache = _routesFromString(json);
+				}
+				_setAllRoutes(arrayFromCache);
+				Log.d("routes", "load from cache");
+				_listener.onRouteKindsLoadComplete(arrayFromCache);
+				
+				
+				ArrayList<Route> array = null;
 				try {
 					Integer version = (Integer)getData("allRoutesVersion");
 					URL url = new URL("http://futbix.ru/busesspb/version/");
@@ -369,76 +406,28 @@ public class Model extends Application {
 							}
 						}
 						
-						
-						JSONObject response = new JSONObject(json);
-				        
-				        JSONArray aaData = response.getJSONArray("aaData");
-				        _array = new ArrayList<Route>();
-				        for (int i = 0; i < aaData.length(); i++) {
-							JSONArray data = aaData.getJSONArray(i);
-							Route route = new Route();
-							route.id = data.getInt(0);
-							route.routeNumber = data.getString(2);
-							if (!data.getString(7).equals("null")) {
-								route.cost = data.getInt(7);
-							}
-							String kind = data.getJSONObject(1).getString("systemName");
-							if (kind.equals("bus")) {
-								route.kind = TransportKind.Bus;
-							} else if (kind.equals("tram")) {
-								route.kind = TransportKind.Tram;
-							} else if (kind.equals("trolley")) {
-								route.kind = TransportKind.Trolley;
-							} else if (kind.equals("ship")) {
-								route.kind = TransportKind.Ship;
-							}
-							
-							_array.add(route);
-						}
-				        Files.saveToFile(_array, "allRoutes.ser", Model.this);
+						array = _routesFromString(json);
+				        Files.saveToFile(array, "allRoutes.ser", Model.this);
 						setData("allRoutesVersion", serverVersion, true);
-					} else {
-						_array = (ArrayList<Route>)Files.loadFromFile("allRoutes.ser", Model.this);
 					}
 				} catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				_step++;
-			}
-			
-			@Override
-			public boolean needExecute() {
-				return _step == 0;
-			}
-			
-			@Override
-			public void finish() {
-				if (isOnline()) {
-					if (_array != null) {
-						if (_array.size() > 0) {
-							_setAllRoutes(_array);
-							_listener.onRouteKindsLoadComplete(_array);
-						}
+				if (array != null) {
+					if (array.size() > 0) {
+						_setAllRoutes(array);
+						Log.d("routes", "load from net");
+						_listener.onRouteKindsLoadComplete(array);
 					}
 				}
-				removeParserById(requestId);
+				
+				_allRoutesIsLoaded = true;
+				_allRoutesIsLoading = false;
 			}
-
-			@Override
-			public int getRequestId() {
-				return requestId;
-			}
-		};
-		
-		startParserWithId(req, requestId);
+		}).start();
 	}
 	
 	
