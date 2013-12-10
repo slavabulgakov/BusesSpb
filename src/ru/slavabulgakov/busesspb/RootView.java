@@ -16,7 +16,7 @@ import android.widget.Scroller;
 public class RootView extends RelativeLayout {
 	
 	interface OnActionListener {
-		void onMenuChangeState(boolean isOpen);
+		void onMenuChangeState(boolean isOpen, MenuKind kind);
 		void onHold(Boolean hold);
 		void onMove(double percent);
 	}
@@ -213,7 +213,7 @@ public class RootView extends RelativeLayout {
 	private void _setOpened(Boolean opened, MenuKind kind) {
 		if (_listener != null && opened != _model.menuIsOpened(kind)) {
 			_model.setMenuOpened(kind, opened);
-			_listener.onMenuChangeState(_model.menuIsOpened(kind));
+			_listener.onMenuChangeState(_model.menuIsOpened(kind), kind);
 		}
 	}
 	

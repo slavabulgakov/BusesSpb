@@ -7,6 +7,7 @@ import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
+import ru.slavabulgakov.busesspb.model.RouteName;
 import ru.slavabulgakov.busesspb.model.Transport;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
@@ -26,6 +27,8 @@ import com.google.android.gms.maps.model.Marker;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -48,6 +51,14 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	private static volatile Contr _instance;
 	private Model _model;
 	private BaseActivity _currentActivity;
+	private Handler _handler;
+	
+	public Handler getHandler() {
+		if (_handler == null) {
+			_handler = new Handler(Looper.getMainLooper());
+		}
+		return _handler;
+	}
 	
 	public static Contr getInstance() {
     	Contr localInstance = _instance;
@@ -254,7 +265,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onRouteKindsLoadComplete(final ArrayList<Route> array) {
-		_currentActivity.runOnUiThread(new Runnable() {
+		getHandler().post(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -344,8 +355,12 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public void onMenuChangeState(boolean isOpen) {
-		_mainActivity().menuChangeState(isOpen);
+	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
+		if (kind == MenuKind.Left) {
+			_mainActivity().menuChangeState(isOpen);
+		} else {
+			_mainActivity().rightMenuChangeState(isOpen);
+		}
 	}
 
 	@Override
@@ -418,5 +433,11 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onForecastLoaded(Forecasts forecasts) {
 		((MainActivity)_currentActivity).getRightMenu().loadForecasts(forecasts);
+	}
+
+	@Override
+	public void onRoutesNamesLoadComplete(ArrayList<RouteName> array) {
+		// TODO Auto-generated method stub
+		
 	}
 }

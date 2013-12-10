@@ -253,6 +253,7 @@ public class Model extends Application {
 		void onImgLoadComplete(Bitmap img);
 		void onInternetAccessDeny();
 		void onInternetAccessSuccess();
+		void onRoutesNamesLoadComplete(ArrayList<RouteName> array);
 	}
 	
 	public void setListener(OnLoadCompleteListener listener) {
@@ -430,8 +431,48 @@ public class Model extends Application {
 		}).start();
 	}
 	
-	
-	
+	private ArrayList<RouteName> _routesNames;
+	public ArrayList<RouteName> getRoutesNames() {
+		if (_routesNames == null) {
+			_routesNames = new ArrayList<RouteName>();
+		}
+		return _routesNames;
+	}
+	private boolean _isRoutesNamesLoading = false;
+	public boolean isRoutesNamesLoading() {
+		return _isRoutesNamesLoading;
+	}
+	public void loadRoutesNames() {
+		_isRoutesNamesLoading = true;
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				ArrayList<String> strings = Files.stringsArrayFromFile("routesNames.txt", Model.this);
+				strings.remove(0);
+				ArrayList<RouteName>routesNames = new ArrayList<RouteName>();
+				for (String line : strings) {
+					String items[] = line.split(",");
+					RouteName routeName = new RouteName();
+					routeName.id = Integer.parseInt(items[0]);
+					routeName.number = items[2];
+					routesNames.add(routeName);
+				}
+				
+				_isRoutesNamesLoading = false;
+				_routesNames = routesNames;
+				_listener.onRoutesNamesLoadComplete(routesNames);
+			}
+		}).start();
+	}
+	public String getNameById(int id) {
+		for (RouteName routeName : _routesNames) {
+			if (routeName.id == id) {
+				return routeName.number;
+			}
+		}
+		return "";
+	}
 	
 	private ArrayList<ParserWebPageTask> _getParsers() {
 		if (_parsers == null) {

@@ -123,6 +123,7 @@ public class RightMenu extends LinearLayout {
 				
 				ViewHolder vh = (ViewHolder)convertView.getTag();
 				vh.time.setText(_format.format(forecast.time));
+				vh.routeNumber.setText(forecast.transportNumber);
 				
 				return convertView;
 			}

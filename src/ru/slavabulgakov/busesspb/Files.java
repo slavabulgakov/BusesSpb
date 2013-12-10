@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import ru.slavabulgakov.busesspb.model.SimpleTransportView;
 
@@ -32,6 +33,21 @@ public class Files {
 			e.printStackTrace();
 		}
 		return str;
+	}
+	
+	public static ArrayList<String> stringsArrayFromFile(String fileName, Context context) {
+		ArrayList<String> array = new ArrayList<String>();
+		try {
+			InputStream inputStream = context.getAssets().open(fileName);
+			BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+			String line;
+			while ((line = r.readLine()) != null) {
+			    array.add(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return array;
 	}
 	
 	public static Object loadFromFile(String fileName, Context context) {

@@ -572,6 +572,12 @@ public class MainActivity extends BaseActivity {
 		}
     }
     
+    public void rightMenuChangeState(boolean isOpen) {
+    	if (isOpen && _model.getRoutesNames().size() == 0) {
+    		_model.loadRoutesNames();
+		}
+    }
+    
     public void menuChangeState(boolean isOpen) {
     	
     	

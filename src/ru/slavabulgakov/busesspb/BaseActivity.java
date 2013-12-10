@@ -16,6 +16,7 @@ import android.content.res.Configuration;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,8 +27,8 @@ public class BaseActivity extends FragmentActivity {
 	protected ProgressDialog _progressDialog;
 	protected Model _model;
 	protected IabHelper _helper;
-	protected static String SKU_ADS_OFF = "ads_off"; 
-	
+	protected static String SKU_ADS_OFF = "ads_off";
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

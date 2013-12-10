@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +41,7 @@ public class ModelPaths {
 	private static String STATIONS_FILE_NAME = "stations.ser";
 	private Model _model;
 	private RequestQueue _queue;
+	private String _selectedStationId;
 	public ModelPaths(Model model) {
 		_model = model;
 	}
@@ -192,6 +195,7 @@ public class ModelPaths {
 		if (_queue == null) {
 			_queue = Volley.newRequestQueue(_model);
 		}
+		
 		JsonObjectRequest request = new JsonObjectRequest("http://transport.orgp.spb.ru/Portal/transport/internalapi/forecast/bystop?stopID=" + stationId, null, new Response.Listener<JSONObject>() {
 
 			@Override
@@ -204,6 +208,7 @@ public class ModelPaths {
 						JSONObject item = array.getJSONObject(i);
 						Forecast forecast = new Forecast();
 						forecast.time = format.parse(item.getString("arrivingTime"));
+						forecast.transportNumber = _model.getNameById(item.getInt("routeId"));
 						forecasts.add(forecast);
 					}
 				} catch (JSONException e) {
