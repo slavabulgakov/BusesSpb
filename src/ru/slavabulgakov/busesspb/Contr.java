@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ru.slavabulgakov.busesspb.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
+import ru.slavabulgakov.busesspb.controls.MapController.Listener;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.RouteName;
@@ -46,7 +47,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded, OnInfoWindowClickListener {
+public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded, OnInfoWindowClickListener, Listener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -120,15 +121,15 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			break;
 			
 		case R.id.location:
-			_mainActivity().moveCameraToMyLocation();
+			_mainActivity().getMapController().moveCameraToMyLocation();
 			break;
 			
 		case R.id.plus:
-			_mainActivity().zoomCameraTo(1);
+			_mainActivity().getMapController().zoomCameraTo(1);
 			break;
 			
 		case R.id.minus:
-			_mainActivity().zoomCameraTo(-1);
+			_mainActivity().getMapController().zoomCameraTo(-1);
 			break;
 			
 		case R.id.about:
@@ -259,7 +260,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onTransportListOfRouteLoadComplete(ArrayList<Transport> array) {
 		if (_isMainActivity()) {
-			_mainActivity().showTransportListOnMap(array);
+			_mainActivity().getMapController().showTransportListOnMap(array);
 		}
 	}
 
@@ -282,7 +283,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onImgLoadComplete(Bitmap img) {
 		if (_isMainActivity()) {
-			_mainActivity().showTransportImgOnMap(img);
+			_mainActivity().getMapController().showTransportImgOnMap(img);
 		}
 		
 	}
@@ -365,7 +366,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onHold(Boolean hold) {
-		_mainActivity().enableMapGestures(!hold);
+		_mainActivity().getMapController().enableMapGestures(!hold);
 	}
 	
 	@Override
@@ -388,7 +389,7 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onInternetAccessSuccess() {
 		if (_isMainActivity()) {
 			_mainActivity().hideInternetDenyIcon();
-			_mainActivity().clearMap();
+			_mainActivity().getMapController().clearMap();
 		}
 	}
 	
@@ -415,12 +416,12 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 
 	@Override
 	public void onPathLoaded(Path path) {
-		_mainActivity().showPath(path);
+		_mainActivity().getMapController().showPath(path);
 	}
 
 	@Override
 	public void onStationsLoaded(Stations stations) {
-		_mainActivity().showStations(stations);
+		_mainActivity().getMapController().showStations(stations);
 	}
 
 	@Override
@@ -439,5 +440,10 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onRoutesNamesLoadComplete(ArrayList<RouteName> array) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onMapImgUpdated() {
+		_mainActivity().runReopenAnimation();
 	}
 }
