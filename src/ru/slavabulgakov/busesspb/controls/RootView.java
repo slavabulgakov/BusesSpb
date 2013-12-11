@@ -1,5 +1,6 @@
-package ru.slavabulgakov.busesspb;
+package ru.slavabulgakov.busesspb.controls;
 
+import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import android.annotation.SuppressLint;
@@ -15,7 +16,7 @@ import android.widget.Scroller;
 
 public class RootView extends RelativeLayout {
 	
-	interface OnActionListener {
+	public interface OnActionListener {
 		void onMenuChangeState(boolean isOpen, MenuKind kind);
 		void onHold(Boolean hold);
 		void onMove(double percent);

@@ -2,10 +2,10 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 
-import ru.slavabulgakov.busesspb.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 import ru.slavabulgakov.busesspb.controls.MapController.Listener;
+import ru.slavabulgakov.busesspb.controls.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.RouteName;

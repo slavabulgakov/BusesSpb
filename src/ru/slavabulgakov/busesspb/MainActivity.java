@@ -3,6 +3,8 @@ package ru.slavabulgakov.busesspb;
 import java.util.Timer;
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.controls.MapController;
+import ru.slavabulgakov.busesspb.controls.RightMenu;
+import ru.slavabulgakov.busesspb.controls.RootView;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.TransportKind;

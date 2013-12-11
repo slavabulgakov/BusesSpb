@@ -1,8 +1,9 @@
-package ru.slavabulgakov.busesspb;
+package ru.slavabulgakov.busesspb.controls;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Forecasts;
