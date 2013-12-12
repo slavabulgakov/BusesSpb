@@ -15,14 +15,14 @@
         android:id="@+id/rightMenu"
         android:layout_width="250dp"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true" ru.slavabulgakov.busesspb.controls.RootView.RootView
+        android:layout_alignParentRight="true" />
+         
+    <ru.slavabulgakov.busesspb.controls.RootView
         android:id="@+id/mainMapLayout"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="-10dp" >
-
-    </ru.slavabulgakov.busesspb.RootView>
-    
+        android:layout_marginRight="-10dp" />
+        
     <com.google.ads.AdView
         		android:id="@+id/mainAdView"
         		android:layout_width="match_parent"

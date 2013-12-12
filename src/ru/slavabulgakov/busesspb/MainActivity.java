@@ -2,6 +2,8 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.Timer;
 import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
+import ru.slavabulgakov.busesspb.controls.InternetDenyImageButtonController;
+import ru.slavabulgakov.busesspb.controls.LeftMenu;
 import ru.slavabulgakov.busesspb.controls.MapController;
 import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.controls.RootView;
@@ -15,11 +17,6 @@ import android.text.InputType;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -60,10 +57,10 @@ public class MainActivity extends BaseActivity {
 	private RelativeLayout _mainRoutesBtn;
 	private ImageButton _clearButton;
 	LinearLayout _ticketsLayout;
-	private LinearLayout _leftMenu;
+	private LeftMenu _leftMenu;
 	private RightMenu _rightMenu;
 	private ImageView _menuIcon;
-	private ImageButton _internetDenyImageButton;
+	private InternetDenyImageButtonController _internetDenyImageButtonController;
 	private AdView _adView;
 	private CheckButton _pathsButton;
 	
@@ -157,7 +154,8 @@ public class MainActivity extends BaseActivity {
 		
 		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
 		
-		_leftMenu = (LinearLayout)findViewById(R.id.leftMenu);
+		_leftMenu = (LeftMenu)findViewById(R.id.leftMenu);
+		_leftMenu.setModel(_model);
 		_rightMenu = (RightMenu)findViewById(R.id.rightMenu);
 		_rightMenu.setModel(_model);
 		_menuIcon = ((ImageView)findViewById(R.id.menuIcon));
@@ -168,13 +166,14 @@ public class MainActivity extends BaseActivity {
 			adapter.getFilter().filter(_editText.getText());
 		}
 		
-		_internetDenyImageButton = (ImageButton)findViewById(R.id.internetDeny);
-		_internetDenyImageButton.setOnClickListener(Contr.getInstance());
-		
-		_internetDenyImageButton.setVisibility(_internetDenyIconIsShowed() ? View.VISIBLE : View.INVISIBLE);
+		_internetDenyImageButtonController = new InternetDenyImageButtonController((ImageButton)findViewById(R.id.internetDeny), _model, this);
 		
 		_adView = (AdView)findViewById(R.id.mainAdView);
     }
+    
+    public InternetDenyImageButtonController getInternetDenyButtonController() {
+		return _internetDenyImageButtonController;
+	}
     
     public MapController getMapController() {
     	return _mapController;
@@ -202,91 +201,6 @@ public class MainActivity extends BaseActivity {
     protected void purchaseDidCheck(boolean hasPurchase) {
     	super.purchaseDidCheck(hasPurchase);
     	_updateBottomControls();
-    }
-    
-    private Boolean _internetDenyIconIsShowed() {
-    	Boolean showed = (Boolean)_model.getData("internetDenyIsShowed");
-    	if (showed == null) {
-			return false;
-		}
-    	return showed; 
-    }
-    private void _setInternetDenyIconShowed(Boolean showed) {
-    	_model.setData("internetDenyIsShowed", showed);
-    }
-    
-    public void showInternetDenyIcon() {
-    	if (!_internetDenyIconIsShowed()) {
-    		_setInternetDenyIconShowed(true);
-    		runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					TranslateAnimation animation = new TranslateAnimation(_model.dpToPx(-100), 0, 0, 0);
-		        	animation.setInterpolator(new BounceInterpolator());
-		        	_internetDenyImageButton.setVisibility(View.VISIBLE);
-		        	animation.setDuration(2000);
-		        	animation.setAnimationListener(new AnimationListener() {
-		    			
-		    			@Override
-		    			public void onAnimationStart(Animation animation) {}
-		    			
-		    			@Override
-		    			public void onAnimationRepeat(Animation animation) {}
-		    			
-		    			@Override
-		    			public void onAnimationEnd(Animation animation) {}
-		    		});
-		        	_internetDenyImageButton.startAnimation(animation);
-				}
-			});
-    		
-		}
-    }
-    public void hideInternetDenyIcon() {
-    	if (_internetDenyIconIsShowed()) {
-    		_setInternetDenyIconShowed(false);
-    		runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					TranslateAnimation animation = new TranslateAnimation(0, _model.dpToPx(-100), 0, 0);
-		        	animation.setInterpolator(new AnticipateInterpolator());
-		        	animation.setDuration(2000);
-		        	animation.setAnimationListener(new AnimationListener() {
-		    			
-		    			@Override
-		    			public void onAnimationStart(Animation animation) {}
-		    			
-		    			@Override
-		    			public void onAnimationRepeat(Animation animation) {}
-		    			
-		    			@Override
-		    			public void onAnimationEnd(Animation animation) {
-		    				_internetDenyImageButton.setVisibility(View.INVISIBLE);
-		    			}
-		    		});
-		        	_internetDenyImageButton.startAnimation(animation);
-				}
-			});
-		}
-    }
-    
-    public void moveLeftMenu(double percent) {
-    	double delta = 100;
-    	if (percent > 0) {
-    		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_leftMenu.getLayoutParams();
-        	lp.setMargins((int)(_model.dpToPx(-delta + delta * percent)), 0, 0, 0);
-        	_leftMenu.setLayoutParams(lp);
-        	
-        	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)_rightMenu.getLayoutParams();
-        	lpRight.setMargins(0, 0, (int)(_model.dpToPx(-200)), 0);
-	    	_rightMenu.setLayoutParams(lpRight);
-		} else {
-			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_rightMenu.getLayoutParams();
-	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(percent))), 0);
-	    	_rightMenu.setLayoutParams(lp);
-		}
     }
     
     public void updateFilterButtons() {
@@ -617,4 +531,8 @@ public class MainActivity extends BaseActivity {
 	public RightMenu getRightMenu() {
 		return _rightMenu;
 	}
+	
+	public LeftMenu getLeftMenu() {
+    	return _leftMenu;
+    }
 }

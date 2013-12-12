@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class RightMenu extends LinearLayout {
@@ -32,6 +33,19 @@ public class RightMenu extends LinearLayout {
 	public void setModel(Model model) {
 		_model = model;
 	}
+	
+	public void move(double percent) {
+    	double delta = 100;
+    	if (percent > 0) {
+        	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)getLayoutParams();
+        	lpRight.setMargins(0, 0, (int)(_model.dpToPx(-200)), 0);
+	    	setLayoutParams(lpRight);
+		} else {
+			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
+	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(percent))), 0);
+	    	setLayoutParams(lp);
+		}
+    }
 	
 	private void _load(Context context, AttributeSet attrs) {
 		_inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

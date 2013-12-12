@@ -20,8 +20,6 @@ import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
 import com.flurry.android.FlurryAgent;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 
@@ -47,7 +45,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded, OnInfoWindowClickListener, Listener {
+public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -144,10 +142,6 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 			
 		case R.id.back_btn:
 			_currentActivity.finish();
-			break;
-			
-		case R.id.internetDeny:
-			_currentActivity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
 			break;
 			
 		case R.id.paths:
@@ -373,7 +367,8 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	public void onMove(double percent) {
 		if (_currentActivity != null) {
 			if (_isMainActivity()) {
-				_mainActivity().moveLeftMenu(percent);
+				_mainActivity().getLeftMenu().move(percent);
+				_mainActivity().getRightMenu().move(percent);
 			}
 		}
 	}
@@ -381,14 +376,14 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	@Override
 	public void onInternetAccessDeny() {
 		if (_isMainActivity()) {
-			_mainActivity().showInternetDenyIcon();
+			_mainActivity().getInternetDenyButtonController().showInternetDenyIcon();
 		}
 	}
 
 	@Override
 	public void onInternetAccessSuccess() {
 		if (_isMainActivity()) {
-			_mainActivity().hideInternetDenyIcon();
+			_mainActivity().getInternetDenyButtonController().hideInternetDenyIcon();
 			_mainActivity().getMapController().clearMap();
 		}
 	}
@@ -425,9 +420,9 @@ public class Contr implements OnClickListener, OnCameraChangeListener, OnLoadCom
 	}
 
 	@Override
-	public void onInfoWindowClick(Marker arg0) {
+	public void onInfoWindowClick(Marker marker) {
 		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
-		Station station = _model.getModelPaths().getStationByMarker(arg0);
+		Station station = _model.getModelPaths().getStationByMarker(marker);
 		((MainActivity)_currentActivity).getRightMenu().loadByStation(station);
 	}
 

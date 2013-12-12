@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ru.slavabulgakov.busesspb.Contr;
 import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.SimpleTransportView;
@@ -32,6 +31,8 @@ import android.util.Pair;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -44,10 +45,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapController {
+public class MapController implements OnCameraChangeListener, OnInfoWindowClickListener {
 	
 	public interface Listener {
 		void onMapImgUpdated();
+		void onInfoWindowClick(Marker marker);
+		void onCameraChange(CameraPosition cameraPosition);
 	}
 	
 	private GoogleMap _map;
@@ -69,10 +72,10 @@ public class MapController {
 	        CameraUpdate zoom = CameraUpdateFactory.zoomTo((float)_model.getZoom());
 	        _map.animateCamera(zoom);
 	        _map.setMyLocationEnabled(true);
-	        _map.setOnCameraChangeListener(Contr.getInstance());
+	        _map.setOnCameraChangeListener(this);
 	        _map.getUiSettings().setMyLocationButtonEnabled(false);
 	        _map.getUiSettings().setZoomControlsEnabled(false);
-	        _map.setOnInfoWindowClickListener(Contr.getInstance());
+	        _map.setOnInfoWindowClickListener(this);
 		}
 	}
 	
@@ -345,5 +348,15 @@ public class MapController {
 	private BitmapDescriptor _getEmptyBitMap() {
 		Bitmap bitmap = Bitmap.createBitmap(5, 5, Config.ARGB_8888);
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker marker) {
+		_listener.onInfoWindowClick(marker);
+	}
+
+	@Override
+	public void onCameraChange(CameraPosition cameraPosition) {
+		_listener.onCameraChange(cameraPosition);
 	}
 }
