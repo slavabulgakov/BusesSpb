@@ -41,7 +41,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.TicketsTray.Listener {
+public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener {
 	
 	private static volatile Contr _instance;
 	private Model _model;

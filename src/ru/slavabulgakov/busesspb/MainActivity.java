@@ -1,11 +1,15 @@
 package ru.slavabulgakov.busesspb;
 
 import java.util.Timer;
+
+import ru.slavabulgakov.busesspb.controls.CheckButton;
 import ru.slavabulgakov.busesspb.controls.InternetDenyImageButtonController;
 import ru.slavabulgakov.busesspb.controls.LeftMenu;
 import ru.slavabulgakov.busesspb.controls.MapController;
 import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.controls.RootView;
+import ru.slavabulgakov.busesspb.controls.TicketCloseLess;
+import ru.slavabulgakov.busesspb.controls.TicketsTray;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.TransportKind;

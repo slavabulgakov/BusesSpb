@@ -70,7 +70,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@+id/mainRoutesBtn" >
 
-                <ru.slavabulgakov.busesspb.CheckButton 
+                <ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/busFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                     android:layout_marginRight="10dp"
                     app:checked="true" />
                 
-                <ru.slavabulgakov.busesspb.CheckButton 
+                <ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/trolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:layout_marginRight="10dp"
                     app:checked="true" />
                 
-                <ru.slavabulgakov.busesspb.CheckButton 
+                <ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/tramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
                     android:layout_marginRight="10dp"
                     app:checked="true" />
                 
-                <ru.slavabulgakov.busesspb.CheckButton 
+                <ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/shipFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
                 android:minHeight="40dp"
                 android:minWidth="40dp" />
             
-            <ru.slavabulgakov.busesspb.CheckButton 
+            <ru.slavabulgakov.busesspb.controls.CheckButton 
                 android:id="@+id/paths"
                 android:layout_alignRight="@+id/about"
                 android:layout_marginRight="0dp"

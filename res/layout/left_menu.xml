@@ -47,7 +47,7 @@
             android:orientation="horizontal"
             android:gravity="center" >
             
-            	<ru.slavabulgakov.busesspb.CheckButton 
+            	<ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/menuBusFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                     app:checked="true"
                     android:layout_marginRight="22dp" />
             	
-            	<ru.slavabulgakov.busesspb.CheckButton 
+            	<ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/menuTrolleyFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                     app:checked="true"
                     android:layout_marginRight="22dp" />
             	
-            	<ru.slavabulgakov.busesspb.CheckButton 
+            	<ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/menuTramFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                     app:checked="true"
                     android:layout_marginRight="22dp" />
                 
-            	<ru.slavabulgakov.busesspb.CheckButton 
+            	<ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/menuShipFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
 
             </LinearLayout>
 
-        <ru.slavabulgakov.busesspb.TicketsTray 
+        <ru.slavabulgakov.busesspb.controls.TicketsTray 
             android:id="@+id/routeTicketsScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

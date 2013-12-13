@@ -1,5 +1,8 @@
-package ru.slavabulgakov.busesspb;
+package ru.slavabulgakov.busesspb.controls;
 
+import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.R.layout;
+import ru.slavabulgakov.busesspb.R.styleable;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;

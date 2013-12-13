@@ -1,5 +1,8 @@
-package ru.slavabulgakov.busesspb;
+package ru.slavabulgakov.busesspb.controls;
 
+import ru.slavabulgakov.busesspb.Animations;
+import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.R.drawable;
 import ru.slavabulgakov.busesspb.model.Model;
 import android.content.Context;
 import android.view.Gravity;
