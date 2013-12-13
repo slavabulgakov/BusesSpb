@@ -16,7 +16,7 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	
 	private Model _model;
 	
-	interface OnAnimationEndListener {
+	public interface OnAnimationEndListener {
 		void onAnimated(CloseAllTickets button);
 	}
 	
@@ -27,7 +27,6 @@ public class CloseAllTickets extends RelativeLayout implements AnimationListener
 	public CloseAllTickets(Context context, Model model) {
 		super(context);
 		_model = model;
-		setOnClickListener(Contr.getInstance());
 		setBackgroundResource(R.drawable.btn_selected_yellow);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		lp.setMargins(0, 0, _model.dpToPx(5), 0);

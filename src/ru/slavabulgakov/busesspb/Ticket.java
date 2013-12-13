@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 public class Ticket extends LinearLayout implements AnimationListener {
 	
-	interface OnRemoveListener {
+	public interface OnRemoveListener {
 		void willRemove(Ticket ticket);
 		void didRemove(Ticket ticket);
 	}
 	
-	interface OnAnimationEndListener {
+	public interface OnAnimationEndListener {
 		void onAnimated(Ticket ticket);
 	}
 	

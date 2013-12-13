@@ -1,7 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
 import java.util.Timer;
-import ru.slavabulgakov.busesspb.CloseAllTickets.OnAnimationEndListener;
 import ru.slavabulgakov.busesspb.controls.InternetDenyImageButtonController;
 import ru.slavabulgakov.busesspb.controls.LeftMenu;
 import ru.slavabulgakov.busesspb.controls.MapController;
@@ -16,7 +15,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.Display;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -63,6 +61,7 @@ public class MainActivity extends BaseActivity {
 	private InternetDenyImageButtonController _internetDenyImageButtonController;
 	private AdView _adView;
 	private CheckButton _pathsButton;
+	private TicketsTray _ticketsTray;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -95,23 +94,9 @@ public class MainActivity extends BaseActivity {
 	    _mainRoutesBtn = (RelativeLayout)findViewById(R.id.mainRoutesBtn);
 	    _mainRoutesBtn.setOnClickListener(Contr.getInstance());
 	    
-	    _ticketsLayout = (LinearLayout)findViewById(R.id.selectRouteTickets);
-		for (Route route : _model.getFavorite()) {
-			Ticket ticket = new Ticket(this);
-			ticket.setRoute(route);
-			ticket.setOnRemoveListener(Contr.getInstance());
-			_ticketsLayout.addView(ticket);
-		}
-		putCloseAllButtonToTicketsLayout();
-		HorizontalScrollView routeTicketsScrollView = (HorizontalScrollView)findViewById(R.id.routeTicketsScrollView);
-		if (_model.getFavorite().size() > 0) {
-			routeTicketsScrollView.setVisibility(View.VISIBLE);
-		} else {
-			routeTicketsScrollView.setVisibility(View.GONE);
-		}
-		
-		
-		
+		_ticketsTray = (TicketsTray)findViewById(R.id.routeTicketsScrollView);
+		_ticketsTray.inition(_model, Contr.getInstance());
+		_ticketsTray.update();
 		
 		_busFilter = (CheckButton)findViewById(R.id.busFilter);
 		_busFilter.setOnClickListener(Contr.getInstance());
@@ -169,6 +154,10 @@ public class MainActivity extends BaseActivity {
 		_internetDenyImageButtonController = new InternetDenyImageButtonController((ImageButton)findViewById(R.id.internetDeny), _model, this);
 		
 		_adView = (AdView)findViewById(R.id.mainAdView);
+    }
+    
+    public TicketsTray getTicketsTray() {
+    	return _ticketsTray;
     }
     
     public InternetDenyImageButtonController getInternetDenyButtonController() {
@@ -289,34 +278,6 @@ public class MainActivity extends BaseActivity {
 		_updateControls();
 	}
 
-	public void putCloseAllButtonToTicketsLayout() {
-		if (_model.getFavorite().size() > 1) {
-			if (_ticketsLayout.getChildAt(0).getClass() != CloseAllTickets.class) {
-				CloseAllTickets closeAllBtn = new CloseAllTickets(this, _model);
-				_ticketsLayout.addView(closeAllBtn, 0);
-				closeAllBtn.animatedShow(_model.dpToPx(60));
-			}
-		} else {
-			if (_ticketsLayout.getChildCount() > 0) {
-				View closeAllBtn = _ticketsLayout.getChildAt(0);
-				if (closeAllBtn.getClass() == CloseAllTickets.class) {
-					((CloseAllTickets)closeAllBtn).animatedRemove(new OnAnimationEndListener() {
-						
-						@Override
-						public void onAnimated(final CloseAllTickets button) {
-							button.setVisibility(View.GONE);
-							((View) button.getParent()).post(new Runnable() {
-					            public void run() {
-					            	((ViewGroup)button.getParent()).removeView(button);
-					            }
-					        });
-						}
-					});
-				}
-			}
-		}
-	}
-    
     public void updateTimer() {
     	if (_timer != null) {
 			_timer.cancel();

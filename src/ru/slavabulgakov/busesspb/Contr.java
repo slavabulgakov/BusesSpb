@@ -2,8 +2,6 @@ package ru.slavabulgakov.busesspb;
 
 import java.util.ArrayList;
 
-import ru.slavabulgakov.busesspb.Ticket.OnAnimationEndListener;
-import ru.slavabulgakov.busesspb.Ticket.OnRemoveListener;
 import ru.slavabulgakov.busesspb.controls.MapController.Listener;
 import ru.slavabulgakov.busesspb.controls.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.model.Model;
@@ -33,19 +31,17 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnRemoveListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener {
+public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.TicketsTray.Listener {
 	
 	private static volatile Contr _instance;
 	private Model _model;
@@ -187,55 +183,6 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 				}
 			}
 		}
-		
-		if (_isMainActivity() && v.getClass() == CloseAllTickets.class) {
-			LinearLayout ticketsLayout = (LinearLayout)_currentActivity.findViewById(R.id.selectRouteTickets);
-			for (Route route : _model.getFavorite()) {
-				_model.getAllRoutes().add(route);
-			}
-			_model.getFavorite().clear();
-//			ticketsLayout.removeAllViews();
-			_mainActivity().updateListView();
-			
-			for (int i = 0; i < ticketsLayout.getChildCount(); i++) {
-				View view = ticketsLayout.getChildAt(i);
-				if (view.getClass() == Ticket.class) {
-					Ticket ticket = (Ticket)view;
-					ticket.animatedRemove(new OnAnimationEndListener() {
-						
-						@Override
-						public void onAnimated(final Ticket ticket_) {
-							ticket_.setVisibility(View.GONE);
-							((View)ticket_.getParent()).post(new Runnable() {
-					            public void run() {
-					            	((ViewGroup)ticket_.getParent()).removeView(ticket_);
-					            }
-					        });
-						}
-					});
-				} else if (view.getClass() == CloseAllTickets.class) {
-					CloseAllTickets closeAllTickets = (CloseAllTickets)view;
-					closeAllTickets.animatedRemove(new CloseAllTickets.OnAnimationEndListener() {
-						
-						@Override
-						public void onAnimated(final CloseAllTickets button) {
-							button.setVisibility(View.GONE);
-							((View)button.getParent()).post(new Runnable() {
-					            public void run() {
-					            	((ViewGroup)button.getParent()).removeView(button);
-					            }
-					        });
-							HorizontalScrollView ticketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
-							ticketsScrollView.setVisibility(View.GONE);
-							LinearLayout listViewAndProgressBarLinearLayout = (LinearLayout)_currentActivity.findViewById(R.id.listViewAndProgressBarLinearLayout);
-							TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
-							animation.setDuration(Animations.ANIMATION_DURATION);
-							listViewAndProgressBarLinearLayout.startAnimation(animation);
-						}
-					});
-				}
-			}
-		}
 	}
 
 	@SuppressLint("NewApi")
@@ -324,29 +271,8 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 			}
 		});
 		
-		Animations.addTicket(route);
+		_mainActivity().getTicketsTray().addTicket(route);
 		Animations.slideDownRoutesListView();
-	}
-
-	@Override
-	public void willRemove(Ticket ticket) {
-		_model.setRouteToAll(ticket.getRoute());
-		_mainActivity().updateListView();
-		_mainActivity().putCloseAllButtonToTicketsLayout();
-		
-		Animations.removeTicket(ticket);
-	}
-	
-	@Override
-	public void didRemove(Ticket ticket) {
-		if (_model.getFavorite().size() == 0) {
-			HorizontalScrollView ticketsScrollView = (HorizontalScrollView)_currentActivity.findViewById(R.id.routeTicketsScrollView);
-			ticketsScrollView.setVisibility(View.GONE);
-			LinearLayout listViewAndProgressBarLinearLayout = (LinearLayout)_currentActivity.findViewById(R.id.listViewAndProgressBarLinearLayout);
-			TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
-			animation.setDuration(Animations.ANIMATION_DURATION);
-			listViewAndProgressBarLinearLayout.startAnimation(animation);
-		}
 	}
 
 	@Override
@@ -440,5 +366,20 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 	@Override
 	public void onMapImgUpdated() {
 		_mainActivity().runReopenAnimation();
+	}
+
+	@Override
+	public void willRemoveTicket() {
+		_mainActivity().updateListView();
+	}
+
+	@Override
+	public void didRemoveTicket() {
+		if (_model.getFavorite().size() == 0) {
+			LinearLayout listViewAndProgressBarLinearLayout = (LinearLayout)_currentActivity.findViewById(R.id.listViewAndProgressBarLinearLayout);
+			TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
+			animation.setDuration(Animations.ANIMATION_DURATION);
+			listViewAndProgressBarLinearLayout.startAnimation(animation);
+		}
 	}
 }
