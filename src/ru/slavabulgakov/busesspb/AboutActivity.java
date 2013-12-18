@@ -4,6 +4,7 @@ import com.flurry.android.FlurryAgent;
 import com.google.ads.AdView;
 
 import ru.slavabulgakov.busesspb.ShareFragment.ShareFragmentListener;
+import ru.slavabulgakov.busesspb.controller.Controller;
 import ru.slavabulgakov.busesspb.util.IabHelper.OnIabPurchaseFinishedListener;
 import ru.slavabulgakov.busesspb.util.IabResult;
 import ru.slavabulgakov.busesspb.util.Purchase;
@@ -42,7 +43,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-		((ImageButton)findViewById(R.id.back_btn)).setOnClickListener(Contr.getInstance());
+		((ImageButton)findViewById(R.id.back_btn)).setOnClickListener(Controller.getInstance());
 		((Button)findViewById(R.id.aboutRateBtn)).setOnClickListener(this);
 		((Button)findViewById(R.id.aboutSendBtn)).setOnClickListener(this);
 		((Button)findViewById(R.id.aboutPurchaseAdsOff)).setOnClickListener(this);

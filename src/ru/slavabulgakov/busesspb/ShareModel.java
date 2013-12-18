@@ -1,6 +1,7 @@
 package ru.slavabulgakov.busesspb;
 
 import ru.slavabulgakov.busesspb.VkApp.*;
+import ru.slavabulgakov.busesspb.controller.Controller;
 import ru.slavabulgakov.busesspb.ParserWebPageTask;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import twitter4j.Twitter;
@@ -26,7 +27,7 @@ public class ShareModel {
 	public static ShareModel getInstance() {
     	ShareModel localInstance = _instance;
     	if (localInstance == null) {
-    		synchronized (Contr.class) {
+    		synchronized (Controller.class) {
     			localInstance = _instance;
     			if (localInstance == null) {
     				_instance = localInstance = new ShareModel();

@@ -7,8 +7,8 @@ import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Forecasts;
-import ru.slavabulgakov.busesspb.paths.Station;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,8 +28,8 @@ public class RightMenu extends LinearLayout {
 	Model _model;
 	ListView _listView;
 	Forecasts _forecasts;
-	LayoutInflater _inflater;
 	SimpleDateFormat _format;
+	RelativeLayout _progressBar;
 	
 	public void setModel(Model model) {
 		_model = model;
@@ -47,12 +48,26 @@ public class RightMenu extends LinearLayout {
 		}
     }
 	
+	public void setLoading() {
+		_progressBar.setVisibility(View.VISIBLE);
+		_listView.setVisibility(View.GONE);
+	}
+	
+	public void setLoaded() {
+		_progressBar.setVisibility(View.GONE);
+		_listView.setVisibility(View.VISIBLE);
+	}
+	
+	public void setTitle(String title) {
+		_title.setText(title);
+	}
+	
 	private void _load(Context context, AttributeSet attrs) {
-		_inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		_inflater.inflate(R.layout.right_menu, this, true);
-		_title = (TextView)((LinearLayout)getChildAt(0)).getChildAt(0);
-		_listView = (ListView)((LinearLayout)getChildAt(0)).getChildAt(1);
+		View.inflate(context, R.layout.right_menu, this);
+		_title = (TextView)findViewById(R.id.rightMenuTitle);
+		_listView = (ListView)findViewById(R.id.rightMenuListView);
 		_format = new SimpleDateFormat("HH:mm", Locale.US);
+		_progressBar = (RelativeLayout)findViewById(R.id.rightMenuProgressBar);
 	}
 
 	public RightMenu(Context context) {
@@ -69,11 +84,6 @@ public class RightMenu extends LinearLayout {
 	public RightMenu(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		_load(context, attrs);
-	}
-	
-	public void loadByStation(Station station) {
-		_title.setText(station.name);
-		_model.getModelPaths().loadForecastForStationId(station.id);
 	}
 	
 	public void loadForecasts(Forecasts forecasts) {
@@ -126,11 +136,13 @@ public class RightMenu extends LinearLayout {
 			
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
+				LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
 				if (convertView == null) {
-					convertView = _inflater.inflate(R.layout.listitem_forecast, parent, false);
+					convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
+					
 					_setViewHolder(convertView);
 				} else if (((ViewHolder)convertView.getTag()).needInflate) {
-					convertView = _inflater.inflate(R.layout.listitem_forecast, parent, false);
+					convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
 					_setViewHolder(convertView);
 				}
 				

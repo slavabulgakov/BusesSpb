@@ -9,12 +9,24 @@
         android:id="@+id/rightMenuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="sdf" />
 
-    <ListView
-        android:id="@+id/listView1"
+    <RelativeLayout
+        android:id="@+id/rightMenuProgressBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-    </ListView>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/rightMenuListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     </LinearLayout>

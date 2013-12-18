@@ -1,10 +1,6 @@
 package ru.slavabulgakov.busesspb.controls;
 
 import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.R.id;
-import ru.slavabulgakov.busesspb.R.layout;
-import ru.slavabulgakov.busesspb.controls.Ticket.OnAnimationEndListener;
-import ru.slavabulgakov.busesspb.controls.Ticket.OnRemoveListener;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
 import android.content.Context;

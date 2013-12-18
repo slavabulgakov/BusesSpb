@@ -1,36 +1,27 @@
 package ru.slavabulgakov.busesspb;
 
-import java.util.Timer;
-
+import ru.slavabulgakov.busesspb.controller.Controller;
+import ru.slavabulgakov.busesspb.controller.MapState;
 import ru.slavabulgakov.busesspb.controls.CheckButton;
+import ru.slavabulgakov.busesspb.controls.CloselessTicketsTray;
 import ru.slavabulgakov.busesspb.controls.InternetDenyImageButtonController;
 import ru.slavabulgakov.busesspb.controls.LeftMenu;
 import ru.slavabulgakov.busesspb.controls.MapController;
 import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.controls.RootView;
-import ru.slavabulgakov.busesspb.controls.TicketCloseLess;
-import ru.slavabulgakov.busesspb.controls.TicketsTray;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
-import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.Display;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.flurry.android.FlurryAgent;
 import com.google.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -43,29 +34,19 @@ import android.view.WindowManager;
 public class MainActivity extends BaseActivity {
 	
 	private MapController _mapController;
-	private Timer _timer;
-	private ListView _listView;
-	private EditText _editText;
-	private ProgressBar _progressBar;
 	private RootView _rootView;
 	private CheckButton _busFilter;
 	private CheckButton _trolleyFilter;
 	private CheckButton _tramFilter;
 	private CheckButton _shipFilter;
-	private CheckButton _menuBusFilter;
-	private CheckButton _menuTrolleyFilter;
-	private CheckButton _menuTramFilter;
-	private CheckButton _menuShipFilter;
-	private RelativeLayout _mainRoutesBtn;
-	private ImageButton _clearButton;
+	
 	LinearLayout _ticketsLayout;
 	private LeftMenu _leftMenu;
 	private RightMenu _rightMenu;
-	private ImageView _menuIcon;
 	private InternetDenyImageButtonController _internetDenyImageButtonController;
 	private AdView _adView;
 	private CheckButton _pathsButton;
-	private TicketsTray _ticketsTray;
+	private CloselessTicketsTray _closelessTicketsTray;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -74,94 +55,54 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         
         _rootView = (RootView)findViewById(R.id.mainMapLayout);
-		_rootView.setOnOpenListener(Contr.getInstance());
+		_rootView.setOnOpenListener(Controller.getInstance());
 		_rootView.setModel(_model);
         
-        _progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
-		
-		_editText = (EditText)findViewById(R.id.selectRouteText);
-		_editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-		_editText.addTextChangedListener(Contr.getInstance());
-		_editText.setOnKeyListener(Contr.getInstance());
-		
-		_clearButton = (ImageButton)findViewById(R.id.clearRouteText);
-		_clearButton.setOnClickListener(Contr.getInstance());
-		if (_editText.getText().length() > 0) {
-			_clearButton.setVisibility(View.VISIBLE);
-		} else {
-			_clearButton.setVisibility(View.GONE);
-		}
-		
-		_listView = (ListView)findViewById(R.id.selectRouteListView);
-		_listView.setOnItemClickListener(Contr.getInstance());
-        
-	    _mainRoutesBtn = (RelativeLayout)findViewById(R.id.mainRoutesBtn);
-	    _mainRoutesBtn.setOnClickListener(Contr.getInstance());
-	    
-		_ticketsTray = (TicketsTray)findViewById(R.id.routeTicketsScrollView);
-		_ticketsTray.inition(_model, Contr.getInstance());
-		_ticketsTray.update();
-		
 		_busFilter = (CheckButton)findViewById(R.id.busFilter);
-		_busFilter.setOnClickListener(Contr.getInstance());
+		_busFilter.setOnClickListener(Controller.getInstance());
 		
 		_trolleyFilter = (CheckButton)findViewById(R.id.trolleyFilter);
-		_trolleyFilter.setOnClickListener(Contr.getInstance());
+		_trolleyFilter.setOnClickListener(Controller.getInstance());
 		
 		_tramFilter = (CheckButton)findViewById(R.id.tramFilter);
-		_tramFilter.setOnClickListener(Contr.getInstance());
+		_tramFilter.setOnClickListener(Controller.getInstance());
 		
 		_shipFilter = (CheckButton)findViewById(R.id.shipFilter);
-		_shipFilter.setOnClickListener(Contr.getInstance());
-		
-		_menuBusFilter = (CheckButton)findViewById(R.id.menuBusFilter);
-    	_menuBusFilter.setOnClickListener(Contr.getInstance());
-    	
-    	_menuTrolleyFilter = (CheckButton)findViewById(R.id.menuTrolleyFilter);
-		_menuTrolleyFilter.setOnClickListener(Contr.getInstance());
-		
-		_menuTramFilter = (CheckButton)findViewById(R.id.menuTramFilter);
-		_menuTramFilter.setOnClickListener(Contr.getInstance());
-		
-		_menuShipFilter = (CheckButton)findViewById(R.id.menuShipFilter);
-		_menuShipFilter.setOnClickListener(Contr.getInstance());
+		_shipFilter.setOnClickListener(Controller.getInstance());
 		
 		_pathsButton = (CheckButton)findViewById(R.id.paths);
-		_pathsButton.setOnClickListener(Contr.getInstance());
+		_pathsButton.setOnClickListener(Controller.getInstance());
 		_pathsButton.setChecked(_model.getModelPaths().pathsIsOn());
+
 		
-		updateFilterButtons();
-		
-		
-		
-		
-		
-		((ImageButton)findViewById(R.id.location)).setOnClickListener(Contr.getInstance());
-		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Contr.getInstance());
-		((ImageButton)findViewById(R.id.minus)).setOnClickListener(Contr.getInstance());
+		((ImageButton)findViewById(R.id.location)).setOnClickListener(Controller.getInstance());
+		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Controller.getInstance());
+		((ImageButton)findViewById(R.id.minus)).setOnClickListener(Controller.getInstance());
 		
 		
-		((ImageButton)findViewById(R.id.about)).setOnClickListener(Contr.getInstance());
+		((ImageButton)findViewById(R.id.about)).setOnClickListener(Controller.getInstance());
 		
 		_leftMenu = (LeftMenu)findViewById(R.id.leftMenu);
 		_leftMenu.setModel(_model);
+		_leftMenu.getTicketsTray().inition(_model, Controller.getInstance());
+		_leftMenu.getTicketsTray().update();
+		
+		updateFilterButtons();
+		
 		_rightMenu = (RightMenu)findViewById(R.id.rightMenu);
 		_rightMenu.setModel(_model);
-		_menuIcon = ((ImageView)findViewById(R.id.menuIcon));
-		
-		if (_listView.getAdapter() == null) {
-			Adapter adapter = new Adapter(this, _model);
-			_listView.setAdapter(adapter);
-			adapter.getFilter().filter(_editText.getText());
-		}
 		
 		_internetDenyImageButtonController = new InternetDenyImageButtonController((ImageButton)findViewById(R.id.internetDeny), _model, this);
 		
 		_adView = (AdView)findViewById(R.id.mainAdView);
+		
+		_closelessTicketsTray = (CloselessTicketsTray)findViewById(R.id.closelessTicketsTray);
+		_closelessTicketsTray.setOnClickListener(Controller.getInstance());
+		_closelessTicketsTray.inition(_model);
     }
     
-    public TicketsTray getTicketsTray() {
-    	return _ticketsTray;
+    public CloselessTicketsTray getCloselessTicketsTray() {
+    	return _closelessTicketsTray;
     }
     
     public InternetDenyImageButtonController getInternetDenyButtonController() {
@@ -196,25 +137,6 @@ public class MainActivity extends BaseActivity {
     	_updateBottomControls();
     }
     
-    public void updateFilterButtons() {
-    	LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
-    	if (_model.getFavorite().size() > 0) {
-			kindBtns.setVisibility(View.INVISIBLE);
-			_pathsButton.setVisibility(View.VISIBLE);
-		} else {
-			kindBtns.setVisibility(View.VISIBLE);
-			_pathsButton.setVisibility(View.INVISIBLE);
-		}
-    	_busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
-    	_trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
-    	_tramFilter.setChecked(_model.isEnabledFilter(TransportKind.Tram));
-    	_shipFilter.setChecked(_model.isEnabledFilter(TransportKind.Ship));
-		
-		_menuBusFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Bus));
-		_menuTrolleyFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Trolley));
-		_menuTramFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Tram));
-		_menuShipFilter.setChecked(_model.isEnabledFilterMenu(TransportKind.Ship));
-    }
     
 	@Override
 	protected void onPause() {
@@ -224,10 +146,7 @@ public class MainActivity extends BaseActivity {
 		_model.saveFavorite();
 		_model.saveLocation();
 		_model.saveZoom();
-    	if (_timer != null) {
-    		_timer.cancel();
-    		_timer = null;
-		}
+		Controller.getInstance().getState().pause();
 		super.onPause();
 	}
 
@@ -238,7 +157,7 @@ public class MainActivity extends BaseActivity {
 		_updateBottomControls();
 		
 		GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-		_mapController = new MapController(map, _model, Contr.getInstance());
+		_mapController = new MapController(map, _model, Controller.getInstance());
 		_mapController.onResume();
 		
 		_mapController.toggleRotateMap(_model.menuIsOpened(MenuKind.Left));
@@ -248,14 +167,11 @@ public class MainActivity extends BaseActivity {
 			_trolleyFilter.setVisibility(View.GONE);
 			_tramFilter.setVisibility(View.GONE);
 			_shipFilter.setVisibility(View.GONE);
-			_menuBusFilter.setVisibility(View.GONE);
-			_menuTrolleyFilter.setVisibility(View.GONE);
-			_menuTramFilter.setVisibility(View.GONE);
-			_menuShipFilter.setVisibility(View.GONE);
-			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.GONE);
-			_editText.setVisibility(View.GONE);
+			_leftMenu.setFiltersButtonsVisibility(false);
+			_closelessTicketsTray.setVisibility(View.GONE);
+			_leftMenu.setInputVisible(false);
+			_leftMenu.setProgressBarVisible(false);
 			((ImageButton)findViewById(R.id.about)).setVisibility(View.GONE);
-			_progressBar.setVisibility(View.GONE);
 			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.GONE);
 			((ImageButton)findViewById(R.id.location)).setVisibility(View.GONE);
 		} else {
@@ -263,14 +179,11 @@ public class MainActivity extends BaseActivity {
 			_trolleyFilter.setVisibility(View.VISIBLE);
 			_tramFilter.setVisibility(View.VISIBLE);
 			_shipFilter.setVisibility(View.VISIBLE);
-			_menuBusFilter.setVisibility(View.VISIBLE);
-			_menuTrolleyFilter.setVisibility(View.VISIBLE);
-			_menuTramFilter.setVisibility(View.VISIBLE);
-			_menuShipFilter.setVisibility(View.VISIBLE);
-			((RelativeLayout)findViewById(R.id.mainRoutesBtn)).setVisibility(View.VISIBLE);
-			_editText.setVisibility(View.VISIBLE);
+			_leftMenu.setFiltersButtonsVisibility(true);
+			_closelessTicketsTray.setVisibility(View.VISIBLE);
+			_leftMenu.setInputVisible(true);
 			((ImageButton)findViewById(R.id.about)).setVisibility(View.VISIBLE);
-			_progressBar.setVisibility(View.VISIBLE);
+			_leftMenu.setProgressBarVisible(true);
 			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.VISIBLE);
 			((ImageButton)findViewById(R.id.location)).setVisibility(View.VISIBLE);
 		}
@@ -279,79 +192,16 @@ public class MainActivity extends BaseActivity {
 			_model.removeAllTransportOverlays();
 		}
 		
-		_updateControls();
+		updateControls();
+		Controller.getInstance().switchToState(new MapState());
+		
+		if (_model.allRouteIsLoaded()) {
+    		_leftMenu.showMenuContent();
+		}
 	}
 
-    public void updateTimer() {
-    	if (_timer != null) {
-			_timer.cancel();
-			_timer = null;
-		}
-    	if (_model.isOnline()) {
-    		if (_model.menuIsOpened(MenuKind.Left) && !_model.allRouteIsLoaded()) {
-    			_timer = new Timer();
-    			_timer.schedule(new UpdateMenuContentTimerTask(this, _model), 0, 3000);
-			} else if (!_model.menuIsOpened(MenuKind.Left)) {
-    			_timer = new Timer();
-    	    	_timer.schedule(new UpdateTransportTimerTask(this, _model), 0, 3000);
-			}
-		} else {
-			_timer = new Timer();
-	    	_timer.schedule(new CheckInternetConnectionTimerTask(this, _model), 5000, 5000);
-		}
-    }
-    
-    public void loadMenuContent() {
-    	_progressBar.setVisibility(View.VISIBLE);
-//		_listView.setVisibility(View.INVISIBLE);
-		_editText.setEnabled(false);
-		_menuBusFilter.setEnabled(false);
-		_menuTrolleyFilter.setEnabled(false);
-		_menuTramFilter.setEnabled(false);
-		_menuShipFilter.setEnabled(true);
-		_model.loadDataForAllRoutes();
-    }
-    
-    private void _updateControls() {
-    	
-    	int resId = _model.menuIsOpened(MenuKind.Left) ? R.drawable.menu_close_icon : R.drawable.menu_open_icon;
-		_menuIcon.setImageResource(resId);
-    	
-    	if (_model.allRouteIsLoaded()) {
-    		showMenuContent();
-		}
-    	
-    	
-    	updateTimer();
-    	
-    	
-    	
-    	
-    	{// ���������� ������� ��������� ���������
-    		LinearLayout ticketsLayout = (LinearLayout)findViewById(R.id.mainRoutesScrollView);
-	    	ticketsLayout.removeAllViews();
-			for (Route route : _model.getFavorite()) {
-				TicketCloseLess ticket = new TicketCloseLess(this);
-				ticket.setRoute(route);
-				ticketsLayout.addView(ticket, 0);
-			}
-			
-	    	HorizontalScrollView routesBtnScrollView = (HorizontalScrollView)findViewById(R.id.mainRoutesBtnScrollView);
-	    	if (_model.getFavorite().size() > 0) {
-	    		routesBtnScrollView.setVisibility(View.VISIBLE);
-			} else {
-				routesBtnScrollView.setVisibility(View.GONE);
-			}
-	    	
-	    	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_mainRoutesBtn.getLayoutParams();
-			lp.setMargins(lp.leftMargin, lp.topMargin, (_model.getFavorite().size() > 0 ? _model.dpToPx(60) : 0), lp.bottomMargin);
-			_mainRoutesBtn.setLayoutParams(lp);
-			_mainRoutesBtn.setPadding(_mainRoutesBtn.getPaddingLeft(), _mainRoutesBtn.getPaddingTop(), (_model.getFavorite().size() > 0 ? _model.dpToPx(5) : 0), _mainRoutesBtn.getPaddingBottom());
-			
-			RelativeLayout.LayoutParams lpMenuIcon = (RelativeLayout.LayoutParams)_menuIcon.getLayoutParams();
-			lpMenuIcon.setMargins(lpMenuIcon.leftMargin, lpMenuIcon.topMargin, (_model.getFavorite().size() > 0 ? 0 : _model.dpToPx(8)), lpMenuIcon.bottomMargin);
-			_menuIcon.setLayoutParams(lpMenuIcon);
-		}
+    public void updateControls() {
+    	_closelessTicketsTray.update();
     	
     	if (!_model.menuIsOpened(MenuKind.Left)) {
     		_model.getModelPaths().loadPaths();
@@ -360,61 +210,8 @@ public class MainActivity extends BaseActivity {
     
     public void keyboardTurnOff() {
     	InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(_editText.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(_leftMenu.getInput().getWindowToken(), 0);
     }
-    
-    public void rightMenuChangeState(boolean isOpen) {
-    	if (isOpen && _model.getRoutesNames().size() == 0) {
-    		_model.loadRoutesNames();
-		}
-    }
-    
-    public void menuChangeState(boolean isOpen) {
-    	
-    	
-		_updateControls();
-		updateFilterButtons();
-		
-		
-		{// ���������� ����������
-			if (!isOpen) {
-				keyboardTurnOff();
-			}
-		}
-		
-		
-		
-		
-		
-		_mapController.toggleRotateMap(isOpen);
-		
-		
-		if (isOpen) {
-			FlurryAgent.logEvent(FlurryConstants.menuIsOpen);
-		} else {
-			if (_model.getFavorite().size() > 0) {
-				FlurryAgent.logEvent(FlurryConstants.selectedTransportModeIsOn);
-			} else {
-				FlurryAgent.logEvent(FlurryConstants.selectedTransportModeIsOff);
-			}
-		}
-		
-		
-		{// ������� �����
-			if (!isOpen) {
-				if (_mapController != null) {
-					_model.removeSimpleTransportOverlay();
-					if (_model.isOnline()) {
-						_model.removeAllTransportOverlays();
-						_model.removeLastSimpleTransportView();
-						updateTransport();
-					} else {
-						updateTransportOffline();
-					}
-				}
-			}
-		}
-	}
     
     public void toggleMenu(MenuKind kind) {
     	_rootView.toggleMenu(kind);
@@ -422,16 +219,6 @@ public class MainActivity extends BaseActivity {
     
     public void showMenu(MenuKind kind) {
 		_rootView.open(kind);
-	}
-    
-    public void showMenuContent() {
-		_progressBar.setVisibility(View.INVISIBLE);
-		_listView.setVisibility(View.VISIBLE);
-		_editText.setEnabled(true);
-		_menuBusFilter.setEnabled(true);
-		_menuTrolleyFilter.setEnabled(true);
-		_menuTramFilter.setEnabled(true);
-		updateListView();
 	}
     
 	@SuppressLint("UseValueOf")
@@ -479,15 +266,8 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 	
-	public void updateListView() {
-		Adapter adapter = (Adapter)_listView.getAdapter();
-		if (adapter != null) {
-			adapter.getFilter().filterByCurrentPrams();
-		}
-	}
-	
 	public void runReopenAnimation() {
-		if (!_model.openAnimationIsShowed() && _timer != null && _mapController.getCountShows() > 3 && !_model.menuIsOpenedOnce() && !_rootView.hasTouches()) {
+		if (!_model.openAnimationIsShowed() && Controller.getInstance().getState().getClass() == MapState.class && _mapController.getCountShows() > 3 && !_model.menuIsOpenedOnce() && !_rootView.hasTouches()) {
 			_model.setOpenAnimationIsShowed();
 			_rootView.animateOpen(_model.dpToPx(100));
 		}
@@ -500,4 +280,21 @@ public class MainActivity extends BaseActivity {
 	public LeftMenu getLeftMenu() {
     	return _leftMenu;
     }
+
+	public void updateFilterButtons() {
+		LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
+		if (_model.getFavorite().size() > 0) {
+			kindBtns.setVisibility(View.INVISIBLE);
+			_pathsButton.setVisibility(View.VISIBLE);
+		} else {
+			kindBtns.setVisibility(View.VISIBLE);
+			_pathsButton.setVisibility(View.INVISIBLE);
+		}
+		_busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
+		_trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
+		_tramFilter.setChecked(_model.isEnabledFilter(TransportKind.Tram));
+		_shipFilter.setChecked(_model.isEnabledFilter(TransportKind.Ship));
+		
+		_leftMenu.updateFilterButtons();
+	}
 }

@@ -2,10 +2,6 @@ package ru.slavabulgakov.busesspb.controls;
 
 import ru.slavabulgakov.busesspb.Animations;
 import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.R.color;
-import ru.slavabulgakov.busesspb.R.drawable;
-import ru.slavabulgakov.busesspb.R.layout;
-import ru.slavabulgakov.busesspb.R.styleable;
 import ru.slavabulgakov.busesspb.model.Route;
 import android.content.Context;
 import android.content.res.TypedArray;

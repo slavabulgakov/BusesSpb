@@ -1,5 +1,6 @@
 package ru.slavabulgakov.busesspb;
 
+import ru.slavabulgakov.busesspb.controller.Controller;
 import ru.slavabulgakov.busesspb.model.Model;
 import android.view.View;
 import android.view.animation.Animation;
@@ -11,12 +12,12 @@ public class Animations {
 	
 	public static final int ANIMATION_DURATION = 200;
 	
-	interface OnAnimationEndListener {
+	public interface OnAnimationEndListener {
 		void onAnimated(View view);
 	}
 	
 	static private MainActivity _getMainActivity() {
-		Contr contr = Contr.getInstance();
+		Controller contr = Controller.getInstance();
 		MainActivity mainActivity = null;
 		if (contr.getActivity().getClass() == MainActivity.class) {
 			mainActivity = (MainActivity)contr.getActivity();
@@ -25,7 +26,7 @@ public class Animations {
 	}
 	
 	static private Model _getModel() {
-		return (Model)Contr.getInstance().getActivity().getApplicationContext();
+		return (Model)Controller.getInstance().getActivity().getApplicationContext();
 	}
 	
 	
@@ -41,7 +42,7 @@ public class Animations {
 		TranslateAnimation animation = null;
 		if (model.getFavorite().size() == 1) {
 			animation = new TranslateAnimation(0, 0, 0, model.dpToPx(60));
-			mainActivity.getTicketsTray().setVisibility(View.GONE);
+			mainActivity.getLeftMenu().getTicketsTray().setVisibility(View.GONE);
 		}
 		if (animation != null) {
 			animation.setDuration(Animations.ANIMATION_DURATION);
@@ -55,7 +56,7 @@ public class Animations {
 				
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					mainActivity.getTicketsTray().update();
+					mainActivity.getLeftMenu().getTicketsTray().update();
 				}
 			});
 			listViewAndProgressBarLinearLayout.startAnimation(animation);

@@ -4,13 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import ru.slavabulgakov.busesspb.Files;
@@ -23,11 +19,6 @@ import ru.slavabulgakov.busesspb.model.Route;
 import android.annotation.SuppressLint;
 import android.util.Pair;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -37,8 +28,6 @@ public class ModelPaths {
 	private static String PATH_FILE_NAME = "paths.ser";
 	private static String STATIONS_FILE_NAME = "stations.ser";
 	private Model _model;
-	private RequestQueue _queue;
-	private String _selectedStationId;
 	public ModelPaths(Model model) {
 		_model = model;
 	}
@@ -46,7 +35,6 @@ public class ModelPaths {
 	public interface OnPathLoaded {
 		void onPathLoaded(Path path);
 		void onStationsLoaded(Stations stations);
-		void onForecastLoaded(Forecasts forecasts);
 	}
 	private OnPathLoaded _listener;
 	public void setListener(OnPathLoaded listener) {
@@ -186,44 +174,6 @@ public class ModelPaths {
 		};
 		
 		_model.startParserWithId(req, requestId);
-	}
-	
-	public void loadForecastForStationId(String stationId) {
-		if (_queue == null) {
-			_queue = Volley.newRequestQueue(_model);
-		}
-		
-		JsonObjectRequest request = new JsonObjectRequest("http://transport.orgp.spb.ru/Portal/transport/internalapi/forecast/bystop?stopID=" + stationId, null, new Response.Listener<JSONObject>() {
-
-			@Override
-			public void onResponse(JSONObject response) {
-				SimpleDateFormat format = new SimpleDateFormat("yyyyy-mm-dd hh:mm:ss", Locale.US);
-				Forecasts forecasts = new Forecasts();
-				try {
-					JSONArray array = response.getJSONArray("result");
-					for (int i = 0; i < array.length(); i++) {
-						JSONObject item = array.getJSONObject(i);
-						Forecast forecast = new Forecast();
-						forecast.time = format.parse(item.getString("arrivingTime"));
-						forecast.transportNumber = _model.getNameById(item.getInt("routeId"));
-						forecasts.add(forecast);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				
-				_listener.onForecastLoaded(forecasts);
-			}
-		}, new Response.ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				int z = 0;
-			}
-		});
-		_queue.add(request);
 	}
 	
 	public void save() {

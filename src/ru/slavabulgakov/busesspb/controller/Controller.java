@@ -1,7 +1,15 @@
-package ru.slavabulgakov.busesspb;
+package ru.slavabulgakov.busesspb.controller;
 
 import java.util.ArrayList;
+import java.util.Timer;
 
+import ru.slavabulgakov.busesspb.AboutActivity;
+import ru.slavabulgakov.busesspb.Adapter;
+import ru.slavabulgakov.busesspb.Animations;
+import ru.slavabulgakov.busesspb.BaseActivity;
+import ru.slavabulgakov.busesspb.FlurryConstants;
+import ru.slavabulgakov.busesspb.MainActivity;
+import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.controls.MapController.Listener;
 import ru.slavabulgakov.busesspb.controls.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.model.Model;
@@ -28,6 +36,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -41,12 +50,39 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener {
+public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener, ru.slavabulgakov.busesspb.model.RightMenuModel.Listener {
 	
-	private static volatile Contr _instance;
+	private static volatile Controller _instance;
 	private Model _model;
 	private BaseActivity _currentActivity;
 	private Handler _handler;
+	private Timer _timer;
+	private State _state;
+	
+	public Timer getTimer() {
+		if (_timer == null) {
+			_timer = new Timer();
+		}
+		return _timer;
+	}
+	
+	public void switchToState(State state) {
+		if (_state != null) {
+			if (state.getClass() == _state.getClass()) {
+				return;
+			}
+		}
+		if (_state != null) {
+			_state.removeState();
+		}
+		_state = state;
+		_state.setController(this);
+		_state.start();
+	}
+	
+	public State getState() {
+		return _state;
+	}
 	
 	public Handler getHandler() {
 		if (_handler == null) {
@@ -55,13 +91,13 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 		return _handler;
 	}
 	
-	public static Contr getInstance() {
-    	Contr localInstance = _instance;
+	public static Controller getInstance() {
+    	Controller localInstance = _instance;
     	if (localInstance == null) {
-    		synchronized (Contr.class) {
+    		synchronized (Controller.class) {
     			localInstance = _instance;
     			if (localInstance == null) {
-    				_instance = localInstance = new Contr();
+    				_instance = localInstance = new Controller();
     			}
     		}
     	}
@@ -76,13 +112,24 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 	public BaseActivity getActivity() {
 		return _currentActivity;
 	}
+	
+	public MainActivity getMainActivity() {
+		if (getActivity().getClass() == MainActivity.class) {
+			return (MainActivity)getActivity();
+		}
+		return null;
+	}
+	
+	public Model getModel() {
+		return _model;
+	}
 
 	@SuppressLint("NewApi")
 	@Override
 	public void onClick(View v) {
 		ListView listView = (ListView)_currentActivity.findViewById(R.id.selectRouteListView);
 		switch (v.getId()) {
-		case R.id.mainRoutesBtn:
+		case R.id.closelessTicketsTray:
 			_mainActivity().toggleMenu(MenuKind.Left);
 			break;
 			
@@ -178,7 +225,7 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 				}
 				if (kind != TransportKind.None) {
 					_model.setFilterMenu(kind);
-					_mainActivity().updateListView();
+					_mainActivity().getLeftMenu().updateListView();
 					_mainActivity().updateFilterButtons();
 				}
 			}
@@ -215,7 +262,7 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 					if(array == null) {
 						Toast.makeText(_currentActivity, R.string.server_access_deny, Toast.LENGTH_LONG).show();
 					}
-					_mainActivity().showMenuContent();
+					_mainActivity().getLeftMenu().showMenuContent();
 				}
 			}
 		});
@@ -271,16 +318,46 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 			}
 		});
 		
-		_mainActivity().getTicketsTray().addTicket(route);
+		_mainActivity().getLeftMenu().getTicketsTray().addTicket(route);
 		Animations.slideDownRoutesListView();
 	}
 
 	@Override
 	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
 		if (kind == MenuKind.Left) {
-			_mainActivity().menuChangeState(isOpen);
-		} else {
-			_mainActivity().rightMenuChangeState(isOpen);
+			if (isOpen) {
+	    		switchToState(new LeftMenuState());
+			}
+			
+			_mainActivity().updateControls();
+			_mainActivity().updateFilterButtons();
+			
+			
+			{// ���������� ����������
+				if (!isOpen) {
+					_mainActivity().keyboardTurnOff();
+				}
+			}
+			
+			
+			
+			
+			
+			_mainActivity().getMapController().toggleRotateMap(isOpen);
+			
+			
+			if (isOpen) {
+				FlurryAgent.logEvent(FlurryConstants.menuIsOpen);
+			} else {
+				if (_model.getFavorite().size() > 0) {
+					FlurryAgent.logEvent(FlurryConstants.selectedTransportModeIsOn);
+				} else {
+					FlurryAgent.logEvent(FlurryConstants.selectedTransportModeIsOff);
+				}
+			}
+		}
+		if (!isOpen) {
+			switchToState(new MapState());
 		}
 	}
 
@@ -310,6 +387,9 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 	public void onInternetAccessSuccess() {
 		if (_isMainActivity()) {
 			_mainActivity().getInternetDenyButtonController().hideInternetDenyIcon();
+			if (_mainActivity().getMapController() == null) {
+				Log.d("slava", "null");
+			}
 			_mainActivity().getMapController().clearMap();
 		}
 	}
@@ -349,20 +429,10 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 	public void onInfoWindowClick(Marker marker) {
 		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
 		Station station = _model.getModelPaths().getStationByMarker(marker);
-		((MainActivity)_currentActivity).getRightMenu().loadByStation(station);
+		_mainActivity().getRightMenu().setTitle(station.name);
+		switchToState(new RightMenuState(station.id));
 	}
-
-	@Override
-	public void onForecastLoaded(Forecasts forecasts) {
-		((MainActivity)_currentActivity).getRightMenu().loadForecasts(forecasts);
-	}
-
-	@Override
-	public void onRoutesNamesLoadComplete(ArrayList<RouteName> array) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	@Override
 	public void onMapImgUpdated() {
 		_mainActivity().runReopenAnimation();
@@ -370,7 +440,7 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 
 	@Override
 	public void willRemoveTicket() {
-		_mainActivity().updateListView();
+		_mainActivity().getLeftMenu().updateListView();
 	}
 
 	@Override
@@ -380,6 +450,27 @@ public class Contr implements OnClickListener, OnLoadCompleteListener, TextWatch
 			TranslateAnimation animation = new TranslateAnimation(0, 0, _model.dpToPx(60), 0);
 			animation.setDuration(Animations.ANIMATION_DURATION);
 			listViewAndProgressBarLinearLayout.startAnimation(animation);
+		}
+	}
+
+	@Override
+	public void onStaticRoutesNameLoadComplete() {
+		if (_state.getClass() == RightMenuState.class) {
+            ((RightMenuState)_state).staticRoutesNamesLoaded();
+        }
+	}
+
+	@Override
+	public void onRoutesNamesLoadComplete(ArrayList<RouteName> array) {
+		if (_state.getClass() == RightMenuState.class) {
+            ((RightMenuState)_state).routesNamesLoaded();
+        }
+	}
+
+	@Override
+	public void onForecastLoaded(Forecasts forecasts) {
+		if (_state.getClass() == RightMenuState.class) {
+			((RightMenuState)_state).forecastsLoaded(forecasts);
 		}
 	}
 }

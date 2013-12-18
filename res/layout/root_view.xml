@@ -25,50 +25,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
-            <RelativeLayout
-                android:id="@+id/mainRoutesBtn"
+            <ru.slavabulgakov.busesspb.controls.CloselessTicketsTray
+                android:id="@+id/closelessTicketsTray"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_pressed_black"
-                android:minHeight="40dp"
-                android:minWidth="40dp" >
-
-                <ImageView
-                    android:id="@+id/menuIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="11dp"
-                    android:src="@drawable/menu_open_icon" />
-
-                <HorizontalScrollView
-                    android:id="@+id/mainRoutesBtnScrollView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/menuIcon" >
-
-                    <LinearLayout
-                        android:id="@+id/mainRoutesScrollView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal" >
-                    </LinearLayout>
-                </HorizontalScrollView>
-            </RelativeLayout>
+    			android:layout_height="wrap_content"
+    			android:layout_marginLeft="10dp"
+    			android:layout_marginTop="10dp" />
 
             <LinearLayout
                 android:id="@+id/kindBtns"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/mainRoutesBtn"
+                android:layout_alignTop="@+id/closelessTicketsTray"
                 android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@+id/mainRoutesBtn" >
+                android:layout_toRightOf="@+id/closelessTicketsTray" >
 
                 <ru.slavabulgakov.busesspb.controls.CheckButton 
                     android:id="@+id/busFilter"
@@ -167,7 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/zoomControls"
-                android:layout_alignLeft="@+id/mainRoutesBtn"
+                android:layout_alignLeft="@+id/closelessTicketsTray"
                 android:background="@drawable/btn_pressed_black"
                 android:src="@drawable/location"
                 android:minHeight="40dp"
@@ -189,8 +159,8 @@
                 android:id="@+id/internetDeny"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mainRoutesBtn"
-                android:layout_alignLeft="@+id/mainRoutesBtn"
+                android:layout_below="@+id/closelessTicketsTray"
+                android:layout_alignLeft="@+id/closelessTicketsTray"
                 android:background="@drawable/btn_pressed_red"
                 android:src="@drawable/internet_deny"
                 android:minHeight="40dp"

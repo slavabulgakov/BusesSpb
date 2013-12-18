@@ -1,10 +1,6 @@
 package ru.slavabulgakov.busesspb.controls;
 
 import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.R.drawable;
-import ru.slavabulgakov.busesspb.R.id;
-import ru.slavabulgakov.busesspb.R.layout;
-import ru.slavabulgakov.busesspb.R.styleable;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;

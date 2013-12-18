@@ -18,14 +18,14 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-class Adapter extends ArrayAdapter<Route> {
+public class Adapter extends ArrayAdapter<Route> {
 	private MyFilter _filter;
 	private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Route>());
 	Context _context;
 	Model _model;
 	LayoutInflater _inflater;
 	
-	class MyFilter extends Filter {
+	public class MyFilter extends Filter {
 
 		ArrayList<Route> _data = null;
 		CharSequence _constraint;
