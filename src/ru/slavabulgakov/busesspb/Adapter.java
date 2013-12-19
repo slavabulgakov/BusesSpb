@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ru.slavabulgakov.busesspb.controls.TransportCellViewHolder;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,14 +131,6 @@ public class Adapter extends ArrayAdapter<Route> {
 		
 	}
 	
-	private class ViewHolder {
-		public boolean needInflate;
-		public TextView routeNumber;
-		public ImageView routeKindImg;
-		public TextView cost;
-		public ImageView currency;
-	}
-	
 	public Adapter(Context context, Model model) {
 		super(context, R.layout.listitem_selectroute, model.getAllRoutes());
 		_context = context;
@@ -151,7 +145,7 @@ public class Adapter extends ArrayAdapter<Route> {
 	}
 
 	public void removeRoute(int position, View view) {
-		ViewHolder vh = (ViewHolder)view.getTag();
+		TransportCellViewHolder vh = (TransportCellViewHolder)view.getTag();
 		vh.needInflate = true;
 		_filtredList.remove(position);
 		notifyDataSetChanged();
@@ -162,47 +156,21 @@ public class Adapter extends ArrayAdapter<Route> {
 		if (convertView == null) {
 			convertView = _inflater.inflate(R.layout.listitem_selectroute, parent, false);
 			_setViewHolder(convertView);
-		} else if (((ViewHolder)convertView.getTag()).needInflate) {
+		} else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
 			convertView = _inflater.inflate(R.layout.listitem_selectroute, parent, false);
 			_setViewHolder(convertView);
 		}
 		
-		ViewHolder vh = (ViewHolder)convertView.getTag();
+		TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
 		
-		vh.routeNumber.setText(_filtredList.get(position).routeNumber);
-		int bgResId = -1;
-		int iconResId = -1;
-		switch (_filtredList.get(position).kind) {
-		case Bus:
-			bgResId = R.drawable.listitem_bg_bus;
-			iconResId = R.drawable.bus_30_30;
-			break;
-			
-		case Trolley:
-			bgResId = R.drawable.listitem_bg_trolley;
-			iconResId = R.drawable.trolley_30_30;
-			break;
-			
-		case Tram:
-			bgResId = R.drawable.listitem_bg_tram;
-			iconResId = R.drawable.tram_30_30;
-			break;
-			
-		case Ship:
-			bgResId = R.drawable.listitem_bg_ship;
-			iconResId = R.drawable.ship_30_30;
-			break;
-
-		default:
-			break;
-		}
-		
-		convertView.setBackgroundResource(bgResId);
-		vh.routeKindImg.setImageResource(iconResId);
+		vh.leftText.setText(_filtredList.get(position).routeNumber);
+		Pair<Integer, Integer> res = vh.backgroundAndIconByKind(_filtredList.get(position).kind);
+		convertView.setBackgroundResource(res.first);
+		vh.leftIcon.setImageResource(res.second);
 		
 		Integer cost = _filtredList.get(position).cost;
-		TextView costTextView = vh.cost;
-		ImageView currency = vh.currency;
+		TextView costTextView = vh.rightText;
+		ImageView currency = vh.rightIcon;
 		if (cost == null) {
 			costTextView.setVisibility(View.INVISIBLE);
 			currency.setVisibility(View.INVISIBLE);
@@ -216,11 +184,11 @@ public class Adapter extends ArrayAdapter<Route> {
 	}
 	
 	private void _setViewHolder(View view) {
-		ViewHolder vh = new ViewHolder();
-		vh.routeKindImg = (ImageView)view.findViewById(R.id.listItemSelectRouteKind);
-		vh.routeNumber = (TextView)view.findViewById(R.id.listItemSelectRouteRouteName);
-		vh.cost = (TextView)view.findViewById(R.id.listItemSelectRouteCost);
-		vh.currency = (ImageView)view.findViewById(R.id.currency);
+		TransportCellViewHolder vh = new TransportCellViewHolder();
+		vh.leftIcon = (ImageView)view.findViewById(R.id.listItemSelectRouteKind);
+		vh.leftText = (TextView)view.findViewById(R.id.listItemSelectRouteRouteName);
+		vh.rightText = (TextView)view.findViewById(R.id.listItemSelectRouteCost);
+		vh.rightIcon = (ImageView)view.findViewById(R.id.currency);
 		vh.needInflate = false;
 		view.setTag(vh);
 	}

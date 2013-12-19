@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -90,13 +90,6 @@ public class RightMenu extends LinearLayout {
 		_forecasts = forecasts;
 		_listView.setAdapter(new ListAdapter() {
 			
-			class ViewHolder {
-				public boolean needInflate;
-				public TextView routeNumber;
-				public ImageView routeKindImg;
-				public TextView time;
-			}
-			
 			@Override
 			public void unregisterDataSetObserver(DataSetObserver arg0) {
 				// TODO Auto-generated method stub
@@ -126,10 +119,10 @@ public class RightMenu extends LinearLayout {
 				return 1;
 			}
 			private void _setViewHolder(View view) {
-				ViewHolder vh = new ViewHolder();
-				vh.routeKindImg = (ImageView)view.findViewById(R.id.listItemForecastKind);
-				vh.routeNumber = (TextView)view.findViewById(R.id.listItemForecastRouteName);
-				vh.time = (TextView)view.findViewById(R.id.listItemForecastTime);
+				TransportCellViewHolder vh = new TransportCellViewHolder();
+				vh.leftIcon = (ImageView)view.findViewById(R.id.listItemForecastKind);
+				vh.leftText = (TextView)view.findViewById(R.id.listItemForecastRouteName);
+				vh.rightText = (TextView)view.findViewById(R.id.listItemForecastTime);
 				vh.needInflate = false;
 				view.setTag(vh);
 			}
@@ -141,16 +134,19 @@ public class RightMenu extends LinearLayout {
 					convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
 					
 					_setViewHolder(convertView);
-				} else if (((ViewHolder)convertView.getTag()).needInflate) {
+				} else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
 					convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
 					_setViewHolder(convertView);
 				}
 				
 				Forecast forecast = _forecasts.get(position);
 				
-				ViewHolder vh = (ViewHolder)convertView.getTag();
-				vh.time.setText(_format.format(forecast.time));
-				vh.routeNumber.setText(forecast.transportNumber);
+				TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
+				vh.rightText.setText(_format.format(forecast.time));
+				vh.leftText.setText(forecast.transportNumber);
+				Pair<Integer, Integer> res = vh.backgroundAndIconByKind(forecast.transportKind);
+				convertView.setBackgroundResource(res.first);
+				vh.leftIcon.setImageResource(res.second);
 				
 				return convertView;
 			}

@@ -107,18 +107,31 @@ public class RightMenuModel {
 			RouteName routeName = new RouteName();
 			routeName.id = Integer.parseInt(items[0]);
 			routeName.number = items[2];
+			String kind = items[items.length - 4];
+			if (kind.equals("bus")) {
+				 routeName.kind = TransportKind.Bus;
+			} else if (kind.equals("tram")) {
+				routeName.kind = TransportKind.Tram;
+			} else if (kind.equals("trolley")) {
+				routeName.kind = TransportKind.Trolley;
+			} else if (kind.equals("ship")) {
+				routeName.kind = TransportKind.Ship;
+			} else {
+				routeName.kind = TransportKind.None;
+			}
+			
 			routesNames.add(routeName);
 		}
 		_routesNames = routesNames;
 	}
 	
-	public String getNameById(int id) {
+	public RouteName getRouteName(int id) {
 		for (RouteName routeName : _routesNames) {
 			if (routeName.id == id) {
-				return routeName.number;
+				return routeName;
 			}
 		}
-		return "";
+		return null;
 	}
 	
 	private RequestQueue _getQueue() {
@@ -154,7 +167,9 @@ public class RightMenuModel {
 						JSONObject item = array.getJSONObject(i);
 						Forecast forecast = new Forecast();
 						forecast.time = format.parse(item.getString("arrivingTime"));
-						forecast.transportNumber = getNameById(item.getInt("routeId"));
+						RouteName routeName = getRouteName(item.getInt("routeId"));
+						forecast.transportNumber = routeName.number;
+						forecast.transportKind = routeName.kind;
 						forecasts.add(forecast);
 					}
 				} catch (JSONException e) {

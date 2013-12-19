@@ -8,4 +8,5 @@ public class RouteName {
 
 	public String number;
 	public int id;
+	public TransportKind kind;
 }
