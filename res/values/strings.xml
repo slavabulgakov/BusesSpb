@@ -10,6 +10,7 @@
     <string name="loading">Загрузка</string>
     <string name="routes">Маршруты</string>
     <string name="routes_placeholder">№ маршрута</string>
+    <string name="states_placeholder">Назв. остановки</string>
     <string name="internet_access_deny">Проблемы с сетью. Проверьте соединение.</string>
     <string name="server_access_deny">Проблемы с сервером.</string>
     <string name="app_version">Версия: </string>

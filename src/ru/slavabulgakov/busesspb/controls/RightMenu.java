@@ -3,7 +3,9 @@ package ru.slavabulgakov.busesspb.controls;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import ru.slavabulgakov.busesspb.Animations;
 import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.controller.Controller;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Forecasts;
@@ -12,14 +14,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +39,11 @@ public class RightMenu extends LinearLayout {
 	Forecasts _forecasts;
 	SimpleDateFormat _format;
 	RelativeLayout _progressBar;
+	EditText _stationText;
+	Button _stationButton;
+	ProgressBar _stationProgressBar;
+	ListView _stationListView;
+	LinearLayout _rightMenuLayout;
 	
 	public void setModel(Model model) {
 		_model = model;
@@ -68,6 +82,44 @@ public class RightMenu extends LinearLayout {
 		_listView = (ListView)findViewById(R.id.rightMenuListView);
 		_format = new SimpleDateFormat("HH:mm", Locale.US);
 		_progressBar = (RelativeLayout)findViewById(R.id.rightMenuProgressBar);
+		_rightMenuLayout = (LinearLayout)findViewById(R.id.rightMenuLayout);
+		_stationText = (EditText)findViewById(R.id.stationText);
+		_stationButton = (Button)findViewById(R.id.stationButton);
+		_stationProgressBar = (ProgressBar)findViewById(R.id.stationProgressBar);
+		_stationProgressBar.setVisibility(View.GONE);
+		_stationListView = (ListView)findViewById(R.id.stationListView);
+		_stationListView.setVisibility(View.GONE);
+		_stationButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				_stationButton.setVisibility(View.GONE);
+				_stationProgressBar.setVisibility(View.VISIBLE);
+				TranslateAnimation animation = new TranslateAnimation(0, 0, -_model.dpToPx(100), 0);
+				_stationListView.setVisibility(View.VISIBLE);
+				animation.setDuration(5000);
+				animation.setAnimationListener(new AnimationListener() {
+					
+					@Override
+					public void onAnimationStart(Animation animation) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						
+					}
+				});
+				_rightMenuLayout.startAnimation(animation);
+			}
+		});
 	}
 
 	public RightMenu(Context context) {

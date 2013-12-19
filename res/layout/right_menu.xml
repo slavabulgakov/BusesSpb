@@ -3,12 +3,84 @@
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:background="@color/menu_bg"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:padding="10dp" >
 
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" >
+            <EditText
+            	android:id="@+id/stationText"
+            	android:layout_width="match_parent"
+            	android:layout_height="wrap_content"
+            	android:background="@drawable/text_view"
+            	android:ems="10"
+            	android:enabled="false"
+            	android:hint="@string/states_placeholder"
+            	android:minHeight="40dp"
+            	android:paddingBottom="5dp"
+            	android:paddingLeft="10dp"
+            	android:paddingRight="10dp"
+            	android:paddingTop="5dp"
+            	android:layout_alignParentLeft="true"
+            	android:singleLine="true" />
+            
+            <ImageButton
+                android:id="@+id/clearRouteText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/close"
+                android:background="@drawable/btn_pressed_black"
+                android:minHeight="30dp"
+                android:minWidth="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_margin="5dp" />
+
+            <Button android:id="@+id/stationButton"
+            	android:layout_width="match_parent"
+            	android:layout_height="wrap_content"
+            	android:background="@drawable/text_view"
+            	android:text="@string/states_placeholder"
+            	android:paddingLeft="10dp"
+            	android:paddingRight="10dp"
+            	android:minHeight="40dp"
+            	android:gravity="left|center_vertical"
+            	android:textColor="@android:color/darker_gray"
+            	android:textSize="20sp" />
+            
+            <ProgressBar
+                android:id="@+id/stationProgressBar"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/stationListView"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/blue" >
+    </ListView>
+
+    <LinearLayout 
+        android:id="@+id/rightMenuLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:background="@color/menu_bg">
     <TextView
         android:id="@+id/rightMenuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center"
         android:text="sdf" />
 
     <RelativeLayout
@@ -28,5 +100,7 @@
         android:id="@+id/rightMenuListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
+    
     </LinearLayout>
+
+</LinearLayout>
