@@ -358,6 +358,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		}
 		if (!isOpen) {
 			switchToState(new MapState());
+		} else {
+			switchToState(new RightMenuState(null));
 		}
 	}
 
@@ -454,13 +456,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	}
 
 	@Override
-	public void onStaticRoutesNameLoadComplete() {
-		if (_state.getClass() == RightMenuState.class) {
-            ((RightMenuState)_state).staticRoutesNamesLoaded();
-        }
-	}
-
-	@Override
 	public void onForecastLoaded(Forecasts forecasts) {
 		if (_state.getClass() == RightMenuState.class) {
 			((RightMenuState)_state).forecastsLoaded(forecasts);
@@ -470,7 +465,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	@Override
 	public void staticLoaded(Loader loader) {
 		if (_state.getClass() == RightMenuState.class) {
-            ((RightMenuState)_state).routesNamesLoaded();
+			RightMenuState state = (RightMenuState)_state;
+			state.staticLoaded(loader);
         }
 	}
 
@@ -482,13 +478,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void netError(Loader loader) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRoutesNamesLoadComplete(
-			ArrayList<ru.slavabulgakov.busesspb.model.RoutesNamesLoaderContainer.RouteName> array) {
 		// TODO Auto-generated method stub
 		
 	}

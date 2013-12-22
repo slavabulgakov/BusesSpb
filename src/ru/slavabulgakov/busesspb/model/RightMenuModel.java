@@ -29,8 +29,6 @@ public class RightMenuModel {
 	}
 	
 	public interface Listener {
-		void onStaticRoutesNameLoadComplete();
-		void onRoutesNamesLoadComplete(ArrayList<RouteName> array);
 		void onForecastLoaded(Forecasts forecasts);
 	}
 	private Listener _listener;
