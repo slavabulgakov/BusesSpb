@@ -12,9 +12,9 @@ import ru.slavabulgakov.busesspb.MainActivity;
 import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.controls.MapController.Listener;
 import ru.slavabulgakov.busesspb.controls.RootView.OnActionListener;
+import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
-import ru.slavabulgakov.busesspb.model.RouteName;
 import ru.slavabulgakov.busesspb.model.Transport;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
@@ -50,7 +50,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener, ru.slavabulgakov.busesspb.model.RightMenuModel.Listener {
+public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener, ru.slavabulgakov.busesspb.model.RightMenuModel.Listener, ru.slavabulgakov.busesspb.model.Loader.Listener {
 	
 	private static volatile Controller _instance;
 	private Model _model;
@@ -461,16 +461,35 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	}
 
 	@Override
-	public void onRoutesNamesLoadComplete(ArrayList<RouteName> array) {
+	public void onForecastLoaded(Forecasts forecasts) {
+		if (_state.getClass() == RightMenuState.class) {
+			((RightMenuState)_state).forecastsLoaded(forecasts);
+		}
+	}
+
+	@Override
+	public void staticLoaded(Loader loader) {
 		if (_state.getClass() == RightMenuState.class) {
             ((RightMenuState)_state).routesNamesLoaded();
         }
 	}
 
 	@Override
-	public void onForecastLoaded(Forecasts forecasts) {
-		if (_state.getClass() == RightMenuState.class) {
-			((RightMenuState)_state).forecastsLoaded(forecasts);
-		}
+	public void netLoaded(Loader loader) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void netError(Loader loader) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRoutesNamesLoadComplete(
+			ArrayList<ru.slavabulgakov.busesspb.model.RoutesNamesLoaderContainer.RouteName> array) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -1,0 +1,100 @@
+package ru.slavabulgakov.busesspb.model;
+
+import java.util.ArrayList;
+import ru.slavabulgakov.busesspb.Files;
+
+import android.util.Log;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+public class Loader {
+	
+	public enum State {
+		staticLoading(0),
+		netLoading(1),
+		complete(2);
+		
+		private final int _value;
+		private State(int value) {
+			_value = value;
+		}
+		public int getValue() {
+			return _value;
+		}
+	};
+	
+	public interface Listener {
+		void staticLoaded(Loader loader);
+		void netLoaded(Loader loader);
+		void netError(Loader loader);
+	}
+	private Listener _listener;
+	public void setListener(Listener listener) {
+		_listener = listener;
+	}
+
+	private LoaderContainer _container;
+	private Model _model;
+	private State _state;
+	private RequestQueue _queue;
+	public Loader(LoaderContainer container, Model model, RequestQueue queue) {
+		_container = container;
+		_model = model;
+		_queue = queue;
+	}
+	
+	public State getState() {
+		return _state;
+	}
+	
+	public LoaderContainer getContainer() {
+		return _container;
+	}
+	
+	private void _cache() {
+		Files.saveToFile(_container.getData(), _container.getCacheFileName(), _model);
+	}
+
+	public void load() {
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				_state = State.staticLoading;
+				@SuppressWarnings("unchecked")
+				ArrayList<Object> data = (ArrayList<Object>)Files.loadFromFile(_container.getCacheFileName(), _model);
+				if (data == null) {
+					ArrayList<String> strings = Files.stringsArrayFromFile(_container.getStaticFileName(), _model);
+					_container.handler(strings);
+				} else {
+					_container.loadData(data);
+				}
+				
+				_state = State.netLoading;
+				_listener.staticLoaded(Loader.this);
+				
+				StringRequest request = new StringRequest(_container.getUrlString(), new Response.Listener<String>() {
+
+					@Override
+					public void onResponse(String response) {
+						_container.handler(response);
+						_state = State.complete;
+						_listener.netLoaded(Loader.this);
+						_cache();
+					}
+				}, new Response.ErrorListener() {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						_listener.netError(Loader.this);
+					}
+					
+				});
+				_queue.add(request);
+			}
+		}).start();
+	}
+}

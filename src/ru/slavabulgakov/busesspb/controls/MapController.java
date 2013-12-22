@@ -312,13 +312,15 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 	}
 	
 	public void showPath(Path path) {
-		for (SubPath subPath : path) {
-			PolylineOptions polylineOptions = new PolylineOptions();
-			for (Point point : subPath) {
-				polylineOptions.add(point.getLatlng());
+		if (path != null) {
+			for (SubPath subPath : path) {
+				PolylineOptions polylineOptions = new PolylineOptions();
+				for (Point point : subPath) {
+					polylineOptions.add(point.getLatlng());
+				}
+				Polyline polyline = _map.addPolyline(polylineOptions.width(2).color(Color.rgb(220, 60, 0)).zIndex(-2));
+				_model.getModelPaths().addMapItem(polyline);
 			}
-			Polyline polyline = _map.addPolyline(polylineOptions.width(2).color(Color.rgb(220, 60, 0)).zIndex(-2));
-			_model.getModelPaths().addMapItem(polyline);
 		}
 	}
 	

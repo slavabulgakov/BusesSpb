@@ -3,7 +3,9 @@ package ru.slavabulgakov.busesspb.controller;
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.controls.RightMenu;
+import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.RightMenuModel;
+import ru.slavabulgakov.busesspb.model.RoutesNamesLoaderContainer;
 import ru.slavabulgakov.busesspb.paths.Forecasts;
 
 public class RightMenuState extends State {
@@ -27,10 +29,15 @@ public class RightMenuState extends State {
 		super.start();
 		
 		_menu().setLoading();
-		if (_menuModel().isStaticRoutesNamesLoaded()) {
-			setTimerTask(new UpdateMenuContentTimerTask());
-		} else if (!_menuModel().isStaticRoutesNamesLoading()) {
-			_menuModel().loadRoutesNames();
+		Loader loader = _menuModel().getLoader(RoutesNamesLoaderContainer.class);
+		if (loader == null) {
+			_menuModel().loadForContainer(new RoutesNamesLoaderContainer(), _controller);
+		} else {
+			if (loader.getState().getValue() > Loader.State.staticLoading.getValue()) {
+				setTimerTask(new UpdateMenuContentTimerTask());
+			} else {
+				_menuModel().loadForContainer(new RoutesNamesLoaderContainer(), _controller);
+			}
 		}
 	}
 	
@@ -52,7 +59,7 @@ public class RightMenuState extends State {
 	}
 	
 	public void forecastsLoaded(Forecasts forecasts) {
-		if (_menuModel().isStaticRoutesNamesLoaded()) {
+		if (_menuModel().getLoader(RoutesNamesLoaderContainer.class).getState().getValue() > Loader.State.staticLoading.getValue()) {
 			_menu().setLoaded();
 			_menu().loadForecasts(forecasts);
 		}

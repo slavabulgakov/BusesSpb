@@ -3,7 +3,6 @@ package ru.slavabulgakov.busesspb.model;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -14,17 +13,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import ru.slavabulgakov.busesspb.Files;
+import ru.slavabulgakov.busesspb.model.Loader.State;
+import ru.slavabulgakov.busesspb.model.RoutesNamesLoaderContainer.RouteName;
 import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Forecasts;
 
 public class RightMenuModel {
 	private Model _model;
 	private RequestQueue _queue;
-	private String _selectedStationId;
 
 	public RightMenuModel(Model model) {
 		_model = model;
@@ -40,93 +38,97 @@ public class RightMenuModel {
 		_listener = listener;
 	}
 
-	private ArrayList<RouteName> _routesNames;
-	public ArrayList<RouteName> getRoutesNames() {
-		if (_routesNames == null) {
-			_routesNames = new ArrayList<RouteName>();
-		}
-		return _routesNames;
-	}
-	private boolean _isStaticRoutesNamesLoading = false;
-	public boolean isStaticRoutesNamesLoading() {
-		return _isStaticRoutesNamesLoading;
-	}
-	private boolean _isStaticRoutesNamesLoaded = false;
-	public boolean isStaticRoutesNamesLoaded() {
-		return _isStaticRoutesNamesLoaded;
-	}
-	private boolean _isRoutesNamesLoading = false;
-	public boolean isRoutesNamesLoading() {
-		return _isRoutesNamesLoading;
-	}
-	private boolean _isRoutesNamesLoaded = false;
-	public boolean isRoutesNamesLoaded() {
-		return _isRoutesNamesLoaded;
-	}
-	public void loadRoutesNames() {
-		_isStaticRoutesNamesLoading = true;
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				ArrayList<String> strings = Files.stringsArrayFromFile("routesNames.txt", _model);
-				_fullRoutesNames(strings);
-				
-				_isStaticRoutesNamesLoading = false;
-				_isStaticRoutesNamesLoaded = true;
-				_listener.onStaticRoutesNameLoadComplete();
-				
-				_isRoutesNamesLoading = true;
-				StringRequest request = new StringRequest("http://futbix.ru/busesspb/v1_0/routesdata/", new Response.Listener<String>() {
-
-					@Override
-					public void onResponse(String response) {
-						_isRoutesNamesLoading = false;
-						_isRoutesNamesLoaded = true;
-					 	ArrayList<String> strings = new ArrayList<String>(Arrays.asList(response.split("\n")));
-					 	_fullRoutesNames(strings);
-						_listener.onRoutesNamesLoadComplete(null);
-					}
-				}, new Response.ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						int asf = 0;
-					}
-				});
-				_getQueue().add(request);
-			}
-		}).start();
-	}
-	
-	private void _fullRoutesNames(ArrayList<String> strings) {
-		strings.remove(0);
-		ArrayList<RouteName>routesNames = new ArrayList<RouteName>();
-		for (String line : strings) {
-			String items[] = line.split(",");
-			RouteName routeName = new RouteName();
-			routeName.id = Integer.parseInt(items[0]);
-			routeName.number = items[2];
-			String kind = items[items.length - 4];
-			if (kind.equals("bus")) {
-				 routeName.kind = TransportKind.Bus;
-			} else if (kind.equals("tram")) {
-				routeName.kind = TransportKind.Tram;
-			} else if (kind.equals("trolley")) {
-				routeName.kind = TransportKind.Trolley;
-			} else if (kind.equals("ship")) {
-				routeName.kind = TransportKind.Ship;
-			} else {
-				routeName.kind = TransportKind.None;
-			}
-			
-			routesNames.add(routeName);
-		}
-		_routesNames = routesNames;
-	}
-	
+//	private ArrayList<RouteName> _routesNames;
+//	public ArrayList<RouteName> getRoutesNames() {
+//		if (_routesNames == null) {
+//			_routesNames = new ArrayList<RouteName>();
+//		}
+//		return _routesNames;
+//	}
+//	private boolean _isStaticRoutesNamesLoading = false;
+//	public boolean isStaticRoutesNamesLoading() {
+//		return _isStaticRoutesNamesLoading;
+//	}
+//	private boolean _isStaticRoutesNamesLoaded = false;
+//	public boolean isStaticRoutesNamesLoaded() {
+//		return _isStaticRoutesNamesLoaded;
+//	}
+//	private boolean _isRoutesNamesLoading = false;
+//	public boolean isRoutesNamesLoading() {
+//		return _isRoutesNamesLoading;
+//	}
+//	private boolean _isRoutesNamesLoaded = false;
+//	public boolean isRoutesNamesLoaded() {
+//		return _isRoutesNamesLoaded;
+//	}
+//	public void loadRoutesNames() {
+//		_isStaticRoutesNamesLoading = true;
+//		new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				ArrayList<String> strings = Files.stringsArrayFromFile("routesNames.txt", _model);
+//				_fullRoutesNames(strings);
+//				
+//				_isStaticRoutesNamesLoading = false;
+//				_isStaticRoutesNamesLoaded = true;
+//				_listener.onStaticRoutesNameLoadComplete();
+//				
+//				_isRoutesNamesLoading = true;
+//				StringRequest request = new StringRequest("http://futbix.ru/busesspb/v1_0/routesdata/", new Response.Listener<String>() {
+//
+//					@Override
+//					public void onResponse(String response) {
+//						_isRoutesNamesLoading = false;
+//						_isRoutesNamesLoaded = true;
+//					 	ArrayList<String> strings = new ArrayList<String>(Arrays.asList(response.split("\n")));
+//					 	_fullRoutesNames(strings);
+//						_listener.onRoutesNamesLoadComplete(null);
+//					}
+//				}, new Response.ErrorListener() {
+//
+//					@Override
+//					public void onErrorResponse(VolleyError error) {
+//						int asf = 0;
+//					}
+//				});
+//				_getQueue().add(request);
+//			}
+//		}).start();
+//	}
+//	private void _fullRoutesNames(ArrayList<String> strings) {
+//		strings.remove(0);
+//		ArrayList<RouteName>routesNames = new ArrayList<RouteName>();
+//		for (String line : strings) {
+//			String items[] = line.split(",");
+//			RouteName routeName = new RouteName();
+//			routeName.id = Integer.parseInt(items[0]);
+//			routeName.number = items[2];
+//			String kind = items[items.length - 4];
+//			if (kind.equals("bus")) {
+//				 routeName.kind = TransportKind.Bus;
+//			} else if (kind.equals("tram")) {
+//				routeName.kind = TransportKind.Tram;
+//			} else if (kind.equals("trolley")) {
+//				routeName.kind = TransportKind.Trolley;
+//			} else if (kind.equals("ship")) {
+//				routeName.kind = TransportKind.Ship;
+//			} else {
+//				routeName.kind = TransportKind.None;
+//			}
+//			
+//			routesNames.add(routeName);
+//		}
+//		_routesNames = routesNames;
+//	}
+//	
+	private RoutesNamesLoaderContainer _routesNamesContainer;
 	public RouteName getRouteName(int id) {
-		for (RouteName routeName : _routesNames) {
+		if (_routesNamesContainer == null) {
+			_routesNamesContainer = (RoutesNamesLoaderContainer)getLoader(RoutesNamesLoaderContainer.class).getContainer();
+		}
+		for (Object obj : _routesNamesContainer.getData()) {
+			RouteName routeName = (RouteName)obj;
 			if (routeName.id == id) {
 				return routeName;
 			}
@@ -191,5 +193,39 @@ public class RightMenuModel {
 			}
 		});
 		_getQueue().add(request);
+	}
+	
+	private ArrayList<Loader> _loaders;
+	private ArrayList<Loader> _getLoaders() {
+		if (_loaders == null) {
+			_loaders = new ArrayList<Loader>();
+		}
+		return _loaders;
+	}
+	public void loadForContainer(LoaderContainer container, Loader.Listener listener) {
+		boolean exist = false;
+		for (Loader loader : _getLoaders()) {
+			if (loader.getContainer().getClass() == container.getClass()) {
+				exist = true;
+				break;
+			}
+		}
+		if (!exist) {
+			Loader loader = new Loader(container, _model, _getQueue());
+			loader.setListener(listener);
+			_getLoaders().add(loader);
+			loader.load();
+		}
+	}
+	
+	public Loader getLoader(Class<?> cl) {
+		for (Loader loader : _getLoaders()) {
+			if (loader.getContainer().getClass() == cl) {
+				if (loader.getState().getValue() > State.staticLoading.getValue()) {
+					return loader;
+				}
+			}
+		}
+		return null;
 	}
 }
