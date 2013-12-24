@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Автобусы СПб</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="about">О программе</string>
+    <string name="loading">Загрузка</string>
+    <string name="routes">Маршруты</string>
+    <string name="routes_placeholder">№ маршрута</string>
+    <string name="states_placeholder">Назв. остановки</string>
+    <string name="internet_access_deny">Проблемы с сетью. Проверьте соединение.</string>
+    <string name="server_access_deny">Проблемы с сервером.</string>
+    <string name="app_version">Версия: </string>
+    <string name="author">Автор: Булгаков Слава</string>
+    <string name="author_email">slavabulgakov@gmail.com</string>
+    <string name="author_email2">Email: slavabulgakov@gmail.com</string>
+    <string name="about_text">Если вы обнаружите ошибку, то не стесняйтесь, пишите. У меня нет того многообразия устройств, которое есть у вас, чтобы потестировать на них Автобусы СПб :)</string>
+    <string name="about_5days">Расскажите друзьям об Автобусах СПб любым из предлагаемых выше способов и реклама будет отключена на две недели!</string>
+    <string name="send_btn">Отправить отзыв или сообщить о проблеме</string>
+    <string name="rate_btn">Оценить приложение</string>
+    <string name="purchase_ads_off">Убрать рекламу за 30 руб</string>
+    <string name="none">none</string>
+    <string name="share">Рассказать\nдрузьям:</string>
+    <string name="admob_publisher_id">a15164a111d9a0f</string>
+    <string name="share_error_title">Ошибка отправки сообщения</string>
+    <string name="share_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
+    <string name="share_error_message_duplicate">При загрузке данных произошла ошибка. Возможно схожее сообщение уже опубликовано.</string>
+    <string name="share_message_title">Android-приложение Автобусы СПб!</string>
+    <string name="share_message">Я установил Android-приложение Автобусы СПб! Оно показывает, где находятся автобусы/трамваи/троллейбусы Питера в реальном времени. http://goo.gl/IwseF</string>
+    <string name="share_message_twitter">Я установил Android-приложение Автобусы СПб! Оно показывает, где находятся автобусы/трамваи/троллейбусы Питера. http://goo.gl/IwseF</string>
+    <string name="share_cancel_title">Сообщение не опубликовано</string>
+    <string name="share_cancel_message">При публикации сообщение произошла ошибка. Проверьте ваше подключение к сети.</string>
+    <string name="share_success">Сообщение опубликовано. Спасибо, что рассказываете друзьям о Автобусах СПб! Реклама отключена на две недели.</string>
+    <string name="twitter_get_pin_title">Получите номер</string>
+    <string name="twitter_get_pin_message">Авторизируйтесь сайте Твиттера и скопируйте номер</string>
+    <string name="twitter_get_pin_continue_btn">Далее</string>
+    <string name="twitter_enter_pin_title">Введите номер</string>
+    <string name="twitter_enter_pin_message">Вставьте номер в поле</string>
+    <string name="twitter_enter_pin_get_btn">Получить номер</string>
+    <string name="send_with">Отправить с помощью</string>
+    <string name="app_id">178239292327584</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Отменить</string>
+    <string name="close">Закрыть</string>
+    <string name="connection_error_title">Ошибка соединения</string>
+    <string name="connection_error_message">При загрузке данных произошла ошибка. Проверьте ваше подключение к сети.</string>
+    <string name="velocity">Скорость: </string>
+    <string name="km">км/час</string>
+    <string name="market_deny">Невозможно открыть Google Play, пожалуйста, уставите приложение Google Play</string>
+    <string name="purchase_cancel">Покупка была отменена. Возможно кредитная карта недействительна.</string>
+    <string name="twitter_auth">Авторизация Twitter</string>
+    
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="red">#ff0000</color>
+    <color name="blue">#7F33b5e5</color>
+    <color name="trans">#00ffffff</color>
+    <color name="menu_bg">#454545</color>
+    <color name="internet_deny">#d02424</color>
+    <color name="bus" >#00adef</color>
+    <color name="trolley" >#70cca1</color>
+    <color name="ship" >#ff6600</color>
+    <color name="tram" >#f17171</color>
+    <color name="tram_ticket" >#f08a8a</color>
+    <color name="trolley_ticket" >#8fd9b6</color>
+    <color name="bus_ticket" >#44bdeb</color>
+    <color name="ship_ticket" >#fc7f2b</color>
+    <color name="yellow">#f9d278</color>
+
+</resources>
