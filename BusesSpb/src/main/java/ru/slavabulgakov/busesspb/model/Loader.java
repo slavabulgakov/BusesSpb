@@ -1,14 +1,13 @@
 package ru.slavabulgakov.busesspb.model;
 
-import java.util.ArrayList;
-import ru.slavabulgakov.busesspb.Files;
-
-import android.util.Log;
-
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+
+import java.util.ArrayList;
+
+import ru.slavabulgakov.busesspb.Files;
 
 public class Loader {
 	
@@ -75,24 +74,24 @@ public class Loader {
 				
 				_state = State.netLoading;
 				_listener.staticLoaded(Loader.this);
-				
-				StringRequest request = new StringRequest(_container.getUrlString(), new Response.Listener<String>() {
 
-					@Override
-					public void onResponse(String response) {
-						_container.handler(response);
-						_state = State.complete;
-						_listener.netLoaded(Loader.this);
-						_cache();
-					}
-				}, new Response.ErrorListener() {
+                Request request = (Request)FacadeLoader.createRequest(_container.isJson(), _container.getUrlString(), new FacadeLoader.Listener() {
 
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						_listener.netError(Loader.this);
-					}
-					
-				});
+                            @Override
+                            public void onResponse(Object obj) {
+                                _container.handler(obj);
+                                _state = State.complete;
+                                _listener.netLoaded(Loader.this);
+                                _cache();
+                            }
+                        }, new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                _listener.netError(Loader.this);
+                            }
+                        }
+                );
 				_queue.add(request);
 			}
 		}).start();

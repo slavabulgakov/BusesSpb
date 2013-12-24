@@ -11,6 +11,7 @@ public class LoaderContainer implements Serializable {
 	private String _urlString;
 	private String _staticFileName;
 	private String _cacheFileName;
+    protected boolean _isJson;
 	protected ArrayList<Object> _data;
 	
 	public LoaderContainer(String urlString, String staticFileName, String cacheFileName) {
@@ -45,4 +46,8 @@ public class LoaderContainer implements Serializable {
 		}
 		_data = data;
 	}
+
+    public boolean isJson() {
+        return _isJson;
+    }
 }
