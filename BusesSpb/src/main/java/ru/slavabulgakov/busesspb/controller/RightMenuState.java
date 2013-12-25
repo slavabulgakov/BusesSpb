@@ -1,15 +1,15 @@
 package ru.slavabulgakov.busesspb.controller;
 
-import java.util.TimerTask;
-
 import android.location.Location;
 
+import java.util.TimerTask;
+
 import ru.slavabulgakov.busesspb.controls.RightMenu;
+import ru.slavabulgakov.busesspb.model.ForecastsContainer;
 import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.RightMenuModel;
 import ru.slavabulgakov.busesspb.model.RoutesNamesLoaderContainer;
 import ru.slavabulgakov.busesspb.model.StationsContainer;
-import ru.slavabulgakov.busesspb.paths.Forecasts;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
@@ -37,20 +37,18 @@ public class RightMenuState extends State {
 		if (_stationId == null) {
 			loadStations();
 		} else {
+            _menu().setLoading();
 			loadForecasts();
 		}
 	}
 	
 	public void loadForecasts() {
-		_menu().setLoading();
 		Loader loader = _menuModel().getLoader(RoutesNamesLoaderContainer.class);
 		if (loader == null) {
 			_menuModel().loadForContainer(new RoutesNamesLoaderContainer(), _controller);
 		} else {
 			if (loader.getState().getValue() > Loader.State.staticLoading.getValue()) {
 				setTimerTask(new UpdateMenuContentTimerTask());
-			} else {
-				_menuModel().loadForContainer(new RoutesNamesLoaderContainer(), _controller);
 			}
 		}
 	}
@@ -63,8 +61,6 @@ public class RightMenuState extends State {
 		} else {
 			if (loader.getState().getValue() > Loader.State.staticLoading.getValue()) {
 				_findNearblyStations();
-			} else {
-				_menuModel().loadForContainer(new StationsContainer(), _controller);
 			}
 		}
 	}
@@ -82,37 +78,27 @@ public class RightMenuState extends State {
 		_menu().loadNearblyStations(nearblyStations);
 	}
 	
-	private void _routesNamesLoaded() {
-		// обновляем
-		if (_menuModel().isForecastsLoaded()) {
-			_menu().loadForecasts(_menuModel().getLastLoadedForecasts());
-		} else if (!_menuModel().isForecastsLoading()) {
-			setTimerTask(new UpdateMenuContentTimerTask());
-		}
-	}
-	
 	public void staticLoaded(Loader loader) {
 		if (loader.getContainer().getClass() == StationsContainer.class) {
 			_findNearblyStations();
 		} else if (loader.getContainer().getClass() == RoutesNamesLoaderContainer.class) {
-			_routesNamesLoaded();
-		}
+			loadForecasts();
+		} else if (loader.getContainer().getClass() == ForecastsContainer.class) {
+            _menu().setLoaded();
+            _menu().loadForecasts(loader.getContainer().getData());
+        }
 	}
 	
-	public void forecastsLoaded(Forecasts forecasts) {
-		if (_menuModel().getLoader(RoutesNamesLoaderContainer.class).getState().getValue() > Loader.State.staticLoading.getValue()) {
-			_menu().setLoaded();
-			_menu().loadForecasts(forecasts);
-		}
-	}
-
 	class UpdateMenuContentTimerTask extends TimerTask {
 		
 		@Override
 		public void run() {
-			if (!_menuModel().isForecastsLoading()) {
-				_menuModel().loadForecastForStationId(_stationId);
-			}
+            Loader loader = _menuModel().getLoader(ForecastsContainer.class);
+            if (loader == null) {
+                _menuModel().loadForContainer(new ForecastsContainer(_stationId, _menuModel()), _controller);
+            } else {
+                loader.reload();
+            }
 		}
 
 	}

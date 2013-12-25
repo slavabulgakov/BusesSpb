@@ -1,16 +1,5 @@
 package ru.slavabulgakov.busesspb.controls;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import ru.slavabulgakov.busesspb.Animations;
-import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.controller.Controller;
-import ru.slavabulgakov.busesspb.model.Model;
-import ru.slavabulgakov.busesspb.paths.Forecast;
-import ru.slavabulgakov.busesspb.paths.Forecasts;
-import ru.slavabulgakov.busesspb.paths.Station;
-import ru.slavabulgakov.busesspb.paths.Stations;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +7,6 @@ import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,11 +24,20 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Locale;
+
+import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.paths.Forecast;
+import ru.slavabulgakov.busesspb.paths.Station;
+import ru.slavabulgakov.busesspb.paths.Stations;
+
 public class RightMenu extends LinearLayout {
 	private TextView _title;
 	private Model _model;
 	private ListView _listView;
-	private Forecasts _forecasts;
 	private Stations _nearblyStations;
 	private SimpleDateFormat _format;
 	private RelativeLayout _progressBar;
@@ -50,6 +47,7 @@ public class RightMenu extends LinearLayout {
 	private ListView _stationListView;
 	private LinearLayout _rightMenuLayout;
 	private Handler _handler;
+    private ArrayList<Object> _forecasts;
 	
 	private Handler _getHandler() {
 		if (_handler == null) {
@@ -260,7 +258,7 @@ public class RightMenu extends LinearLayout {
 		});
 	}
 	
-	public void loadForecasts(Forecasts forecasts) {
+	public void loadForecasts(ArrayList<Object> forecasts) {
 		_forecasts = forecasts;
 		_listView.setAdapter(new ListAdapter() {
 			
@@ -313,7 +311,7 @@ public class RightMenu extends LinearLayout {
 					_setViewHolder(convertView);
 				}
 				
-				Forecast forecast = _forecasts.get(position);
+				Forecast forecast = (Forecast)_forecasts.get(position);
 				
 				TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
 				vh.rightText.setText(_format.format(forecast.time));

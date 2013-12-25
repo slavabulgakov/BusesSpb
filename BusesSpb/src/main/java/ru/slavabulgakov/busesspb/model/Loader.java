@@ -54,7 +54,9 @@ public class Loader {
 	}
 	
 	private void _cache() {
-		Files.saveToFile(_container.getData(), _container.getCacheFileName(), _model);
+        if (_container.getCacheFileName() != null) {
+            Files.saveToFile(_container.getData(), _container.getCacheFileName(), _model);
+        }
 	}
 
 	public void load() {
@@ -63,17 +65,22 @@ public class Loader {
 			@Override
 			public void run() {
 				_state = State.staticLoading;
-				@SuppressWarnings("unchecked")
-				ArrayList<Object> data = (ArrayList<Object>)Files.loadFromFile(_container.getCacheFileName(), _model);
+                ArrayList<Object> data = null;
+                if (_container.getCacheFileName() != null) {
+                    data = (ArrayList<Object>)Files.loadFromFile(_container.getCacheFileName(), _model);
+                }
 				if (data == null) {
-					ArrayList<String> strings = Files.stringsArrayFromFile(_container.getStaticFileName(), _model);
-					_container.handler(strings);
+                    if (_container.getStaticFileName() != null) {
+                        ArrayList<String> strings = Files.stringsArrayFromFile(_container.getStaticFileName(), _model);
+                        _container.handler(strings);
+                        _listener.staticLoaded(Loader.this);
+                    }
 				} else {
 					_container.loadData(data);
+                    _listener.staticLoaded(Loader.this);
 				}
 				
 				_state = State.netLoading;
-				_listener.staticLoaded(Loader.this);
 
                 Request request = (Request)FacadeLoader.createRequest(_container.isJson(), _container.getUrlString(), new FacadeLoader.Listener() {
 
@@ -96,4 +103,10 @@ public class Loader {
 			}
 		}).start();
 	}
+
+    public void reload() {
+        if (_state == State.complete) {
+            load();
+        }
+    }
 }

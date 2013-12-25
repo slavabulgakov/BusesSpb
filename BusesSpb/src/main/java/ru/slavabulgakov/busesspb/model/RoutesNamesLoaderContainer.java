@@ -63,9 +63,6 @@ public class RoutesNamesLoaderContainer extends LoaderContainer {
 			
 			data.add(routeName);
 		}
-		if (_data != null) {
-			_data.clear();
-		}
 		_data = data;
 	}
 }

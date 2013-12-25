@@ -1,20 +1,12 @@
 package ru.slavabulgakov.busesspb;
 
-import com.flurry.android.FlurryAgent;
-
-import ru.slavabulgakov.busesspb.controller.Controller;
-import ru.slavabulgakov.busesspb.model.Model;
-import ru.slavabulgakov.busesspb.util.IabHelper;
-import ru.slavabulgakov.busesspb.util.IabResult;
-import ru.slavabulgakov.busesspb.util.Inventory;
-import ru.slavabulgakov.busesspb.util.IabHelper.OnIabSetupFinishedListener;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.res.Configuration;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -22,6 +14,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.WebView;
+
+import com.flurry.android.FlurryAgent;
+
+import ru.slavabulgakov.busesspb.controller.Controller;
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.util.IabHelper;
+import ru.slavabulgakov.busesspb.util.IabHelper.OnIabSetupFinishedListener;
+import ru.slavabulgakov.busesspb.util.IabResult;
+import ru.slavabulgakov.busesspb.util.Inventory;
 
 public class BaseActivity extends FragmentActivity {
 	protected ProgressDialog _progressDialog;
@@ -36,8 +37,7 @@ public class BaseActivity extends FragmentActivity {
 		_model = (Model)getApplicationContext();
 		_model.setListener(Controller.getInstance());
 		_model.getModelPaths().setListener(Controller.getInstance());
-		_model.getRightMenuModel().setListener(Controller.getInstance());
-		
+
 		String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA26ADkNNKb3IcTfy7HT4ZOoumAZqj2xQ+OHUQuiliVukaq6gwhaLms6vMsDslCgsWhdc3II0c+lViuLcLRUQevPPZ0aVa0zdNbBQrMfbPSqlga1vE66iikcssdonrrL2S+uSqEu7Q8hlLP3Rbu+AV9vLdSUKfmG83EHecgRpyKeu0urhW2IXbVt8W61p5EykVCrcNpN8P2/8RhpOFv7iEMPGQEvX2VX+gLM6+bwH5jlFXcZusfv5sQTq5Kd5gcfk885LH21B3pZxXrhDIlVdryt+Bawk2zbeoANAGR9Gnk8B39uNU5EsMIFVFftElPayo4Gi4yVqVWRCPjYlTzgqMWQIDAQAB";
 		_helper = new IabHelper(this, base64EncodedPublicKey);
 		

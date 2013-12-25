@@ -37,7 +37,9 @@ public class LoaderContainer implements Serializable {
 	}
 	
 	public void handler(Object obj) {
-		
+        if (_data != null) {
+            _data.clear();
+        }
 	}
 	
 	public void loadData(ArrayList<Object> data) {

@@ -1,5 +1,30 @@
 package ru.slavabulgakov.busesspb.controller;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.flurry.android.FlurryAgent;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Marker;
+
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -14,43 +39,17 @@ import ru.slavabulgakov.busesspb.controls.MapController.Listener;
 import ru.slavabulgakov.busesspb.controls.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Model.MenuKind;
+import ru.slavabulgakov.busesspb.model.Model.OnLoadCompleteListener;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.Transport;
 import ru.slavabulgakov.busesspb.model.TransportKind;
-import ru.slavabulgakov.busesspb.model.Model.MenuKind;
-import ru.slavabulgakov.busesspb.model.Model.OnLoadCompleteListener;
-import ru.slavabulgakov.busesspb.paths.Forecasts;
 import ru.slavabulgakov.busesspb.paths.ModelPaths.OnPathLoaded;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
-import com.flurry.android.FlurryAgent;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Marker;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnKeyListener;
-import android.view.View.OnClickListener;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-
-public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener, ru.slavabulgakov.busesspb.model.RightMenuModel.Listener, ru.slavabulgakov.busesspb.model.Loader.Listener {
+public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener, ru.slavabulgakov.busesspb.model.Loader.Listener {
 	
 	private static volatile Controller _instance;
 	private Model _model;
@@ -456,13 +455,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	}
 
 	@Override
-	public void onForecastLoaded(Forecasts forecasts) {
-		if (_state.getClass() == RightMenuState.class) {
-			((RightMenuState)_state).forecastsLoaded(forecasts);
-		}
-	}
-
-	@Override
 	public void staticLoaded(Loader loader) {
 		if (_state.getClass() == RightMenuState.class) {
 			RightMenuState state = (RightMenuState)_state;
@@ -472,8 +464,10 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void netLoaded(Loader loader) {
-		// TODO Auto-generated method stub
-		
+        if (_state.getClass() == RightMenuState.class) {
+            RightMenuState state = (RightMenuState)_state;
+            state.staticLoaded(loader);
+        }
 	}
 
 	@Override
