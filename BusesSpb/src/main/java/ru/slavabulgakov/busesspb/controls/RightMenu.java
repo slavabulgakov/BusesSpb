@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,7 +33,7 @@ import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class RightMenu extends LinearLayout {
+public class RightMenu extends LinearLayout implements View.OnClickListener {
 	private TextView _title;
 	private Model _model;
 	private ListView _listView;
@@ -45,6 +44,8 @@ public class RightMenu extends LinearLayout {
 	private Button _stationButton;
 	private ProgressBar _stationProgressBar;
 	private ListView _stationListView;
+    private RelativeLayout _stationLayout;
+    private Button _stationsBackButton;
 	private LinearLayout _rightMenuLayout;
 	private Handler _handler;
     private ArrayList<Object> _forecasts;
@@ -64,11 +65,11 @@ public class RightMenu extends LinearLayout {
     	double delta = 100;
     	if (percent > 0) {
         	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)getLayoutParams();
-        	lpRight.setMargins(0, 0, (int)(_model.dpToPx(-200)), 0);
+        	lpRight.setMargins(0, 0, (int)(_model.dpToPx(-200)), lpRight.bottomMargin);
 	    	setLayoutParams(lpRight);
 		} else {
 			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
-	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(percent))), 0);
+	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(percent))), lp.bottomMargin);
 	    	setLayoutParams(lp);
 		}
     }
@@ -99,38 +100,11 @@ public class RightMenu extends LinearLayout {
 		_stationProgressBar = (ProgressBar)findViewById(R.id.stationProgressBar);
 		_stationProgressBar.setVisibility(View.GONE);
 		_stationListView = (ListView)findViewById(R.id.stationListView);
-		_stationListView.setVisibility(View.GONE);
-		_stationButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				_stationButton.setVisibility(View.GONE);
-				_stationProgressBar.setVisibility(View.VISIBLE);
-				TranslateAnimation animation = new TranslateAnimation(0, 0, -_model.dpToPx(100), 0);
-				_stationListView.setVisibility(View.VISIBLE);
-				animation.setDuration(5000);
-				animation.setAnimationListener(new AnimationListener() {
-					
-					@Override
-					public void onAnimationStart(Animation animation) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void onAnimationEnd(Animation animation) {
-						
-					}
-				});
-				_rightMenuLayout.startAnimation(animation);
-			}
-		});
+        _stationLayout = (RelativeLayout)findViewById(R.id.stationLayout);
+        _stationLayout.setVisibility(View.GONE);
+		_stationButton.setOnClickListener(this);
+        _stationsBackButton = (Button)findViewById(R.id.stationsBack);
+        _stationsBackButton.setOnClickListener(this);
 	}
 
 	public RightMenu(Context context) {
@@ -363,4 +337,40 @@ public class RightMenu extends LinearLayout {
 			}
 		});
 	}
+
+    @Override
+    public void onClick(View v) {
+        if (v == _stationButton) {
+            LinearLayout.LayoutParams lp = (LayoutParams) _rightMenuLayout.getLayoutParams();
+            _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp.width, getHeight()));
+            _stationButton.setVisibility(View.GONE);
+            _stationProgressBar.setVisibility(View.VISIBLE);
+            _stationLayout.setVisibility(View.VISIBLE);
+            TranslateAnimation animation = new TranslateAnimation(0, 0, -(getHeight() - _stationButton.getHeight() - _model.dpToPx(30)), 0);
+            animation.setDuration(5000);
+            _rightMenuLayout.startAnimation(animation);
+        } else if (v == _stationsBackButton) {
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight() - _stationButton.getHeight() - _model.dpToPx(30)));
+            animation.setDuration(5000);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    _stationButton.setVisibility(View.VISIBLE);
+                    _stationLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _stationLayout.setVisibility(GONE);
+                        }
+                    });
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            _rightMenuLayout.startAnimation(animation);
+        }
+    }
 }

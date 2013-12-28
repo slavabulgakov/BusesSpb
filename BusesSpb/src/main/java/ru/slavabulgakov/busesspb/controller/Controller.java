@@ -332,7 +332,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			_mainActivity().updateFilterButtons();
 			
 			
-			{// ���������� ����������
+			{
 				if (!isOpen) {
 					_mainActivity().keyboardTurnOff();
 				}
@@ -472,7 +472,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void netError(Loader loader) {
-		// TODO Auto-generated method stub
-		
+		if (_state.getClass() != NetCheckState.class) {
+            switchToState(new NetCheckState());
+        }
 	}
 }

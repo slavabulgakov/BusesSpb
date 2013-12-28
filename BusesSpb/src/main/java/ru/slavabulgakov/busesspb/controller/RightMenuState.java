@@ -66,6 +66,9 @@ public class RightMenuState extends State {
 	}
 	
 	private void _findNearblyStations() {
+        if (_location == null) {
+            return;
+        }
 		double epsilon = .005;
 		Loader loader = _menuModel().getLoader(StationsContainer.class);
 		Stations nearblyStations = new Stations();
