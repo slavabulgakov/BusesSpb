@@ -1,8 +1,5 @@
 package ru.slavabulgakov.busesspb.controls;
 
-import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.model.Model;
-import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -13,6 +10,10 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
+
+import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 
 public class RootView extends RelativeLayout {
 	
@@ -62,7 +63,7 @@ public class RootView extends RelativeLayout {
 		lp.leftMargin = (int)x;
 		lp.rightMargin = -(int)x;
 		setLayoutParams(lp);
-		_onMove();
+        _listener.onMove((double)_getX() / (double)_model.dpToPx(_menuWidth));
 	}
 	
 	@SuppressLint("Override")
@@ -84,10 +85,6 @@ public class RootView extends RelativeLayout {
 	public RootView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		_load(context, attrs);
-	}
-	
-	private void _onMove() {
-		_listener.onMove((double)_getX() / (double)_model.dpToPx(_menuWidth));
 	}
 	
 	@SuppressLint("NewApi")

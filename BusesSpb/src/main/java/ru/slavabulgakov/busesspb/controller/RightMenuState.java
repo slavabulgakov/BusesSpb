@@ -16,10 +16,9 @@ import ru.slavabulgakov.busesspb.paths.Stations;
 public class RightMenuState extends State {
 	
 	private String _stationId;
-	private Location _location;
-	
-	public RightMenuState(String stationId) {
-		_stationId = stationId;
+
+	public RightMenuState() {
+
 	}
 	
 	private RightMenu _menu() {
@@ -33,13 +32,10 @@ public class RightMenuState extends State {
 	@Override
 	public void start() {
 		super.start();
-		
-		if (_stationId == null) {
-			loadStations();
-		} else {
-            _menu().setLoading();
-			loadForecasts();
-		}
+
+        _stationId = (String)_controller.getModel().getData("stationId");
+        _menu().setLoading();
+        loadForecasts();
 	}
 	
 	public void loadForecasts() {
@@ -53,38 +49,8 @@ public class RightMenuState extends State {
 		}
 	}
 	
-	public void loadStations() {
-		_location = _controller.getMainActivity().getMapController().getMap().getMyLocation();
-		Loader loader = _menuModel().getLoader(StationsContainer.class);
-		if (loader == null) {
-			_menuModel().loadForContainer(new StationsContainer(), _controller);
-		} else {
-			if (loader.getState().getValue() > Loader.State.staticLoading.getValue()) {
-				_findNearblyStations();
-			}
-		}
-	}
-	
-	private void _findNearblyStations() {
-        if (_location == null) {
-            return;
-        }
-		double epsilon = .005;
-		Loader loader = _menuModel().getLoader(StationsContainer.class);
-		Stations nearblyStations = new Stations();
-		for (Object obj: loader.getContainer().getData()) {
-			Station station = (Station)obj;
-			if (Math.abs(_location.getLatitude() - station.point.getLatlng().latitude) < epsilon && Math.abs(_location.getLongitude() - station.point.getLatlng().longitude) < epsilon) {
-				nearblyStations.add(station);
-			}
-		}
-		_menu().loadNearblyStations(nearblyStations);
-	}
-	
 	public void staticLoaded(Loader loader) {
-		if (loader.getContainer().getClass() == StationsContainer.class) {
-			_findNearblyStations();
-		} else if (loader.getContainer().getClass() == RoutesNamesLoaderContainer.class) {
+		if (loader.getContainer().getClass() == RoutesNamesLoaderContainer.class) {
 			loadForecasts();
 		} else if (loader.getContainer().getClass() == ForecastsContainer.class) {
             _menu().setLoaded();

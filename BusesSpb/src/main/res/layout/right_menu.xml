@@ -56,18 +56,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <ListView
-            android:id="@+id/stationListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/blue"
-            android:layout_marginBottom="50dp" />
-
-        <ProgressBar
-            android:id="@+id/stationProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" />
 
         <Button
             android:id="@+id/stationsBack"
@@ -77,6 +65,19 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+
+        <ListView
+            android:id="@+id/stationListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/blue" />
+
+        <ProgressBar
+            android:id="@+id/stationProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -103,10 +104,10 @@
             android:layout_height="wrap_content" >
 
             <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
 

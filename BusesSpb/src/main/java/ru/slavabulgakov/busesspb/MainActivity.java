@@ -91,6 +91,7 @@ public class MainActivity extends BaseActivity {
 		
 		_rightMenu = (RightMenu)findViewById(R.id.rightMenu);
 		_rightMenu.setModel(_model);
+        _rightMenu.setListener(Controller.getInstance());
 		
 		_internetDenyImageButtonController = new InternetDenyImageButtonController((ImageButton)findViewById(R.id.internetDeny), _model, this);
 		

@@ -49,6 +49,16 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 	private LinearLayout _rightMenuLayout;
 	private Handler _handler;
     private ArrayList<Object> _forecasts;
+
+    public interface Listener {
+        void onClickStationsButton();
+        void onClickBackButton();
+    }
+
+    private Listener _listener;
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
 	
 	private Handler _getHandler() {
 		if (_handler == null) {
@@ -60,18 +70,29 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 	public void setModel(Model model) {
 		_model = model;
 	}
-	
-	public void move(double percent) {
+
+    private double _prevPosition;
+	public void move(double position) {
     	double delta = 100;
-    	if (percent > 0) {
+        double direction = position - _prevPosition;
+    	if (position > 0) {
         	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)getLayoutParams();
         	lpRight.setMargins(0, 0, (int)(_model.dpToPx(-200)), lpRight.bottomMargin);
 	    	setLayoutParams(lpRight);
 		} else {
 			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
-	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(percent))), lp.bottomMargin);
+	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(position))), lp.bottomMargin);
 	    	setLayoutParams(lp);
-		}
+
+//            if (direction < 0 && !_model.menuIsOpened(Model.MenuKind.Right)) {
+//                if (_model.getData("stationId") == null) {
+//                    changeToState(State.STATIONS, false);
+//                } else {
+//                    changeToState(State.FORECASTS, false);
+//                }
+//            }
+        }
+        _prevPosition = position;
     }
 	
 	public void setLoading() {
@@ -97,14 +118,14 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 		_rightMenuLayout = (LinearLayout)findViewById(R.id.rightMenuLayout);
 		_stationText = (EditText)findViewById(R.id.stationText);
 		_stationButton = (Button)findViewById(R.id.stationButton);
+        _stationButton.setVisibility(GONE);
 		_stationProgressBar = (ProgressBar)findViewById(R.id.stationProgressBar);
-		_stationProgressBar.setVisibility(View.GONE);
 		_stationListView = (ListView)findViewById(R.id.stationListView);
         _stationLayout = (RelativeLayout)findViewById(R.id.stationLayout);
-        _stationLayout.setVisibility(View.GONE);
 		_stationButton.setOnClickListener(this);
         _stationsBackButton = (Button)findViewById(R.id.stationsBack);
         _stationsBackButton.setOnClickListener(this);
+        _showBackButton(false);
 	}
 
 	public RightMenu(Context context) {
@@ -122,13 +143,15 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 		super(context, attrs, defStyle);
 		_load(context, attrs);
 	}
-	
+
 	public void loadNearblyStations(Stations stations) {
 		_nearblyStations = stations;
 		_getHandler().post(new Runnable() {
 			
 			@Override
 			public void run() {
+                _stationProgressBar.setVisibility(GONE);
+                _stationListView.setVisibility(VISIBLE);
 				_stationListView.setAdapter(new ListAdapter() {
 					
 					@Override
@@ -338,20 +361,60 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 		});
 	}
 
-    @Override
-    public void onClick(View v) {
-        if (v == _stationButton) {
-            LinearLayout.LayoutParams lp = (LayoutParams) _rightMenuLayout.getLayoutParams();
-            _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp.width, getHeight()));
-            _stationButton.setVisibility(View.GONE);
-            _stationProgressBar.setVisibility(View.VISIBLE);
-            _stationLayout.setVisibility(View.VISIBLE);
+    public enum State {
+        STATIONS,
+        FORECASTS
+    }
+
+    private State _state;
+    public State getState() {
+        return _state;
+    }
+    public void changeToState(State state, boolean animated) {
+        if (state != _state) {
+            _state = state;
+            switch (state) {
+                case FORECASTS:
+                    _changeToForecastsState(animated);
+                    break;
+
+                case STATIONS:
+                    _changeToStationsState(animated);
+                    break;
+            }
+        }
+    }
+
+    private void _showBackButton(boolean show) {
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_stationListView.getLayoutParams();
+        if (show) {
+            _stationsBackButton.setVisibility(VISIBLE);
+            lp.setMargins(0, 0, 0, _model.dpToPx(50));
+        } else {
+            _stationsBackButton.setVisibility(GONE);
+            lp.setMargins(0, 0, 0, 0);
+        }
+        _stationListView.setLayoutParams(lp);
+    }
+
+    private void _changeToStationsState(boolean animated) {
+        _showBackButton(_model.getData("stationId") != null);
+        _stationButton.setVisibility(View.GONE);
+        _stationProgressBar.setVisibility(View.VISIBLE);
+        _stationLayout.setVisibility(View.VISIBLE);
+        if (animated) {
+            LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
+            _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));
             TranslateAnimation animation = new TranslateAnimation(0, 0, -(getHeight() - _stationButton.getHeight() - _model.dpToPx(30)), 0);
-            animation.setDuration(5000);
+            animation.setDuration(500);
             _rightMenuLayout.startAnimation(animation);
-        } else if (v == _stationsBackButton) {
+        }
+    }
+
+    private  void  _changeToForecastsState(boolean animated) {
+        if (animated) {
             TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight() - _stationButton.getHeight() - _model.dpToPx(30)));
-            animation.setDuration(5000);
+            animation.setDuration(500);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {}
@@ -370,7 +433,22 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
                 @Override
                 public void onAnimationRepeat(Animation animation) {}
             });
+            _rightMenuLayout.setAnimation(animation);
             _rightMenuLayout.startAnimation(animation);
+        } else {
+            _stationButton.setVisibility(View.VISIBLE);
+            _stationLayout.setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == _stationButton) {
+            changeToState(State.STATIONS, true);
+            _listener.onClickStationsButton();
+        } else if (v == _stationsBackButton) {
+            changeToState(State.FORECASTS, true);
+            _listener.onClickBackButton();
         }
     }
 }

@@ -1,5 +1,23 @@
 package ru.slavabulgakov.busesspb.model;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
+
+import com.flurry.android.FlurryAgent;
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,32 +32,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.flurry.android.FlurryAgent;
-import com.flurry.org.codehaus.jackson.map.ser.StdSerializers.BooleanSerializer;
-import com.google.android.gms.maps.model.GroundOverlay;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import ru.slavabulgakov.busesspb.Files;
 import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.LoadTaskException;
 import ru.slavabulgakov.busesspb.Mercator;
-import ru.slavabulgakov.busesspb.ParserWebPageTask;
-import ru.slavabulgakov.busesspb.ShareModel;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
+import ru.slavabulgakov.busesspb.ParserWebPageTask;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
+import ru.slavabulgakov.busesspb.ShareModel;
 import ru.slavabulgakov.busesspb.paths.ModelPaths;
-import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
 
 public class Model extends Application {
 	

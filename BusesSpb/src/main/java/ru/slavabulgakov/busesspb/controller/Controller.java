@@ -36,7 +36,9 @@ import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.MainActivity;
 import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.controls.MapController.Listener;
+import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.controls.RootView.OnActionListener;
+import ru.slavabulgakov.busesspb.controls.TicketsTray;
 import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
@@ -49,7 +51,7 @@ import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, ru.slavabulgakov.busesspb.controls.TicketsTray.Listener, ru.slavabulgakov.busesspb.model.Loader.Listener {
+public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, TicketsTray.Listener, Loader.Listener, RightMenu.Listener {
 	
 	private static volatile Controller _instance;
 	private Model _model;
@@ -66,6 +68,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	}
 	
 	public void switchToState(State state) {
+        Log.d("switchToState", state.toString());
 		if (_state != null) {
 			if (state.getClass() == _state.getClass()) {
 				return;
@@ -354,11 +357,17 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 					FlurryAgent.logEvent(FlurryConstants.selectedTransportModeIsOff);
 				}
 			}
-		}
+		} else if (kind == MenuKind.Right) {
+            if (isOpen) {
+                if (_mainActivity().getRightMenu().getState() == RightMenu.State.FORECASTS) {
+                    switchToState(new RightMenuState());
+                } else {
+                    switchToState(new RightMenuStationsState());
+                }
+            }
+        }
 		if (!isOpen) {
 			switchToState(new MapState());
-		} else {
-			switchToState(new RightMenuState(null));
 		}
 	}
 
@@ -431,7 +440,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
 		Station station = _model.getModelPaths().getStationByMarker(marker);
 		_mainActivity().getRightMenu().setTitle(station.name);
-		switchToState(new RightMenuState(station.id));
+        _model.setData("stationId", station.id);
+        _mainActivity().getRightMenu().changeToState(RightMenu.State.FORECASTS, false);
 	}
 	
 	@Override
@@ -459,6 +469,9 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		if (_state.getClass() == RightMenuState.class) {
 			RightMenuState state = (RightMenuState)_state;
 			state.staticLoaded(loader);
+        } else if (_state.getClass() == RightMenuStationsState.class) {
+            RightMenuStationsState state = (RightMenuStationsState)_state;
+            state.staticLoaded(loader);
         }
 	}
 
@@ -476,4 +489,14 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
             switchToState(new NetCheckState());
         }
 	}
+
+    @Override
+    public void onClickStationsButton() {
+        switchToState(new RightMenuStationsState());
+    }
+
+    @Override
+    public void onClickBackButton() {
+        switchToState(new RightMenuState());
+    }
 }
