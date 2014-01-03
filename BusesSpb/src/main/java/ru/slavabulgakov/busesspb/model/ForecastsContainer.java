@@ -17,11 +17,17 @@ import ru.slavabulgakov.busesspb.paths.Forecast;
 public class ForecastsContainer extends LoaderContainer {
 
     private RightMenuModel _rightMenuModel;
+    private String _stationId;
 
     public ForecastsContainer(String stationId, RightMenuModel rightMenuModel) {
         super("http://transport.orgp.spb.ru/Portal/transport/internalapi/forecast/bystop?stopID=" + stationId, null, null);
+        _stationId = stationId;
         _rightMenuModel = rightMenuModel;
         _isJson = true;
+    }
+
+    public String getStationId() {
+        return _stationId;
     }
 
     @Override
@@ -48,5 +54,10 @@ public class ForecastsContainer extends LoaderContainer {
             e.printStackTrace();
         }
         _data = forecasts;
+    }
+
+    @Override
+    public boolean isEqual(LoaderContainer loaderContainer) {
+        return ((ForecastsContainer)loaderContainer).getStationId() == _stationId;
     }
 }

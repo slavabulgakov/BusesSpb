@@ -16,7 +16,6 @@
             	android:layout_height="wrap_content"
             	android:background="@drawable/text_view"
             	android:ems="10"
-            	android:enabled="false"
             	android:hint="@string/states_placeholder"
             	android:minHeight="40dp"
             	android:paddingBottom="5dp"
@@ -68,9 +67,11 @@
 
         <ListView
             android:id="@+id/stationListView"
+            android:dividerHeight="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/blue" />
+            android:background="@color/menu_bg"
+            android:layoutAnimation="@anim/layout_bottom_to_top_slide"/>
 
         <ProgressBar
             android:id="@+id/stationProgressBar"
@@ -86,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="0dp"
-        android:background="@color/red">
+        android:background="@color/menu_bg">
 
         <TextView
             android:id="@+id/rightMenuTitle"
@@ -113,8 +114,10 @@
 
         <ListView
             android:id="@+id/rightMenuListView"
+            android:dividerHeight="10dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layoutAnimation="@anim/layout_bottom_to_top_slide" />
 
     </LinearLayout>
 

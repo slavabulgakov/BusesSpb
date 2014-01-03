@@ -46,18 +46,18 @@ public class RightMenuModel {
 		return _loaders;
 	}
 	public void loadForContainer(LoaderContainer container, Loader.Listener listener) {
-        Loader loader = null;
-		for (Loader loader_ : _getLoaders()) {
-			if (loader_.getContainer().getClass() == container.getClass()) {
-				loader = loader_;
-				break;
-			}
-		}
+        Loader loader = getLoader(container.getClass());
+        boolean needNewLoader = false;
 		if (loader == null) {
+            needNewLoader = true;
+		} else if (!loader.getContainer().isEqual(container)) {
+            needNewLoader = true;
+        }
+        if (needNewLoader) {
             loader = new Loader(container, _model, _getQueue());
             loader.setListener(listener);
             _getLoaders().add(loader);
-		}
+        }
         loader.load();
 	}
 	

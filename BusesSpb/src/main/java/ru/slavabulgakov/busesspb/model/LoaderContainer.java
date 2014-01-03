@@ -52,4 +52,8 @@ public class LoaderContainer implements Serializable {
     public boolean isJson() {
         return _isJson;
     }
+
+    public boolean isEqual(LoaderContainer loaderContainer) {
+        return true;
+    }
 }

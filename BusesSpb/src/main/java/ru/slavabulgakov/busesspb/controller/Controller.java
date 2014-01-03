@@ -496,7 +496,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
     }
 
     @Override
-    public void onClickBackButton() {
+    public void willShowForecastsMenu() {
         switchToState(new RightMenuState());
     }
 }

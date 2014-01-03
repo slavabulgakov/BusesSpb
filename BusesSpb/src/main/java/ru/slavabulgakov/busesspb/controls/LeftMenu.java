@@ -1,10 +1,5 @@
 package ru.slavabulgakov.busesspb.controls;
 
-import ru.slavabulgakov.busesspb.Adapter;
-import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.controller.Controller;
-import ru.slavabulgakov.busesspb.model.Model;
-import ru.slavabulgakov.busesspb.model.TransportKind;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.InputType;
@@ -16,6 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
+import ru.slavabulgakov.busesspb.Adapter;
+import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.controller.Controller;
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.TransportKind;
 
 public class LeftMenu extends LinearLayout {
 	private Model _model;
@@ -81,12 +82,6 @@ public class LeftMenu extends LinearLayout {
 		
 		_menuShipFilter = (CheckButton)findViewById(R.id.menuShipFilter);
 		_menuShipFilter.setOnClickListener(Controller.getInstance());
-		
-//		if (_listView.getAdapter() == null) {
-//			Adapter adapter = new Adapter(context, _model);
-//			_listView.setAdapter(adapter);
-//			adapter.getFilter().filter(_editText.getText());
-//		}
 	}
 
 	public LeftMenu(Context context) {
@@ -109,7 +104,7 @@ public class LeftMenu extends LinearLayout {
     	double delta = 100;
     	if (percent > 0) {
     		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
-        	lp.setMargins((int)(_model.dpToPx(-delta + delta * percent)), 0, 0, 0);
+        	lp.setMargins(_model.dpToPx(-delta + delta * percent), 0, 0, 0);
         	setLayoutParams(lp);
 		}
     }

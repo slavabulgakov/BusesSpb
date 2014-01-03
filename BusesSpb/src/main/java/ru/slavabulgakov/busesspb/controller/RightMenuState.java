@@ -62,12 +62,7 @@ public class RightMenuState extends State {
 		
 		@Override
 		public void run() {
-            Loader loader = _menuModel().getLoader(ForecastsContainer.class);
-            if (loader == null) {
-                _menuModel().loadForContainer(new ForecastsContainer(_stationId, _menuModel()), _controller);
-            } else {
-                loader.reload();
-            }
+            _menuModel().loadForContainer(new ForecastsContainer(_stationId, _menuModel()), _controller);
 		}
 
 	}

@@ -8,11 +8,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,7 +35,7 @@ import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class RightMenu extends LinearLayout implements View.OnClickListener {
+public class RightMenu extends LinearLayout implements View.OnClickListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener, TextView.OnEditorActionListener {
 	private TextView _title;
 	private Model _model;
 	private ListView _listView;
@@ -50,9 +52,28 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 	private Handler _handler;
     private ArrayList<Object> _forecasts;
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Station station = _nearblyStations.get(position);
+        setTitle(station.name);
+        _model.setData("stationId", station.id);
+        changeToState(State.FORECASTS, true);
+        _listener.willShowForecastsMenu();
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        int d = 0;
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        return false;
+    }
+
     public interface Listener {
         void onClickStationsButton();
-        void onClickBackButton();
+        void willShowForecastsMenu();
     }
 
     private Listener _listener;
@@ -71,28 +92,17 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 		_model = model;
 	}
 
-    private double _prevPosition;
 	public void move(double position) {
     	double delta = 100;
-        double direction = position - _prevPosition;
     	if (position > 0) {
         	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)getLayoutParams();
-        	lpRight.setMargins(0, 0, (int)(_model.dpToPx(-200)), lpRight.bottomMargin);
+        	lpRight.setMargins(0, 0, (_model.dpToPx(-200)), lpRight.bottomMargin);
 	    	setLayoutParams(lpRight);
 		} else {
 			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
-	    	lp.setMargins(0, 0, (int)(_model.dpToPx(-delta + delta * Math.abs(position))), lp.bottomMargin);
+	    	lp.setMargins(0, 0, (_model.dpToPx(-delta + delta * Math.abs(position))), lp.bottomMargin);
 	    	setLayoutParams(lp);
-
-//            if (direction < 0 && !_model.menuIsOpened(Model.MenuKind.Right)) {
-//                if (_model.getData("stationId") == null) {
-//                    changeToState(State.STATIONS, false);
-//                } else {
-//                    changeToState(State.FORECASTS, false);
-//                }
-//            }
         }
-        _prevPosition = position;
     }
 	
 	public void setLoading() {
@@ -116,15 +126,25 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 		_format = new SimpleDateFormat("HH:mm", Locale.US);
 		_progressBar = (RelativeLayout)findViewById(R.id.rightMenuProgressBar);
 		_rightMenuLayout = (LinearLayout)findViewById(R.id.rightMenuLayout);
+
 		_stationText = (EditText)findViewById(R.id.stationText);
+        _stationText.setOnFocusChangeListener(this);
+        _stationText.setOnEditorActionListener(this);
+
 		_stationButton = (Button)findViewById(R.id.stationButton);
         _stationButton.setVisibility(GONE);
+        _stationButton.setOnClickListener(this);
+
 		_stationProgressBar = (ProgressBar)findViewById(R.id.stationProgressBar);
+
 		_stationListView = (ListView)findViewById(R.id.stationListView);
+        _stationListView.setOnItemClickListener(this);
+
         _stationLayout = (RelativeLayout)findViewById(R.id.stationLayout);
-		_stationButton.setOnClickListener(this);
+
         _stationsBackButton = (Button)findViewById(R.id.stationsBack);
         _stationsBackButton.setOnClickListener(this);
+
         _showBackButton(false);
 	}
 
@@ -155,26 +175,18 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 				_stationListView.setAdapter(new ListAdapter() {
 					
 					@Override
-					public void unregisterDataSetObserver(DataSetObserver arg0) {
-						// TODO Auto-generated method stub
-						
-					}
+					public void unregisterDataSetObserver(DataSetObserver arg0) {}
 					
 					@Override
-					public void registerDataSetObserver(DataSetObserver arg0) {
-						// TODO Auto-generated method stub
-						
-					}
+					public void registerDataSetObserver(DataSetObserver arg0) {}
 					
 					@Override
 					public boolean isEmpty() {
-						// TODO Auto-generated method stub
 						return false;
 					}
 					
 					@Override
 					public boolean hasStableIds() {
-						// TODO Auto-generated method stub
 						return false;
 					}
 					
@@ -204,10 +216,10 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 							_setViewHolder(convertView);
 						}
 						
-						Station station= _nearblyStations.get(position);
+						Station station = _nearblyStations.get(position);
 						
 						TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
-//						vh.rightText.setText(_format.format(forecast.time));
+						vh.rightText.setText("");
 						vh.leftText.setText(station.name);
 						Pair<Integer, Integer> res = vh.backgroundAndIconByKind(station.kind);
 						convertView.setBackgroundResource(res.first);
@@ -218,19 +230,16 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 					
 					@Override
 					public int getItemViewType(int arg0) {
-						// TODO Auto-generated method stub
 						return 0;
 					}
 					
 					@Override
 					public long getItemId(int arg0) {
-						// TODO Auto-generated method stub
 						return 0;
 					}
 					
 					@Override
 					public Object getItem(int arg0) {
-						// TODO Auto-generated method stub
 						return null;
 					}
 					
@@ -241,13 +250,11 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
 					
 					@Override
 					public boolean isEnabled(int position) {
-						// TODO Auto-generated method stub
-						return false;
+						return true;
 					}
 					
 					@Override
 					public boolean areAllItemsEnabled() {
-						// TODO Auto-generated method stub
 						return false;
 					}
 				});
@@ -446,9 +453,10 @@ public class RightMenu extends LinearLayout implements View.OnClickListener {
         if (v == _stationButton) {
             changeToState(State.STATIONS, true);
             _listener.onClickStationsButton();
+//            _stationText.requestFocus();
         } else if (v == _stationsBackButton) {
             changeToState(State.FORECASTS, true);
-            _listener.onClickBackButton();
+            _listener.willShowForecastsMenu();
         }
     }
 }
