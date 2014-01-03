@@ -7,24 +7,31 @@
         android:padding="10dp" >
 
     <RelativeLayout
+        android:id="@+id/stationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" >
+            android:layout_marginBottom="10dp"
+            android:id="@+id/relativeLayout">
+
             <EditText
-            	android:id="@+id/stationText"
-            	android:layout_width="match_parent"
-            	android:layout_height="wrap_content"
-            	android:background="@drawable/text_view"
-            	android:ems="10"
-            	android:hint="@string/states_placeholder"
-            	android:minHeight="40dp"
-            	android:paddingBottom="5dp"
-            	android:paddingLeft="10dp"
-            	android:paddingRight="10dp"
-            	android:paddingTop="5dp"
-            	android:layout_alignParentLeft="true"
-            	android:singleLine="true" />
-            
+                android:id="@+id/stationText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_view"
+                android:ems="10"
+                android:hint="@string/states_placeholder"
+                android:minHeight="40dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:layout_alignParentLeft="true"
+                android:singleLine="true" />
+
             <ImageButton
                 android:id="@+id/clearRouteText"
                 android:layout_width="wrap_content"
@@ -36,25 +43,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_margin="5dp" />
 
-            <Button android:id="@+id/stationButton"
-            	android:layout_width="match_parent"
-            	android:layout_height="wrap_content"
-            	android:background="@drawable/text_view"
-            	android:text="@string/states_placeholder"
-            	android:paddingLeft="10dp"
-            	android:paddingRight="10dp"
-            	android:minHeight="40dp"
-            	android:gravity="left|center_vertical"
-            	android:textColor="@android:color/darker_gray"
-            	android:textSize="20sp" />
-            
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/stationLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        </RelativeLayout>
 
         <Button
             android:id="@+id/stationsBack"
@@ -71,12 +60,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/menu_bg"
-            android:layoutAnimation="@anim/layout_bottom_to_top_slide"/>
+            android:layoutAnimation="@anim/layout_bottom_to_top_slide"
+            android:layout_below="@+id/relativeLayout" />
 
         <ProgressBar
             android:id="@+id/stationProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/relativeLayout"
             android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
@@ -88,6 +79,11 @@
         android:layout_height="match_parent"
         android:padding="0dp"
         android:background="@color/menu_bg">
+
+        <Button
+            android:id="@+id/forecastsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/rightMenuTitle"

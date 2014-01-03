@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +34,7 @@ import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class RightMenu extends LinearLayout implements View.OnClickListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener, TextView.OnEditorActionListener {
+public class RightMenu extends LinearLayout implements View.OnClickListener, AdapterView.OnItemClickListener {
 	private TextView _title;
 	private Model _model;
 	private ListView _listView;
@@ -43,7 +42,6 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	private SimpleDateFormat _format;
 	private RelativeLayout _progressBar;
 	private EditText _stationText;
-	private Button _stationButton;
 	private ProgressBar _stationProgressBar;
 	private ListView _stationListView;
     private RelativeLayout _stationLayout;
@@ -51,6 +49,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	private LinearLayout _rightMenuLayout;
 	private Handler _handler;
     private ArrayList<Object> _forecasts;
+    private Button _forecastsButton;
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -59,16 +58,6 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
         _model.setData("stationId", station.id);
         changeToState(State.FORECASTS, true);
         _listener.willShowForecastsMenu();
-    }
-
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        int d = 0;
-    }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        return false;
     }
 
     public interface Listener {
@@ -128,12 +117,6 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 		_rightMenuLayout = (LinearLayout)findViewById(R.id.rightMenuLayout);
 
 		_stationText = (EditText)findViewById(R.id.stationText);
-        _stationText.setOnFocusChangeListener(this);
-        _stationText.setOnEditorActionListener(this);
-
-		_stationButton = (Button)findViewById(R.id.stationButton);
-        _stationButton.setVisibility(GONE);
-        _stationButton.setOnClickListener(this);
 
 		_stationProgressBar = (ProgressBar)findViewById(R.id.stationProgressBar);
 
@@ -144,6 +127,9 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
         _stationsBackButton = (Button)findViewById(R.id.stationsBack);
         _stationsBackButton.setOnClickListener(this);
+
+        _forecastsButton = (Button)findViewById(R.id.forecastsButton);
+        _forecastsButton.setOnClickListener(this);
 
         _showBackButton(false);
 	}
@@ -406,13 +392,12 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
     private void _changeToStationsState(boolean animated) {
         _showBackButton(_model.getData("stationId") != null);
-        _stationButton.setVisibility(View.GONE);
         _stationProgressBar.setVisibility(View.VISIBLE);
         _stationLayout.setVisibility(View.VISIBLE);
         if (animated) {
             LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
             _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));
-            TranslateAnimation animation = new TranslateAnimation(0, 0, -(getHeight() - _stationButton.getHeight() - _model.dpToPx(30)), 0);
+            TranslateAnimation animation = new TranslateAnimation(0, 0, -(getHeight()/* - _stationText.getHeight()*/ - _model.dpToPx(20)), 0);
             animation.setDuration(500);
             _rightMenuLayout.startAnimation(animation);
         }
@@ -420,7 +405,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
     private  void  _changeToForecastsState(boolean animated) {
         if (animated) {
-            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight() - _stationButton.getHeight() - _model.dpToPx(30)));
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight()/* - _stationText.getHeight()*/ - _model.dpToPx(20)));
             animation.setDuration(500);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -428,7 +413,6 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    _stationButton.setVisibility(View.VISIBLE);
                     _stationLayout.post(new Runnable() {
                         @Override
                         public void run() {
@@ -443,20 +427,18 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
             _rightMenuLayout.setAnimation(animation);
             _rightMenuLayout.startAnimation(animation);
         } else {
-            _stationButton.setVisibility(View.VISIBLE);
             _stationLayout.setVisibility(GONE);
         }
     }
 
     @Override
     public void onClick(View v) {
-        if (v == _stationButton) {
-            changeToState(State.STATIONS, true);
-            _listener.onClickStationsButton();
-//            _stationText.requestFocus();
-        } else if (v == _stationsBackButton) {
+        if (v == _stationsBackButton) {
             changeToState(State.FORECASTS, true);
             _listener.willShowForecastsMenu();
+        } else {
+            changeToState(State.STATIONS, true);
+            _listener.onClickStationsButton();
         }
     }
 }
