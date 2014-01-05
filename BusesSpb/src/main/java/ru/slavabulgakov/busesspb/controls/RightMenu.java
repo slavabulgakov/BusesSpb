@@ -6,6 +6,8 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -29,12 +32,13 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.StationsAdapter;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.paths.Forecast;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class RightMenu extends LinearLayout implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class RightMenu extends LinearLayout implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher {
 	private TextView _title;
 	private Model _model;
 	private ListView _listView;
@@ -50,14 +54,33 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	private Handler _handler;
     private ArrayList<Object> _forecasts;
     private Button _forecastsButton;
+    private Context _context;
+    private ImageButton _clearButton;
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Station station = _nearblyStations.get(position);
+        Station station = ((StationsAdapter)_stationListView.getAdapter()).getItem(position);
         setTitle(station.name);
         _model.setData("stationId", station.id);
         changeToState(State.FORECASTS, true);
         _listener.willShowForecastsMenu();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        String text = s.toString();
+        ((StationsAdapter)_stationListView.getAdapter()).getFilter().filter(text);
+        if (text.length() > 0) {
+            _clearButton.setVisibility(View.VISIBLE);
+        } else {
+            _clearButton.setVisibility(View.GONE);
+        }
     }
 
     public interface Listener {
@@ -109,6 +132,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	}
 	
 	private void _load(Context context, AttributeSet attrs) {
+        _context = context;
 		View.inflate(context, R.layout.right_menu, this);
 		_title = (TextView)findViewById(R.id.rightMenuTitle);
 		_listView = (ListView)findViewById(R.id.rightMenuListView);
@@ -117,6 +141,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 		_rightMenuLayout = (LinearLayout)findViewById(R.id.rightMenuLayout);
 
 		_stationText = (EditText)findViewById(R.id.stationText);
+        _stationText.addTextChangedListener(this);
 
 		_stationProgressBar = (ProgressBar)findViewById(R.id.stationProgressBar);
 
@@ -130,6 +155,10 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
         _forecastsButton = (Button)findViewById(R.id.forecastsButton);
         _forecastsButton.setOnClickListener(this);
+
+        _clearButton = (ImageButton)findViewById(R.id.clearStationsText);
+        _clearButton.setVisibility(GONE);
+        _clearButton.setOnClickListener(this);
 
         _showBackButton(false);
 	}
@@ -158,92 +187,8 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 			public void run() {
                 _stationProgressBar.setVisibility(GONE);
                 _stationListView.setVisibility(VISIBLE);
-				_stationListView.setAdapter(new ListAdapter() {
-					
-					@Override
-					public void unregisterDataSetObserver(DataSetObserver arg0) {}
-					
-					@Override
-					public void registerDataSetObserver(DataSetObserver arg0) {}
-					
-					@Override
-					public boolean isEmpty() {
-						return false;
-					}
-					
-					@Override
-					public boolean hasStableIds() {
-						return false;
-					}
-					
-					@Override
-					public int getViewTypeCount() {
-						return 1;
-					}
-					
-					private void _setViewHolder(View view) {
-						TransportCellViewHolder vh = new TransportCellViewHolder();
-						vh.leftIcon = (ImageView)view.findViewById(R.id.listItemForecastKind);
-						vh.leftText = (TextView)view.findViewById(R.id.listItemForecastRouteName);
-						vh.rightText = (TextView)view.findViewById(R.id.listItemForecastTime);
-						vh.needInflate = false;
-						view.setTag(vh);
-					}
-					
-					@Override
-					public View getView(int position, View convertView, ViewGroup parent) {
-						LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-						if (convertView == null) {
-							convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
-							
-							_setViewHolder(convertView);
-						} else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
-							convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
-							_setViewHolder(convertView);
-						}
-						
-						Station station = _nearblyStations.get(position);
-						
-						TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
-						vh.rightText.setText("");
-						vh.leftText.setText(station.name);
-						Pair<Integer, Integer> res = vh.backgroundAndIconByKind(station.kind);
-						convertView.setBackgroundResource(res.first);
-						vh.leftIcon.setImageResource(res.second);
-						
-						return convertView;
-					}
-					
-					@Override
-					public int getItemViewType(int arg0) {
-						return 0;
-					}
-					
-					@Override
-					public long getItemId(int arg0) {
-						return 0;
-					}
-					
-					@Override
-					public Object getItem(int arg0) {
-						return null;
-					}
-					
-					@Override
-					public int getCount() {
-						return _nearblyStations.size();
-					}
-					
-					@Override
-					public boolean isEnabled(int position) {
-						return true;
-					}
-					
-					@Override
-					public boolean areAllItemsEnabled() {
-						return false;
-					}
-				});
+                _stationListView.setAdapter(new StationsAdapter(_context, _model, _nearblyStations));
+                ((StationsAdapter)_stationListView.getAdapter()).getFilter().filter("");
 			}
 		});
 	}
@@ -403,7 +348,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
         }
     }
 
-    private  void  _changeToForecastsState(boolean animated) {
+    private void _changeToForecastsState(boolean animated) {
         if (animated) {
             TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight()/* - _stationText.getHeight()*/ - _model.dpToPx(20)));
             animation.setDuration(500);
@@ -436,9 +381,11 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
         if (v == _stationsBackButton) {
             changeToState(State.FORECASTS, true);
             _listener.willShowForecastsMenu();
-        } else {
+        } else if (v == _forecastsButton) {
             changeToState(State.STATIONS, true);
             _listener.onClickStationsButton();
+        } else if (v == _clearButton) {
+            _stationText.setText("");
         }
     }
 }

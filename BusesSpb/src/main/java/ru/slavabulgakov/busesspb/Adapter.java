@@ -1,14 +1,5 @@
 package ru.slavabulgakov.busesspb;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import ru.slavabulgakov.busesspb.controls.TransportCellViewHolder;
-import ru.slavabulgakov.busesspb.model.Model;
-import ru.slavabulgakov.busesspb.model.Route;
-
 import android.app.Activity;
 import android.content.Context;
 import android.util.Pair;
@@ -20,29 +11,36 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import ru.slavabulgakov.busesspb.controls.TransportCellViewHolder;
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Route;
+
 public class Adapter extends ArrayAdapter<Route> {
 	private MyFilter _filter;
-	private List<Route> _filtredList = Collections.synchronizedList(new ArrayList<Route>());
 	Context _context;
 	Model _model;
 	LayoutInflater _inflater;
 	
 	public class MyFilter extends Filter {
 
-		ArrayList<Route> _data = null;
 		CharSequence _constraint;
 		
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
 			synchronized (this) {
-				_filtredList.clear();
 				@SuppressWarnings("unchecked")
 				ArrayList<Route>objects = (ArrayList<Route>)results.values;
+                notifyDataSetChanged();
+                clear();
 				if (objects != null) {
 					for (Route route : objects) {
-						_filtredList.add(route);
+						add(route);
 					}
-					notifyDataSetChanged();
+					notifyDataSetInvalidated();
 				}
 			}
 		}
@@ -70,57 +68,56 @@ public class Adapter extends ArrayAdapter<Route> {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
 			_constraint = constraint;
-			_data = new ArrayList<Route>();
+			ArrayList<Route> data = new ArrayList<Route>();
 			FilterResults filterResults = new FilterResults();
 			if (constraint != null) {
 				synchronized (this) {
 					for (Route route : _model.getAllRoutes()) {
 						if ((constraint.length() == 0 || route.routeNumber.toLowerCase().contains(constraint.toString().toLowerCase())) && _model.isEnabledFilterMenu(route.kind)) {
-							_data.add(route);
+							data.add(route);
 						}
 					}
 				}
 			}
-			
-			
-			Collections.sort(_data, new Comparator<Route>() {
 
-				@Override
-				public int compare(Route lhs, Route rhs) {
-					int left = 0;
-					int right = 0;
-					int result = 0;
-					
-					
-					left = lhs.routeNumber.length();
-					right = rhs.routeNumber.length();
-					result = left - right;
+			Collections.sort(data, new Comparator<Route>() {
 
-					
-					if (result == 0) {
-						left = _routeNumberToInt(lhs.routeNumber);
-						right = _routeNumberToInt(rhs.routeNumber);
-						result = left - right;
-					}
-					
-					
-					if (result == 0) {
-						result = lhs.routeNumber.compareToIgnoreCase(rhs.routeNumber);
-					}
-					 
-					if (result == 0) {
-						left = _model.enumKindToInt(lhs.kind);
-						right = _model.enumKindToInt(rhs.kind);
-						result = left - right;
-					}
-					return result;
-				}
-			});
+                @Override
+                public int compare(Route lhs, Route rhs) {
+                    int left = 0;
+                    int right = 0;
+                    int result = 0;
+
+
+                    left = lhs.routeNumber.length();
+                    right = rhs.routeNumber.length();
+                    result = left - right;
+
+
+                    if (result == 0) {
+                        left = _routeNumberToInt(lhs.routeNumber);
+                        right = _routeNumberToInt(rhs.routeNumber);
+                        result = left - right;
+                    }
+
+
+                    if (result == 0) {
+                        result = lhs.routeNumber.compareToIgnoreCase(rhs.routeNumber);
+                    }
+
+                    if (result == 0) {
+                        left = _model.enumKindToInt(lhs.kind);
+                        right = _model.enumKindToInt(rhs.kind);
+                        result = left - right;
+                    }
+                    return result;
+                }
+            });
 			
 			
 			synchronized (this) {
-				filterResults.values = _data;
-				filterResults.count = _data.size();
+				filterResults.values = data;
+				filterResults.count = data.size();
 			}
 			return filterResults;
 		}
@@ -139,15 +136,10 @@ public class Adapter extends ArrayAdapter<Route> {
 		_inflater = ((Activity)_context).getLayoutInflater();
 	}
 	
-	@Override
-	public Route getItem(int position) {
-		return _filtredList.get(position);
-	}
-
 	public void removeRoute(int position, View view) {
 		TransportCellViewHolder vh = (TransportCellViewHolder)view.getTag();
 		vh.needInflate = true;
-		_filtredList.remove(position);
+        remove(getItem(position));
 		notifyDataSetChanged();
 	}
 
@@ -163,12 +155,12 @@ public class Adapter extends ArrayAdapter<Route> {
 		
 		TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
 		
-		vh.leftText.setText(_filtredList.get(position).routeNumber);
-		Pair<Integer, Integer> res = vh.backgroundAndIconByKind(_filtredList.get(position).kind);
+		vh.leftText.setText(getItem(position).routeNumber);
+		Pair<Integer, Integer> res = vh.backgroundAndIconByKind(getItem(position).kind);
 		convertView.setBackgroundResource(res.first);
 		vh.leftIcon.setImageResource(res.second);
 		
-		Integer cost = _filtredList.get(position).cost;
+		Integer cost = getItem(position).cost;
 		TextView costTextView = vh.rightText;
 		ImageView currency = vh.rightIcon;
 		if (cost == null) {
@@ -191,11 +183,6 @@ public class Adapter extends ArrayAdapter<Route> {
 		vh.rightIcon = (ImageView)view.findViewById(R.id.currency);
 		vh.needInflate = false;
 		view.setTag(vh);
-	}
-
-	@Override
-	public int getCount() {
-		return _filtredList.size();
 	}
 
 	@Override
