@@ -66,6 +66,11 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		}
 		return _timer;
 	}
+
+    public void cancelTimer() {
+        _timer.cancel();
+        _timer = null;
+    }
 	
 	public void switchToState(State state) {
         Log.d("switchToState", state.toString());
