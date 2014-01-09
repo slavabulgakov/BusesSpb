@@ -73,15 +73,15 @@ public class Loader {
                     if (_container.getStaticFileName() != null) {
                         ArrayList<String> strings = Files.stringsArrayFromFile(_container.getStaticFileName(), _model);
                         _container.handler(strings);
+                        _state = State.netLoading;
                         _listener.staticLoaded(Loader.this);
                     }
 				} else {
 					_container.loadData(data);
+                    _state = State.netLoading;
                     _listener.staticLoaded(Loader.this);
 				}
 				
-				_state = State.netLoading;
-
                 Request request = (Request)FacadeLoader.createRequest(_container.isJson(), _container.getUrlString(), new FacadeLoader.Listener() {
 
                             @Override

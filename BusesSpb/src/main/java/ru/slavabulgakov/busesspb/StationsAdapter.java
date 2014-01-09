@@ -25,7 +25,6 @@ public class StationsAdapter extends ArrayAdapter<Station> {
 	private MyFilter _filter;
 	Context _context;
 	Model _model;
-	LayoutInflater _inflater;
     Stations _nearblyStations;
 
 	public class MyFilter extends Filter {
@@ -36,7 +35,8 @@ public class StationsAdapter extends ArrayAdapter<Station> {
 		protected void publishResults(CharSequence constraint, FilterResults results) {
 			synchronized (this) {
 				clear();
-				ArrayList<Station>objects = (ArrayList<Station>)results.values;
+                //noinspection unchecked
+                ArrayList<Station>objects = (ArrayList<Station>)results.values;
 				if (objects != null) {
 					for (Station station : objects) {
 						add(station);
@@ -61,14 +61,14 @@ public class StationsAdapter extends ArrayAdapter<Station> {
                         }
                     }
                 }
-			}
 
-            Collections.sort(data, new Comparator<Station>() {
-                @Override
-                public int compare(Station lhs, Station rhs) {
-                    return lhs.name.compareToIgnoreCase(rhs.name);
-                }
-            });
+                Collections.sort(data, new Comparator<Station>() {
+                    @Override
+                    public int compare(Station lhs, Station rhs) {
+                        return lhs.name.compareToIgnoreCase(rhs.name);
+                    }
+                });
+			}
 
 			synchronized (this) {
                 if (_constraint.length() == 0) {
@@ -82,19 +82,18 @@ public class StationsAdapter extends ArrayAdapter<Station> {
 			return filterResults;
 		}
 
-		public void filterByCurrentPrams() {
+		public void filterByCurrentParams() {
 			filter(_constraint);
 		}
 
 	}
 
 	public StationsAdapter(Context context, Model model, Stations nearblyStations) {
-		super(context, R.layout.listitem_selectroute);
+		super(context, R.layout.listitem_forecast);
         _nearblyStations = nearblyStations;
 		_context = context;
 		_model = model;
 		_filter = new MyFilter();
-		_inflater = ((Activity)_context).getLayoutInflater();
 	}
 
     @Override
@@ -102,7 +101,6 @@ public class StationsAdapter extends ArrayAdapter<Station> {
         LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
-
             _setViewHolder(convertView);
         } else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
             convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);

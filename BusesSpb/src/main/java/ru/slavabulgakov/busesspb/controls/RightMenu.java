@@ -42,7 +42,6 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	private TextView _title;
 	private Model _model;
 	private ListView _listView;
-	private Stations _nearblyStations;
 	private SimpleDateFormat _format;
 	private RelativeLayout _progressBar;
 	private EditText _stationText;
@@ -179,16 +178,16 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 		_load(context, attrs);
 	}
 
-	public void loadNearblyStations(Stations stations) {
-		_nearblyStations = stations;
+	public void loadNearblyStations(final Stations nearblyStations) {
 		_getHandler().post(new Runnable() {
 			
 			@Override
 			public void run() {
                 _stationProgressBar.setVisibility(GONE);
                 _stationListView.setVisibility(VISIBLE);
-                _stationListView.setAdapter(new StationsAdapter(_context, _model, _nearblyStations));
-                ((StationsAdapter)_stationListView.getAdapter()).getFilter().filter("");
+                StationsAdapter stationsAdapter = new StationsAdapter(_context, _model, nearblyStations);
+                _stationListView.setAdapter(stationsAdapter);
+                stationsAdapter.getFilter().filter("");
 			}
 		});
 	}
@@ -198,26 +197,18 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 		_listView.setAdapter(new ListAdapter() {
 			
 			@Override
-			public void unregisterDataSetObserver(DataSetObserver arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void unregisterDataSetObserver(DataSetObserver arg0) {}
 			
 			@Override
-			public void registerDataSetObserver(DataSetObserver arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void registerDataSetObserver(DataSetObserver arg0) {}
 			
 			@Override
 			public boolean isEmpty() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			
 			@Override
 			public boolean hasStableIds() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			
@@ -260,19 +251,16 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 			
 			@Override
 			public int getItemViewType(int arg0) {
-				// TODO Auto-generated method stub
 				return 0;
 			}
 			
 			@Override
 			public long getItemId(int arg0) {
-				// TODO Auto-generated method stub
 				return 0;
 			}
 			
 			@Override
 			public Object getItem(int arg0) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 			
@@ -287,13 +275,11 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 			
 			@Override
 			public boolean isEnabled(int position) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			
 			@Override
 			public boolean areAllItemsEnabled() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
@@ -342,7 +328,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
         if (animated) {
             LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
             _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));
-            TranslateAnimation animation = new TranslateAnimation(0, 0, -(getHeight()/* - _stationText.getHeight()*/ - _model.dpToPx(20)), 0);
+            TranslateAnimation animation = new TranslateAnimation(0, 0, -(getHeight() - _model.dpToPx(20)), 0);
             animation.setDuration(500);
             _rightMenuLayout.startAnimation(animation);
         }
@@ -350,7 +336,9 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
     private void _changeToForecastsState(boolean animated) {
         if (animated) {
-            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight()/* - _stationText.getHeight()*/ - _model.dpToPx(20)));
+            LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
+            _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight() - _model.dpToPx(20)));
             animation.setDuration(500);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
