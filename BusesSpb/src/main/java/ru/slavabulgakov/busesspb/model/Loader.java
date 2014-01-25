@@ -85,11 +85,16 @@ public class Loader {
                 Request request = (Request)FacadeLoader.createRequest(_container.isJson(), _container.getUrlString(), new FacadeLoader.Listener() {
 
                             @Override
-                            public void onResponse(Object obj) {
-                                _container.handler(obj);
-                                _state = State.complete;
-                                _listener.netLoaded(Loader.this);
-                                _cache();
+                            public void onResponse(final Object obj) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        _container.handler(obj);
+                                        _state = State.complete;
+                                        _listener.netLoaded(Loader.this);
+                                        _cache();
+                                    }
+                                });
                             }
                         }, new Response.ErrorListener() {
 
