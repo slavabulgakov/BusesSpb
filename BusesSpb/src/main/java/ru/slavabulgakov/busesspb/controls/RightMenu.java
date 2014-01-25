@@ -122,8 +122,13 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	}
 	
 	public void setLoaded() {
-		_progressBar.setVisibility(View.GONE);
-		_listView.setVisibility(View.VISIBLE);
+        _getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                _progressBar.setVisibility(View.GONE);
+                _listView.setVisibility(View.VISIBLE);
+            }
+        });
 	}
 	
 	public void setTitle(String title) {
@@ -193,96 +198,101 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	}
 	
 	public void loadForecasts(ArrayList<Object> forecasts) {
-		_forecasts = forecasts;
-		_listView.setAdapter(new ListAdapter() {
-			
-			@Override
-			public void unregisterDataSetObserver(DataSetObserver arg0) {}
-			
-			@Override
-			public void registerDataSetObserver(DataSetObserver arg0) {}
-			
-			@Override
-			public boolean isEmpty() {
-				return false;
-			}
-			
-			@Override
-			public boolean hasStableIds() {
-				return false;
-			}
-			
-			@Override
-			public int getViewTypeCount() {
-				return 1;
-			}
-			private void _setViewHolder(View view) {
-				TransportCellViewHolder vh = new TransportCellViewHolder();
-				vh.leftIcon = (ImageView)view.findViewById(R.id.listItemForecastKind);
-				vh.leftText = (TextView)view.findViewById(R.id.listItemForecastRouteName);
-				vh.rightText = (TextView)view.findViewById(R.id.listItemForecastTime);
-				vh.needInflate = false;
-				view.setTag(vh);
-			}
-			
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-				if (convertView == null) {
-					convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
-					
-					_setViewHolder(convertView);
-				} else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
-					convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
-					_setViewHolder(convertView);
-				}
-				
-				Forecast forecast = (Forecast)_forecasts.get(position);
-				
-				TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
-				vh.rightText.setText(_format.format(forecast.time));
-				vh.leftText.setText(forecast.transportNumber);
-				Pair<Integer, Integer> res = vh.backgroundAndIconByKind(forecast.transportKind);
-				convertView.setBackgroundResource(res.first);
-				vh.leftIcon.setImageResource(res.second);
-				
-				return convertView;
-			}
-			
-			@Override
-			public int getItemViewType(int arg0) {
-				return 0;
-			}
-			
-			@Override
-			public long getItemId(int arg0) {
-				return 0;
-			}
-			
-			@Override
-			public Object getItem(int arg0) {
-				return null;
-			}
-			
-			@Override
-			public int getCount() {
-				int count = 0;
-				if (_forecasts != null) {
-					count = _forecasts.size();
-				}
-				return count;
-			}
-			
-			@Override
-			public boolean isEnabled(int position) {
-				return false;
-			}
-			
-			@Override
-			public boolean areAllItemsEnabled() {
-				return false;
-			}
-		});
+        _forecasts = forecasts;
+        _getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                _listView.setAdapter(new ListAdapter() {
+
+                    @Override
+                    public void unregisterDataSetObserver(DataSetObserver arg0) {}
+
+                    @Override
+                    public void registerDataSetObserver(DataSetObserver arg0) {}
+
+                    @Override
+                    public boolean isEmpty() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean hasStableIds() {
+                        return false;
+                    }
+
+                    @Override
+                    public int getViewTypeCount() {
+                        return 1;
+                    }
+                    private void _setViewHolder(View view) {
+                        TransportCellViewHolder vh = new TransportCellViewHolder();
+                        vh.leftIcon = (ImageView)view.findViewById(R.id.listItemForecastKind);
+                        vh.leftText = (TextView)view.findViewById(R.id.listItemForecastRouteName);
+                        vh.rightText = (TextView)view.findViewById(R.id.listItemForecastTime);
+                        vh.needInflate = false;
+                        view.setTag(vh);
+                    }
+
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
+                        if (convertView == null) {
+                            convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
+
+                            _setViewHolder(convertView);
+                        } else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
+                            convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
+                            _setViewHolder(convertView);
+                        }
+
+                        Forecast forecast = (Forecast)_forecasts.get(position);
+
+                        TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
+                        vh.rightText.setText(_format.format(forecast.time));
+                        vh.leftText.setText(forecast.transportNumber);
+                        Pair<Integer, Integer> res = vh.backgroundAndIconByKind(forecast.transportKind);
+                        convertView.setBackgroundResource(res.first);
+                        vh.leftIcon.setImageResource(res.second);
+
+                        return convertView;
+                    }
+
+                    @Override
+                    public int getItemViewType(int arg0) {
+                        return 0;
+                    }
+
+                    @Override
+                    public long getItemId(int arg0) {
+                        return 0;
+                    }
+
+                    @Override
+                    public Object getItem(int arg0) {
+                        return null;
+                    }
+
+                    @Override
+                    public int getCount() {
+                        int count = 0;
+                        if (_forecasts != null) {
+                            count = _forecasts.size();
+                        }
+                        return count;
+                    }
+
+                    @Override
+                    public boolean isEnabled(int position) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean areAllItemsEnabled() {
+                        return false;
+                    }
+                });
+            }
+        });
 	}
 
     public enum State {

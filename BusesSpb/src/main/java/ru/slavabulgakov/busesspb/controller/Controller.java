@@ -365,7 +365,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		} else if (kind == MenuKind.Right) {
             if (isOpen) {
                 if (_mainActivity().getRightMenu().getState() == RightMenu.State.FORECASTS) {
-                    switchToState(new RightMenuState());
+                    switchToState(new ForecastsState());
                 } else {
                     switchToState(new RightMenuStationsState());
                 }
@@ -471,8 +471,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void staticLoaded(Loader loader) {
-		if (_state.getClass() == RightMenuState.class) {
-			RightMenuState state = (RightMenuState)_state;
+		if (_state.getClass() == ForecastsState.class) {
+			ForecastsState state = (ForecastsState)_state;
 			state.staticLoaded(loader);
         } else if (_state.getClass() == RightMenuStationsState.class) {
             RightMenuStationsState state = (RightMenuStationsState)_state;
@@ -482,8 +482,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void netLoaded(Loader loader) {
-        if (_state.getClass() == RightMenuState.class) {
-            RightMenuState state = (RightMenuState)_state;
+        if (_state.getClass() == ForecastsState.class) {
+            ForecastsState state = (ForecastsState)_state;
             state.staticLoaded(loader);
         }
 	}
@@ -502,6 +502,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
     @Override
     public void willShowForecastsMenu() {
-        switchToState(new RightMenuState());
+        switchToState(new ForecastsState());
     }
 }

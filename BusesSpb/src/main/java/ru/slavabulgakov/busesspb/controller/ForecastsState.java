@@ -1,7 +1,5 @@
 package ru.slavabulgakov.busesspb.controller;
 
-import android.location.Location;
-
 import java.util.TimerTask;
 
 import ru.slavabulgakov.busesspb.controls.RightMenu;
@@ -9,15 +7,12 @@ import ru.slavabulgakov.busesspb.model.ForecastsContainer;
 import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.RightMenuModel;
 import ru.slavabulgakov.busesspb.model.RoutesNamesLoaderContainer;
-import ru.slavabulgakov.busesspb.model.StationsContainer;
-import ru.slavabulgakov.busesspb.paths.Station;
-import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class RightMenuState extends State {
+public class ForecastsState extends State {
 	
 	private String _stationId;
 
-	public RightMenuState() {
+	public ForecastsState() {
 
 	}
 	
@@ -37,8 +32,14 @@ public class RightMenuState extends State {
         _menu().setLoading();
         loadForecasts();
 	}
-	
-	public void loadForecasts() {
+
+    @Override
+    public void resume() {
+        super.resume();
+        loadForecasts();
+    }
+
+    public void loadForecasts() {
 		Loader loader = _menuModel().getLoader(RoutesNamesLoaderContainer.class);
 		if (loader == null) {
 			_menuModel().loadForContainer(new RoutesNamesLoaderContainer(), _controller);

@@ -11,12 +11,22 @@ public class LeftMenuState extends State {
 	@Override
 	public void start() {
 		super.start();
-		if (!_controller.getModel().allRouteIsLoaded()) {
-			setTimerTask(new UpdateMenuContentTimerTask((MainActivity)_controller.getActivity(), _controller.getModel()));
-		}
+		_startTimer();
 	}
 
-	class UpdateMenuContentTimerTask extends TimerTask {
+    @Override
+    public void resume() {
+        super.resume();
+        _startTimer();
+    }
+
+    private void _startTimer() {
+        if (!_controller.getModel().allRouteIsLoaded()) {
+            setTimerTask(new UpdateMenuContentTimerTask((MainActivity)_controller.getActivity(), _controller.getModel()));
+        }
+    }
+
+    class UpdateMenuContentTimerTask extends TimerTask {
 		
 		private MainActivity _mainActivity;
 		private Model _model;

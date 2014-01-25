@@ -20,6 +20,12 @@ public class RightMenuStationsState extends State {
         _loadStations();
     }
 
+    @Override
+    public void resume() {
+        super.resume();
+        _loadStations();
+    }
+
     private Location _location;
     private void _loadStations() {
         _location = _controller.getMainActivity().getMapController().getMap().getMyLocation();

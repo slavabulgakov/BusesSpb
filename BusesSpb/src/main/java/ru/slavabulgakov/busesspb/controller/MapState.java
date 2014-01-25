@@ -12,20 +12,30 @@ public class MapState extends State {
 	public void start() {
 		super.start();
 		
-		_controller.getModel().removeSimpleTransportOverlay();
-		if (_controller.getModel().isOnline()) {
-			_controller.getModel().removeAllTransportOverlays();
-			_controller.getModel().removeLastSimpleTransportView();
-			_controller.getMainActivity().updateTransport();
-		} else {
-			_controller.getMainActivity().updateTransportOffline();
-		}
-		
-		UpdateTransportTimerTask timerTask = new UpdateTransportTimerTask((MainActivity)_controller.getActivity(), _controller.getModel());
-		setTimerTask(timerTask);
+		_prepareMap();
 	}
-	
-	class UpdateTransportTimerTask extends TimerTask {
+
+    @Override
+    public void resume() {
+        super.resume();
+        _prepareMap();
+    }
+
+    private void _prepareMap() {
+        _controller.getModel().removeSimpleTransportOverlay();
+        if (_controller.getModel().isOnline()) {
+            _controller.getModel().removeAllTransportOverlays();
+            _controller.getModel().removeLastSimpleTransportView();
+            _controller.getMainActivity().updateTransport();
+        } else {
+            _controller.getMainActivity().updateTransportOffline();
+        }
+
+        UpdateTransportTimerTask timerTask = new UpdateTransportTimerTask((MainActivity)_controller.getActivity(), _controller.getModel());
+        setTimerTask(timerTask);
+    }
+
+    class UpdateTransportTimerTask extends TimerTask {
 		
 		private MainActivity _mainActivity;
 		private Model _model;

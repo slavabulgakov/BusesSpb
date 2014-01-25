@@ -30,4 +30,6 @@ public class State {
 			_timerTask.cancel();
 		}
 	}
+
+    public void resume() {}
 }

@@ -1,5 +1,25 @@
 package ru.slavabulgakov.busesspb;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.Display;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+
+import com.google.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
 import ru.slavabulgakov.busesspb.controller.Controller;
 import ru.slavabulgakov.busesspb.controller.MapState;
 import ru.slavabulgakov.busesspb.controls.CheckButton;
@@ -11,25 +31,6 @@ import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.controls.RootView;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.TransportKind;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.Display;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-
-import com.google.ads.AdView;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.SupportMapFragment;
-import android.view.WindowManager;
 
 public class MainActivity extends BaseActivity {
 	
@@ -194,9 +195,13 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		updateControls();
-		Controller.getInstance().switchToState(new MapState());
-		
-		if (_model.allRouteIsLoaded()) {
+        if (Controller.getInstance().getState() != null) {
+            Controller.getInstance().getState().resume();
+        } else {
+            Controller.getInstance().switchToState(new MapState());
+        }
+
+        if (_model.allRouteIsLoaded()) {
     		_leftMenu.showMenuContent();
 		}
 	}

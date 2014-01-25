@@ -94,7 +94,7 @@ public class Loader {
                                         _listener.netLoaded(Loader.this);
                                         _cache();
                                     }
-                                });
+                                }).start();
                             }
                         }, new Response.ErrorListener() {
 
