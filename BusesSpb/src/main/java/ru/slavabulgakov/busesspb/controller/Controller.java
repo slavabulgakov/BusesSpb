@@ -444,8 +444,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	public void onInfoWindowClick(Marker marker) {
 		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
 		Station station = _model.getModelPaths().getStationByMarker(marker);
-		_mainActivity().getRightMenu().setTitle(station.name);
         _model.setData("stationId", station.id);
+        _model.setData("stationTitle", station.name);
         _mainActivity().getRightMenu().changeToState(RightMenu.State.FORECASTS, false);
 	}
 	

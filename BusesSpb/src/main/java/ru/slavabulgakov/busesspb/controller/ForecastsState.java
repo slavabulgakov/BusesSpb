@@ -29,6 +29,8 @@ public class ForecastsState extends State {
 		super.start();
 
         _stationId = (String)_controller.getModel().getData("stationId");
+        String title = (String)_controller.getModel().getData("stationTitle");
+        _menu().setTitle(title);
         _menu().setLoading();
         loadForecasts();
 	}
@@ -36,6 +38,11 @@ public class ForecastsState extends State {
     @Override
     public void resume() {
         super.resume();
+        String title = (String)_controller.getModel().getData("stationTitle");
+        _menu().setTitle(title);
+        if (_menu().getState() != RightMenu.State.FORECASTS) {
+            _menu().changeToState(RightMenu.State.FORECASTS, false);
+        }
         loadForecasts();
     }
 

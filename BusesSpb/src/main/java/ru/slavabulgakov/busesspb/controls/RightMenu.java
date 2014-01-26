@@ -59,8 +59,8 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Station station = ((StationsAdapter)_stationListView.getAdapter()).getItem(position);
-        setTitle(station.name);
         _model.setData("stationId", station.id);
+        _model.setData("stationTitle", station.name);
         changeToState(State.FORECASTS, true);
         _listener.willShowForecastsMenu();
     }
@@ -74,7 +74,10 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
     @Override
     public void afterTextChanged(Editable s) {
         String text = s.toString();
-        ((StationsAdapter)_stationListView.getAdapter()).getFilter().filter(text);
+        StationsAdapter adapter = (StationsAdapter)_stationListView.getAdapter();
+        if (adapter != null) {
+            adapter.getFilter().filter(text);
+        }
         if (text.length() > 0) {
             _clearButton.setVisibility(View.VISIBLE);
         } else {
@@ -192,11 +195,11 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
                 _stationListView.setVisibility(VISIBLE);
                 StationsAdapter stationsAdapter = new StationsAdapter(_context, _model, nearblyStations);
                 _stationListView.setAdapter(stationsAdapter);
-                stationsAdapter.getFilter().filter("");
+                stationsAdapter.getFilter().filter(_stationText.getText());
 			}
 		});
 	}
-	
+
 	public void loadForecasts(ArrayList<Object> forecasts) {
         _forecasts = forecasts;
         _getHandler().post(new Runnable() {

@@ -16,7 +16,7 @@ public class RightMenuStationsState extends State {
     @Override
     public void start() {
         super.start();
-
+        _location = _controller.getMainActivity().getMapController().getMap().getMyLocation();
         _loadStations();
     }
 
@@ -28,7 +28,6 @@ public class RightMenuStationsState extends State {
 
     private Location _location;
     private void _loadStations() {
-        _location = _controller.getMainActivity().getMapController().getMap().getMyLocation();
         // TODO remove mock location
         _location.setLatitude(59.932709);
         _location.setLongitude(30.346395);
