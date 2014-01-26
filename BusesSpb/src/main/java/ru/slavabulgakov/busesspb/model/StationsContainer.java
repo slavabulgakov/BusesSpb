@@ -1,8 +1,8 @@
 package ru.slavabulgakov.busesspb.model;
 
-import java.util.ArrayList;
-
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 
 import ru.slavabulgakov.busesspb.paths.Point;
 import ru.slavabulgakov.busesspb.paths.Station;
@@ -45,7 +45,7 @@ public class StationsContainer extends LoaderContainer {
 			for (int i = items.length - 5; i < items.length; i++) {
 				length += items[i].length() + 1;
 			}
-			station.name = line.substring(items[0].length() + 1 + items[1].length() + 2, line.length() - length);
+			station.name = line.substring(items[0].length() + 1 + items[1].length() + 1, line.length() - length);
 			double lat = Double.parseDouble(items[items.length - 5]);
 			double lng = Double.parseDouble(items[items.length - 4]);
 			station.point = new Point(new LatLng(lat, lng));
