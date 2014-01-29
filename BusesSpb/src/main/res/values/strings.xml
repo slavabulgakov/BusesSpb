@@ -50,6 +50,7 @@
     <string name="market_deny">Невозможно открыть Google Play, пожалуйста, уставите приложение Google Play</string>
     <string name="purchase_cancel">Покупка была отменена. Возможно кредитная карта недействительна.</string>
     <string name="twitter_auth">Авторизация Twitter</string>
+    <string name="stations">Остановки</string>
     
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

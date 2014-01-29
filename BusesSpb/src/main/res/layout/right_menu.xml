@@ -49,10 +49,16 @@
             android:id="@+id/stationsBack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="sdfsdf"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:background="@drawable/btn_stations_yellow"
+            android:drawableLeft="@drawable/menu_up"
+            android:drawableRight="@drawable/menu_up"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:minHeight="45dp"
+            android:textColor="@color/white"/>
 
         <ListView
             android:id="@+id/stationListView"
@@ -84,7 +90,15 @@
         <Button
             android:id="@+id/forecastsButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_stations_yellow"
+            android:drawableLeft="@drawable/menu_down"
+            android:drawableRight="@drawable/menu_down"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:minHeight="45dp"
+            android:text="@string/stations"
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/rightMenuTitle"

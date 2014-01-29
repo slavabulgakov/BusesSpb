@@ -136,6 +136,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	
 	public void setTitle(String title) {
 		_title.setText(title);
+        _stationsBackButton.setText(title);
 	}
 	
 	private void _load(Context context, AttributeSet attrs) {
