@@ -193,8 +193,13 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 			public void run() {
                 _stationProgressBar.setVisibility(GONE);
                 _stationListView.setVisibility(VISIBLE);
-                StationsAdapter stationsAdapter = new StationsAdapter(_context, _model, nearblyStations);
-                _stationListView.setAdapter(stationsAdapter);
+                StationsAdapter stationsAdapter = (StationsAdapter)_stationListView.getAdapter();
+                if (stationsAdapter != null) {
+                    stationsAdapter.setNearblyStations(nearblyStations);
+                } else {
+                    stationsAdapter = new StationsAdapter(_context, _model, nearblyStations);
+                    _stationListView.setAdapter(stationsAdapter);
+                }
                 stationsAdapter.getFilter().filter(_stationText.getText());
 			}
 		});

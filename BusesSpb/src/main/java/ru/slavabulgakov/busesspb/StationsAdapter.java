@@ -27,6 +27,10 @@ public class StationsAdapter extends ArrayAdapter<Station> {
 	Model _model;
     Stations _nearblyStations;
 
+    public void setNearblyStations(Stations nearblyStations) {
+        _nearblyStations = nearblyStations;
+    }
+
 	public class MyFilter extends Filter {
 
 		CharSequence _constraint;
