@@ -48,6 +48,7 @@ public class MainActivity extends BaseActivity {
 	private AdView _adView;
 	private CheckButton _pathsButton;
 	private CloselessTicketsTray _closelessTicketsTray;
+    private ImageButton _rightMenuButton;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -76,13 +77,13 @@ public class MainActivity extends BaseActivity {
 		_pathsButton.setChecked(_model.getModelPaths().pathsIsOn());
 
 		
-		((ImageButton)findViewById(R.id.location)).setOnClickListener(Controller.getInstance());
-		((ImageButton)findViewById(R.id.plus)).setOnClickListener(Controller.getInstance());
-		((ImageButton)findViewById(R.id.minus)).setOnClickListener(Controller.getInstance());
+		findViewById(R.id.location).setOnClickListener(Controller.getInstance());
+		findViewById(R.id.plus).setOnClickListener(Controller.getInstance());
+		findViewById(R.id.minus).setOnClickListener(Controller.getInstance());
 		
 		
-		((ImageButton)findViewById(R.id.about)).setOnClickListener(Controller.getInstance());
-		
+		findViewById(R.id.about).setOnClickListener(Controller.getInstance());
+
 		_leftMenu = (LeftMenu)findViewById(R.id.leftMenu);
 		_leftMenu.setModel(_model);
 		_leftMenu.getTicketsTray().inition(_model, Controller.getInstance());
@@ -101,6 +102,9 @@ public class MainActivity extends BaseActivity {
 		_closelessTicketsTray = (CloselessTicketsTray)findViewById(R.id.closelessTicketsTray);
 		_closelessTicketsTray.setOnClickListener(Controller.getInstance());
 		_closelessTicketsTray.inition(_model);
+
+        _rightMenuButton = (ImageButton)findViewById(R.id.rightMenuButton);
+        _rightMenuButton.setOnClickListener(Controller.getInstance());
     }
     
     public CloselessTicketsTray getCloselessTicketsTray() {
@@ -173,9 +177,9 @@ public class MainActivity extends BaseActivity {
 			_closelessTicketsTray.setVisibility(View.GONE);
 			_leftMenu.setInputVisible(false);
 			_leftMenu.setProgressBarVisible(false);
-			((ImageButton)findViewById(R.id.about)).setVisibility(View.GONE);
-			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.GONE);
-			((ImageButton)findViewById(R.id.location)).setVisibility(View.GONE);
+			_rightMenuButton.setVisibility(View.GONE);
+			findViewById(R.id.zoomControls).setVisibility(View.GONE);
+			findViewById(R.id.location).setVisibility(View.GONE);
 		} else {
 			_busFilter.setVisibility(View.VISIBLE);
 			_trolleyFilter.setVisibility(View.VISIBLE);
@@ -184,10 +188,10 @@ public class MainActivity extends BaseActivity {
 			_leftMenu.setFiltersButtonsVisibility(true);
 			_closelessTicketsTray.setVisibility(View.VISIBLE);
 			_leftMenu.setInputVisible(true);
-			((ImageButton)findViewById(R.id.about)).setVisibility(View.VISIBLE);
+			_rightMenuButton.setVisibility(View.VISIBLE);
 			_leftMenu.setProgressBarVisible(true);
-			((LinearLayout)findViewById(R.id.zoomControls)).setVisibility(View.VISIBLE);
-			((ImageButton)findViewById(R.id.location)).setVisibility(View.VISIBLE);
+			findViewById(R.id.zoomControls).setVisibility(View.VISIBLE);
+			findViewById(R.id.location).setVisibility(View.VISIBLE);
 		}
 		
 		if (_model.isOnline()) {
@@ -212,6 +216,9 @@ public class MainActivity extends BaseActivity {
     	if (!_model.menuIsOpened(MenuKind.Left)) {
     		_model.getModelPaths().loadPaths();
 		}
+
+        int resId = _model.menuIsOpened(MenuKind.Right) ? R.drawable.menu_open_icon : R.drawable.menu_close_icon;
+        _rightMenuButton.setImageResource(resId);
 	}
     
     public void keyboardTurnOff() {

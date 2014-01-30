@@ -42,7 +42,10 @@ public class RightMenuStationsState extends State {
     }
 
     private RightMenu _menu() {
-        return _controller.getMainActivity().getRightMenu();
+        if (_controller.getMainActivity() != null) {
+            return _controller.getMainActivity().getRightMenu();
+        }
+        return null;
     }
 
     private RightMenuModel _menuModel() {
@@ -80,7 +83,9 @@ public class RightMenuStationsState extends State {
                 nearblyStations.remove(nearblyStations.size() - 1);
             }
         }
-        _menu().loadNearblyStations(nearblyStations);
+        if (_menu() != null) {
+            _menu().loadNearblyStations(nearblyStations);
+        }
     }
 
     public void staticLoaded(Loader loader) {

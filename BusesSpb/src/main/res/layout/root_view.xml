@@ -82,7 +82,7 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/about"
+                android:id="@+id/rightMenuButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -92,14 +92,14 @@
                 android:background="@drawable/btn_pressed_black"
                 android:minHeight="40dp"
                 android:minWidth="40dp"
-                android:src="@drawable/about" />
+                android:src="@drawable/menu_close_icon" />
 
             <LinearLayout
                 android:id="@+id/zoomControls"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignRight="@+id/about"
+                android:layout_alignRight="@+id/rightMenuButton"
                 android:background="@color/menu_bg"
                 android:orientation="vertical"
                 android:layout_marginBottom="10dp"

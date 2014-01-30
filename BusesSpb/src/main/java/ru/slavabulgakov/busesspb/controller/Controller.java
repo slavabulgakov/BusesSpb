@@ -139,6 +139,10 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		case R.id.closelessTicketsTray:
 			_mainActivity().toggleMenu(MenuKind.Left);
 			break;
+
+        case R.id.rightMenuButton:
+            _mainActivity().toggleMenu(MenuKind.Right);
+            break;
 			
 		case R.id.busFilter:
 			_model.setFilter(TransportKind.Bus);
@@ -198,7 +202,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			_model.getModelPaths().setPathsOn(_mainActivity().pathsButton().checked());
 			FlurryAgent.logEvent(FlurryConstants.pathBtnPressed);
 			break;
-			
+
 		default:
 			break;
 		}
@@ -331,12 +335,12 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
+        _mainActivity().updateControls();
 		if (kind == MenuKind.Left) {
 			if (isOpen) {
 	    		switchToState(new LeftMenuState());
 			}
 			
-			_mainActivity().updateControls();
 			_mainActivity().updateFilterButtons();
 			
 			
