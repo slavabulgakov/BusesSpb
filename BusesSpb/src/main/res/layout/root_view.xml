@@ -145,7 +145,7 @@
             
             <ru.slavabulgakov.busesspb.controls.CheckButton 
                 android:id="@+id/paths"
-                android:layout_alignRight="@+id/about"
+                android:layout_alignRight="@+id/rightMenuButton"
                 android:layout_marginRight="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

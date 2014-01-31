@@ -55,6 +55,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
     private Button _forecastsButton;
     private Context _context;
     private ImageButton _clearButton;
+    private Button _aboutButton;
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -167,6 +168,8 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
         _clearButton = (ImageButton)findViewById(R.id.clearStationsText);
         _clearButton.setVisibility(GONE);
         _clearButton.setOnClickListener(this);
+
+        _aboutButton = (Button)findViewById(R.id.about);
 
         _showBackButton(false);
 	}
@@ -344,6 +347,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
         _showBackButton(_model.getData("stationId") != null);
         _stationProgressBar.setVisibility(View.VISIBLE);
         _stationLayout.setVisibility(View.VISIBLE);
+        _aboutButton.setVisibility(VISIBLE);
         if (animated) {
             LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
             _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));
@@ -369,6 +373,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
                         @Override
                         public void run() {
                             _stationLayout.setVisibility(GONE);
+                            _aboutButton.setVisibility(GONE);
                         }
                     });
                 }
@@ -380,6 +385,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
             _rightMenuLayout.startAnimation(animation);
         } else {
             _stationLayout.setVisibility(GONE);
+            _aboutButton.setVisibility(GONE);
         }
     }
 
