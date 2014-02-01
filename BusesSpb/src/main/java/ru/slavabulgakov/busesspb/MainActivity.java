@@ -2,6 +2,7 @@ package ru.slavabulgakov.busesspb;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import com.google.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -49,6 +51,7 @@ public class MainActivity extends BaseActivity {
 	private CheckButton _pathsButton;
 	private CloselessTicketsTray _closelessTicketsTray;
     private ImageButton _rightMenuButton;
+    private LocationClient _locationClient;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -105,8 +108,26 @@ public class MainActivity extends BaseActivity {
 
         _rightMenuButton = (ImageButton)findViewById(R.id.rightMenuButton);
         _rightMenuButton.setOnClickListener(Controller.getInstance());
+
+        _locationClient = new LocationClient(this, Controller.getInstance(), Controller.getInstance());
     }
-    
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        _locationClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        _locationClient.disconnect();
+        super.onStop();
+    }
+
+    public Location getLoaction() {
+        return _locationClient.getLastLocation();
+    }
+
     public CloselessTicketsTray getCloselessTicketsTray() {
     	return _closelessTicketsTray;
     }

@@ -43,7 +43,7 @@ import ru.slavabulgakov.busesspb.ShareModel;
 import ru.slavabulgakov.busesspb.paths.ModelPaths;
 
 public class Model extends Application {
-	
+
  	public enum MenuKind {
 		Left,
 		Right
@@ -55,7 +55,7 @@ public class Model extends Application {
 		_paths = new ModelPaths(this);
 		_rightMenuModel = new RightMenuModel(this);
 	}
-	
+
 	public ModelPaths getModelPaths() {
 		return _paths;
 	}

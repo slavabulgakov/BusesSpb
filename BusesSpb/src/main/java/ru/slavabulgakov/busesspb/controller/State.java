@@ -27,7 +27,7 @@ public class State {
 	
 	public void pause() {
 		if (_timerTask != null) {
-			_timerTask.cancel();
+            _controller.cancelTimer();
 		}
 	}
 

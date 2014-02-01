@@ -1,27 +1,10 @@
 package ru.slavabulgakov.busesspb.controls;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.model.Model;
-import ru.slavabulgakov.busesspb.model.SimpleTransportView;
-import ru.slavabulgakov.busesspb.model.Transport;
-import ru.slavabulgakov.busesspb.model.TransportKind;
-import ru.slavabulgakov.busesspb.model.Model.MenuKind;
-import ru.slavabulgakov.busesspb.model.TransportOverlay;
-import ru.slavabulgakov.busesspb.paths.Path;
-import ru.slavabulgakov.busesspb.paths.Point;
-import ru.slavabulgakov.busesspb.paths.Station;
-import ru.slavabulgakov.busesspb.paths.Stations;
-import ru.slavabulgakov.busesspb.paths.SubPath;
-
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Bitmap.Config;
 import android.graphics.Paint.Align;
 import android.location.Location;
 import android.os.Handler;
@@ -44,6 +27,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Model.MenuKind;
+import ru.slavabulgakov.busesspb.model.SimpleTransportView;
+import ru.slavabulgakov.busesspb.model.Transport;
+import ru.slavabulgakov.busesspb.model.TransportKind;
+import ru.slavabulgakov.busesspb.model.TransportOverlay;
+import ru.slavabulgakov.busesspb.paths.Path;
+import ru.slavabulgakov.busesspb.paths.Point;
+import ru.slavabulgakov.busesspb.paths.Station;
+import ru.slavabulgakov.busesspb.paths.Stations;
+import ru.slavabulgakov.busesspb.paths.SubPath;
 
 public class MapController implements OnCameraChangeListener, OnInfoWindowClickListener {
 	
@@ -83,8 +83,7 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 		return _map;
 	}
 	
-	public void moveCameraToMyLocation() {
-		Location location = _map.getMyLocation();
+	public void moveCameraToMyLocation(Location location) {
 		if (location != null) {
 			_map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
 		}

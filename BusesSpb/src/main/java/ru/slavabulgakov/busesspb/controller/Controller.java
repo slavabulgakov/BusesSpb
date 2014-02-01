@@ -3,6 +3,7 @@ package ru.slavabulgakov.busesspb.controller;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -22,6 +23,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 
@@ -51,7 +54,7 @@ import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, TicketsTray.Listener, Loader.Listener, RightMenu.Listener {
+public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, TicketsTray.Listener, Loader.Listener, RightMenu.Listener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	private static volatile Controller _instance;
 	private Model _model;
@@ -59,8 +62,8 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	private Handler _handler;
 	private Timer _timer;
 	private State _state;
-	
-	public Timer getTimer() {
+
+    public Timer getTimer() {
 		if (_timer == null) {
 			_timer = new Timer();
 		}
@@ -68,8 +71,10 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	}
 
     public void cancelTimer() {
-        _timer.cancel();
-        _timer = null;
+        if (_timer != null) {
+            _timer.cancel();
+            _timer = null;
+        }
     }
 	
 	public void switchToState(State state) {
@@ -173,7 +178,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			break;
 			
 		case R.id.location:
-			_mainActivity().getMapController().moveCameraToMyLocation();
+			_mainActivity().getMapController().moveCameraToMyLocation(getMainActivity().getLoaction());
 			break;
 			
 		case R.id.plus:
@@ -371,7 +376,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
                 if (_mainActivity().getRightMenu().getState() == RightMenu.State.FORECASTS) {
                     switchToState(new ForecastsState());
                 } else {
-                    switchToState(new RightMenuStationsState());
+                    switchToState(new RightMenuStationsState(getMainActivity().getLoaction()));
                 }
             }
         }
@@ -501,11 +506,26 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
     @Override
     public void onClickStationsButton() {
-        switchToState(new RightMenuStationsState());
+        switchToState(new RightMenuStationsState(getMainActivity().getLoaction()));
     }
 
     @Override
     public void willShowForecastsMenu() {
         switchToState(new ForecastsState());
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

@@ -2,6 +2,8 @@ package ru.slavabulgakov.busesspb.controller;
 
 import android.location.Location;
 
+import com.google.android.gms.location.LocationClient;
+
 import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.RightMenuModel;
@@ -13,10 +15,15 @@ import ru.slavabulgakov.busesspb.paths.Stations;
  * Created by user on 30.12.13.
  */
 public class RightMenuStationsState extends State {
+    private Location _location;
+
+    public RightMenuStationsState(Location location) {
+        _location = location;
+    }
+
     @Override
     public void start() {
         super.start();
-        _location = _controller.getMainActivity().getMapController().getMap().getMyLocation();
         _loadStations();
     }
 
@@ -26,11 +33,7 @@ public class RightMenuStationsState extends State {
         _loadStations();
     }
 
-    private Location _location;
     private void _loadStations() {
-        // TODO remove mock location
-        _location.setLatitude(59.932709);
-        _location.setLongitude(30.346395);
         Loader loader = _menuModel().getLoader(StationsContainer.class);
         if (loader == null) {
             _menuModel().loadForContainer(new StationsContainer(), _controller);
@@ -58,9 +61,6 @@ public class RightMenuStationsState extends State {
     }
 
     private void _findNearblyStations() {
-        if (_location == null) {
-            return;
-        }
         Loader loader = _menuModel().getLoader(StationsContainer.class);
         Stations nearblyStations = new Stations();
         for (Object obj: loader.getContainer().getData()) {

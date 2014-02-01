@@ -36,6 +36,7 @@
         android:paddingTop="10dp"
         android:text="35"
         android:textColor="@color/white"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginRight="10dp" />
 
 </RelativeLayout>
