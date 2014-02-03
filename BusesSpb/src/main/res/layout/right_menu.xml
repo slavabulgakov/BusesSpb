@@ -118,7 +118,7 @@
             android:layout_marginBottom="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
-            android:text="sdf" />
+            android:text="" />
 
         <RelativeLayout
             android:id="@+id/rightMenuProgressBar"

@@ -9,12 +9,14 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -172,6 +174,8 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
         _aboutButton = (Button)findViewById(R.id.about);
 
         _showBackButton(false);
+
+        _stationText.setEnabled(false);
 	}
 
 	public RightMenu(Context context) {
@@ -190,11 +194,19 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 		_load(context, attrs);
 	}
 
-	public void loadNearblyStations(final Stations nearblyStations) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
+        _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight() - _model.dpToPx(20)));
+    }
+
+    public void loadNearblyStations(final Stations nearblyStations) {
 		_getHandler().post(new Runnable() {
 			
 			@Override
 			public void run() {
+                _stationText.setEnabled(true);
                 _stationProgressBar.setVisibility(GONE);
                 _stationListView.setVisibility(VISIBLE);
                 StationsAdapter stationsAdapter = (StationsAdapter)_stationListView.getAdapter();
@@ -358,6 +370,8 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
     }
 
     private void _changeToForecastsState(boolean animated) {
+        InputMethodManager imm = (InputMethodManager)_context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(_stationText.getWindowToken(), 0);
         if (animated) {
             LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
             _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));

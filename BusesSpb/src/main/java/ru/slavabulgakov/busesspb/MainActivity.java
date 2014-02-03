@@ -124,7 +124,7 @@ public class MainActivity extends BaseActivity {
         super.onStop();
     }
 
-    public Location getLoaction() {
+    public Location getLocation() {
         return _locationClient.getLastLocation();
     }
 

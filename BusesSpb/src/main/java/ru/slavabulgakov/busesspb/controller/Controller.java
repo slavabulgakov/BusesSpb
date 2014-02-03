@@ -76,7 +76,12 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
             _timer = null;
         }
     }
-	
+
+    private State _lastState;
+    public  void  switchToLastState() {
+        switchToState(_lastState);
+    }
+
 	public void switchToState(State state) {
         Log.d("switchToState", state.toString());
 		if (_state != null) {
@@ -87,6 +92,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		if (_state != null) {
 			_state.removeState();
 		}
+        _lastState = _state;
 		_state = state;
 		_state.setController(this);
 		_state.start();
@@ -178,7 +184,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			break;
 			
 		case R.id.location:
-			_mainActivity().getMapController().moveCameraToMyLocation(getMainActivity().getLoaction());
+			_mainActivity().getMapController().moveCameraToMyLocation(getMainActivity().getLocation());
 			break;
 			
 		case R.id.plus:
@@ -341,22 +347,17 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	@Override
 	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
         _mainActivity().updateControls();
+
+        if (!isOpen) {
+            _mainActivity().keyboardTurnOff();
+        }
+
 		if (kind == MenuKind.Left) {
 			if (isOpen) {
 	    		switchToState(new LeftMenuState());
 			}
 			
 			_mainActivity().updateFilterButtons();
-			
-			
-			{
-				if (!isOpen) {
-					_mainActivity().keyboardTurnOff();
-				}
-			}
-			
-			
-			
 			
 			
 			_mainActivity().getMapController().toggleRotateMap(isOpen);
@@ -376,7 +377,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
                 if (_mainActivity().getRightMenu().getState() == RightMenu.State.FORECASTS) {
                     switchToState(new ForecastsState());
                 } else {
-                    switchToState(new RightMenuStationsState(getMainActivity().getLoaction()));
+                    switchToState(new RightMenuStationsState(getMainActivity().getLocation()));
                 }
             }
         }
@@ -506,7 +507,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
     @Override
     public void onClickStationsButton() {
-        switchToState(new RightMenuStationsState(getMainActivity().getLoaction()));
+        switchToState(new RightMenuStationsState(getMainActivity().getLocation()));
     }
 
     @Override

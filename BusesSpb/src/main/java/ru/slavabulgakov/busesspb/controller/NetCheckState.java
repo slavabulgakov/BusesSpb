@@ -32,12 +32,15 @@ public class NetCheckState extends State {
                 @Override
                 public void onResponse(String response) {
                     Log.d("internet", "success");
+                    _controller.switchToLastState();
+                    _controller.getMainActivity().getInternetDenyButtonController().hideInternetDenyIcon();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("internet", "retry");
                     _timer.schedule(new CheckInternetConnectionTimerTask(), 3000);
+                    _controller.getMainActivity().getInternetDenyButtonController().showInternetDenyIcon();
                 }
             });
             _queue.add(request);
