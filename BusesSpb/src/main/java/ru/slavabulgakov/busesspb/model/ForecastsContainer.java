@@ -35,7 +35,7 @@ public class ForecastsContainer extends LoaderContainer {
         super.handler(obj);
 
         JSONObject response = (JSONObject)obj;
-        SimpleDateFormat format = new SimpleDateFormat("yyyyy-mm-dd hh:mm:ss", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yyyyy-mm-dd HH:mm:ss", Locale.US);
         ArrayList<Object> forecasts = new ArrayList<Object>();
         try {
             JSONArray array = response.getJSONArray("result");
