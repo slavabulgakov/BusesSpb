@@ -17,13 +17,14 @@ android {
     buildToolsVersion "19.0.1"
 
     defaultConfig {
-        minSdkVersion 9
+        minSdkVersion 8
         targetSdkVersion 19
         versionCode 15
         versionName "1.10"
     }
     buildTypes {
         release {
+            debuggable false
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
