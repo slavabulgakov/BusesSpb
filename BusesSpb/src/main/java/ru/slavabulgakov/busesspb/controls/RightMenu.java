@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +28,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.StationsAdapter;
 import ru.slavabulgakov.busesspb.model.Model;
@@ -61,6 +63,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FlurryAgent.logEvent(FlurryConstants.onStationCellClick);
         Station station = ((StationsAdapter)_stationListView.getAdapter()).getItem(position);
         _model.setData("stationId", station.id);
         _model.setData("stationTitle", station.name);

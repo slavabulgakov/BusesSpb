@@ -23,6 +23,7 @@ public class FlurryConstants {
 	public static final String shareTwitterDeny = "shareTwitterDeny";
 	
 	public static final String menuIsOpen = "menuIsOpen";
+    public static final String rightMenuIsOpen = "rightMenuIsOpen";
 	public static final String selectedTransportModeIsOn = "selectedTransportModeIsOn";
 	public static final String selectedTransportModeIsOff = "selectedTransportModeIsOff";
 	
@@ -42,4 +43,7 @@ public class FlurryConstants {
 	public static final String pathBtnPressed = "pathBtnPressed";
 	
 	public static final String lowMemory = "lowMemory";
+
+    public static final String onInfoWindowClick = "onInfoWindowClick";
+    public static final String onStationCellClick = "onStationCellClick";
 }

@@ -374,6 +374,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			}
 		} else if (kind == MenuKind.Right) {
             if (isOpen) {
+                FlurryAgent.logEvent(FlurryConstants.rightMenuIsOpen);
                 if (_mainActivity().getRightMenu().getState() == RightMenu.State.FORECASTS) {
                     switchToState(new ForecastsState());
                 } else {
@@ -452,12 +453,15 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
-		((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
 		Station station = _model.getModelPaths().getStationByMarker(marker);
-        _model.setData("stationId", station.id);
-        _model.setData("stationTitle", station.name);
-        _mainActivity().getRightMenu().changeToState(RightMenu.State.FORECASTS, false);
-	}
+        if (station != null) {
+            FlurryAgent.logEvent(FlurryConstants.onInfoWindowClick);
+            _model.setData("stationId", station.id);
+            _model.setData("stationTitle", station.name);
+            _mainActivity().getRightMenu().changeToState(RightMenu.State.FORECASTS, false);
+            ((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
+        }
+    }
 	
 	@Override
 	public void onMapImgUpdated() {
