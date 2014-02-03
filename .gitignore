@@ -38,3 +38,4 @@ __otherFiles
 .project
 .idea
 org.eclipse.core.resources.prefs
+buses.keystore
