@@ -55,8 +55,15 @@ public class RightMenuStationsState extends State {
         return _controller.getModel().getRightMenuModel();
     }
 
-    private double _distationOfStation(Station station) {
-        double dist = Math.abs(_location.getLatitude() - station.point.getLatlng().latitude) + Math.abs(_location.getLongitude() - station.point.getLatlng().longitude);
+    private Double _distationOfStation(Station station) {
+        if (_location == null) {
+            return null;
+        }
+        double loc_lat = _location.getLatitude();
+        double loc_lng = _location.getLongitude();
+        double station_lat = station.point.getLatlng().latitude;
+        double station_lng = station.point.getLatlng().longitude;
+        Double dist = Math.abs(loc_lat - station_lat) + Math.abs(loc_lng - station_lng);
         return dist;
     }
 
@@ -65,19 +72,21 @@ public class RightMenuStationsState extends State {
         Stations nearblyStations = new Stations();
         for (Object obj: loader.getContainer().getData()) {
             Station station = (Station)obj;
-            double dist = _distationOfStation(station);
-            int index = 0;
-            boolean setted = false;
-            for (Station nearblyStation : nearblyStations) {
-                if (dist < _distationOfStation(nearblyStation)) {
-                    nearblyStations.add(index, station);
-                    setted = true;
-                    break;
+            Double dist = _distationOfStation(station);
+            if (dist != null) {
+                int index = 0;
+                boolean setted = false;
+                for (Station nearblyStation : nearblyStations) {
+                    if (dist < _distationOfStation(nearblyStation)) {
+                        nearblyStations.add(index, station);
+                        setted = true;
+                        break;
+                    }
+                    index++;
                 }
-                index++;
-            }
-            if (!setted) {
-                nearblyStations.add(station);
+                if (!setted) {
+                    nearblyStations.add(station);
+                }
             }
             while (nearblyStations.size() > 10) {
                 nearblyStations.remove(nearblyStations.size() - 1);
