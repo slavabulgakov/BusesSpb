@@ -12,6 +12,7 @@ public class Forecast {
 	
 	public String transportNumber;
 	public TransportKind transportKind;
+    public String fullName;
 	public Date time;
 
 }

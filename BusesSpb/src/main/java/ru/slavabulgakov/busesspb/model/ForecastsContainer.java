@@ -46,6 +46,7 @@ public class ForecastsContainer extends LoaderContainer {
                 RoutesNamesLoaderContainer.RouteName routeName = _rightMenuModel.getRouteName(item.getInt("routeId"));
                 forecast.transportNumber = routeName.number;
                 forecast.transportKind = routeName.kind;
+                forecast.fullName = routeName.fullName;
                 forecasts.add(forecast);
             }
         } catch (JSONException e) {

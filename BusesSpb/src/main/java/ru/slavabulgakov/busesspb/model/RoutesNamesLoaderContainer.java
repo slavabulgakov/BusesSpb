@@ -23,6 +23,7 @@ public class RoutesNamesLoaderContainer extends LoaderContainer {
 		public String number;
 		public int id;
 		public TransportKind kind;
+        public String fullName;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -48,6 +49,7 @@ public class RoutesNamesLoaderContainer extends LoaderContainer {
 			RouteName routeName = new RouteName();
 			routeName.id = Integer.parseInt(items[0]);
 			routeName.number = items[2];
+            routeName.fullName = items[3];
 			String kind = items[items.length - 4];
 			if (kind.equals("bus")) {
 				 routeName.kind = TransportKind.Bus;

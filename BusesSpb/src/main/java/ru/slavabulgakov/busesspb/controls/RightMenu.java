@@ -224,7 +224,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 		});
 	}
 
-	public void loadForecasts(ArrayList<Object> forecasts) {
+    public void loadForecasts(ArrayList<Object> forecasts) {
         _forecasts = forecasts;
         _getHandler().post(new Runnable() {
             @Override
@@ -232,10 +232,12 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
                 _listView.setAdapter(new ListAdapter() {
 
                     @Override
-                    public void unregisterDataSetObserver(DataSetObserver arg0) {}
+                    public void unregisterDataSetObserver(DataSetObserver arg0) {
+                    }
 
                     @Override
-                    public void registerDataSetObserver(DataSetObserver arg0) {}
+                    public void registerDataSetObserver(DataSetObserver arg0) {
+                    }
 
                     @Override
                     public boolean isEmpty() {
@@ -251,35 +253,38 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
                     public int getViewTypeCount() {
                         return 1;
                     }
+
                     private void _setViewHolder(View view) {
-                        TransportCellViewHolder vh = new TransportCellViewHolder();
-                        vh.leftIcon = (ImageView)view.findViewById(R.id.listItemForecastKind);
-                        vh.leftText = (TextView)view.findViewById(R.id.listItemForecastRouteName);
-                        vh.rightText = (TextView)view.findViewById(R.id.listItemForecastTime);
+                        ForecastCellViewHolder vh = new ForecastCellViewHolder();
+                        vh.leftIcon = (ImageView) view.findViewById(R.id.listItemForecastKind);
+                        vh.leftText = (TextView) view.findViewById(R.id.listItemForecastRouteName);
+                        vh.rightText = (TextView) view.findViewById(R.id.listItemForecastTime);
+                        vh.centerText = (TextView) view.findViewById(R.id.listItemForecastRouteFullName);
                         vh.needInflate = false;
                         view.setTag(vh);
                     }
 
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
-                        LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
+                        LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
                         if (convertView == null) {
                             convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
 
                             _setViewHolder(convertView);
-                        } else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
+                        } else if (((ForecastCellViewHolder) convertView.getTag()).needInflate) {
                             convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
                             _setViewHolder(convertView);
                         }
 
-                        Forecast forecast = (Forecast)_forecasts.get(position);
+                        Forecast forecast = (Forecast) _forecasts.get(position);
 
-                        TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
+                        ForecastCellViewHolder vh = (ForecastCellViewHolder) convertView.getTag();
                         vh.rightText.setText(_format.format(forecast.time));
                         vh.leftText.setText(forecast.transportNumber);
                         Pair<Integer, Integer> res = vh.backgroundAndIconByKind(forecast.transportKind);
                         convertView.setBackgroundResource(res.first);
                         vh.leftIcon.setImageResource(res.second);
+                        vh.centerText.setText(forecast.fullName);
 
                         return convertView;
                     }
@@ -320,7 +325,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
                 });
             }
         });
-	}
+    }
 
     public enum State {
         STATIONS,

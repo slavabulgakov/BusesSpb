@@ -93,7 +93,7 @@ public class StationsAdapter extends ArrayAdapter<Station> {
 	}
 
 	public StationsAdapter(Context context, Model model, Stations nearblyStations) {
-		super(context, R.layout.listitem_forecast);
+		super(context, R.layout.listitem_station);
         _nearblyStations = nearblyStations;
 		_context = context;
 		_model = model;
@@ -104,17 +104,16 @@ public class StationsAdapter extends ArrayAdapter<Station> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
+            convertView = inflater.inflate(R.layout.listitem_station, parent, false);
             _setViewHolder(convertView);
         } else if (((TransportCellViewHolder)convertView.getTag()).needInflate) {
-            convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
+            convertView = inflater.inflate(R.layout.listitem_station, parent, false);
             _setViewHolder(convertView);
         }
 
         Station station = getItem(position);
 
         TransportCellViewHolder vh = (TransportCellViewHolder)convertView.getTag();
-        vh.rightText.setText("");
         vh.leftText.setText(station.name);
         Pair<Integer, Integer> res = vh.backgroundAndIconByKind(station.kind);
         convertView.setBackgroundResource(res.first);
@@ -127,7 +126,6 @@ public class StationsAdapter extends ArrayAdapter<Station> {
         TransportCellViewHolder vh = new TransportCellViewHolder();
         vh.leftIcon = (ImageView)view.findViewById(R.id.listItemForecastKind);
         vh.leftText = (TextView)view.findViewById(R.id.listItemForecastRouteName);
-        vh.rightText = (TextView)view.findViewById(R.id.listItemForecastTime);
         vh.needInflate = false;
         view.setTag(vh);
     }
