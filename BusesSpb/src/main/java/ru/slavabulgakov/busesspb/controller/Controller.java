@@ -352,15 +352,14 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
             _mainActivity().keyboardTurnOff();
         }
 
+        _mainActivity().getMapController().toggleRotateMap(isOpen);
+
 		if (kind == MenuKind.Left) {
 			if (isOpen) {
 	    		switchToState(new LeftMenuState());
 			}
 			
 			_mainActivity().updateFilterButtons();
-			
-			
-			_mainActivity().getMapController().toggleRotateMap(isOpen);
 			
 			
 			if (isOpen) {
