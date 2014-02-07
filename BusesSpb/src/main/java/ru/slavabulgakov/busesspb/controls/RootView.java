@@ -56,9 +56,16 @@ public class RootView extends RelativeLayout {
 			_setX(_model.dpToPx(_xClose));
 		}
 	}
+
+    private boolean _isEnableRightMenu() {
+         return _model.getData("stationId") != null;
+    }
 	
 	@SuppressLint("Override")
 	private void _setX(float x) {
+        if (x < 0 && !_isEnableRightMenu()) {
+            return;
+        }
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
 		lp.leftMargin = (int)x;
 		lp.rightMargin = -(int)x;

@@ -81,18 +81,35 @@
                 
             </LinearLayout>
 
-            <ImageButton
+
+
+            <FrameLayout
                 android:id="@+id/rightMenuButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:minWidth="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/btn_pressed_black"
-                android:minHeight="40dp"
-                android:minWidth="40dp"
-                android:src="@drawable/menu_close_icon" />
+                android:background="@drawable/btn_pressed_black">
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rightMenuButtonProgressBar"
+                    android:layout_gravity="center" />
+
+                <ImageView
+                    android:id="@+id/rightMenuButtonImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/menu_close_icon"
+                    android:layout_gravity="center" />
+
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/zoomControls"

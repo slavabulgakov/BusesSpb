@@ -9,7 +9,6 @@ import android.graphics.Paint.Align;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Pair;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,6 +41,7 @@ import ru.slavabulgakov.busesspb.model.TransportOverlay;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Point;
 import ru.slavabulgakov.busesspb.paths.Station;
+import ru.slavabulgakov.busesspb.paths.StationMarker;
 import ru.slavabulgakov.busesspb.paths.Stations;
 import ru.slavabulgakov.busesspb.paths.SubPath;
 
@@ -78,6 +78,10 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 	        _map.setOnInfoWindowClickListener(this);
 		}
 	}
+
+    public LatLng getCameraLocation() {
+        return  _map.getCameraPosition().target;
+    }
 	
 	public GoogleMap getMap() {
 		return _map;
@@ -192,7 +196,7 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 		}
 		LatLng position = new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng);
 		String velocity = _model.getString(R.string.velocity) + Integer.toString(transportOverlay.transport.velocity) + _model.getString(R.string.km);
-		GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().image(_getBusBitMap(transportOverlay.transport.kind)).position(position, getWidth()).bearing(transportOverlay.transport.direction));
+		GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().zIndex(1000).image(_getBusBitMap(transportOverlay.transport.kind)).position(position, getWidth()).bearing(transportOverlay.transport.direction));
 		Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber)));
 		transportOverlay.groundOverlay = groundOverlay;
 		transportOverlay.marker = marker;
@@ -332,20 +336,27 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 		return (float)w;
 	}
 	
-	public void showStations(Stations stations) {
-		for (Station station : stations) {
-			MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name).icon(_getEmptyBitMap()).anchor((float).5, (float).5);
-			Marker marker = _map.addMarker(markerOptions);
-			Pair<Marker, Station> pair = new Pair<Marker, Station>(marker, station);
-			_model.getModelPaths().addMapItem(pair);
-			
-			BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.station);
-			GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(-1);
-			GroundOverlay groundOverlay = _map.addGroundOverlay(groundOverlayOptions);
-			_model.getModelPaths().addMapShortTimeItem(groundOverlay);
-		}
+	public void showStations(final Stations stations) {
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (Station station : stations) {
+                    MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name + " >").icon(_getEmptyBitMap()).anchor((float).5, (float).5);
+                    Marker marker = _map.addMarker(markerOptions);
+                    StationMarker stationMarker = new StationMarker();
+                    stationMarker.marker = marker;
+                    stationMarker.station = station;
+                    _model.getModelPaths().addMapItem(stationMarker);
+
+                    BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.station);
+                    GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(-1);
+                    GroundOverlay groundOverlay = _map.addGroundOverlay(groundOverlayOptions);
+                    _model.getModelPaths().addMapShortTimeItem(groundOverlay);
+                }
+            }
+        });
 	}
-	
+
 	private BitmapDescriptor _getEmptyBitMap() {
 		Bitmap bitmap = Bitmap.createBitmap(5, 5, Config.ARGB_8888);
 		return BitmapDescriptorFactory.fromBitmap(bitmap);

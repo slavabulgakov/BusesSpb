@@ -1,13 +1,23 @@
 package ru.slavabulgakov.busesspb.paths;
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Looper;
+
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import ru.slavabulgakov.busesspb.Files;
 import ru.slavabulgakov.busesspb.LoadTaskException;
@@ -16,18 +26,12 @@ import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
-import android.annotation.SuppressLint;
-import android.util.Pair;
-
-import com.google.android.gms.maps.model.GroundOverlay;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
 
 public class ModelPaths {
 	private static String PATH_FILE_NAME = "paths.ser";
 	private static String STATIONS_FILE_NAME = "stations.ser";
 	private Model _model;
+    private Handler _handler;
 	public ModelPaths(Model model) {
 		_model = model;
 	}
@@ -280,7 +284,9 @@ public class ModelPaths {
 				((Polyline)item).remove();
 			} else if (item.getClass() == GroundOverlay.class) {
 				((GroundOverlay)item).remove();
-			}
+			} else if (item.getClass() == StationMarker.class) {
+                ((StationMarker)item).marker.remove();
+            }
 		}
 	}
 	public void addMapItem(Object item) {
@@ -288,17 +294,17 @@ public class ModelPaths {
 	}
 	public boolean isStationMarker(Object item) {
 		boolean exist = _getMapItems().contains(item);
-		boolean isMarker = item.getClass() == Pair.class;
+		boolean isMarker = item.getClass() == StationMarker.class;
 		return exist && isMarker;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Station getStationByMarker(Marker marker) {
 		for (Object object : _getMapItems()) {
-			if (object.getClass() == Pair.class) {
-				Pair<Marker, Station> pair = (Pair<Marker, Station>)object;
-				if (pair.first.equals(marker)) {
-					return pair.second;
+			if (object.getClass() == StationMarker.class) {
+				StationMarker pair = (StationMarker)object;
+				if (pair.marker.equals(marker)) {
+					return pair.station;
 				}
 			}
 		}
@@ -313,15 +319,20 @@ public class ModelPaths {
 		return _mapShortTimeItems;
 	}
 	public void removeMapShortTimeItems() {
-		for (Object item : _getMapShortTimeItems()) {
-			if (item.getClass() == Marker.class) {
-				((Marker)item).remove();
-			} else if (item.getClass() == Polyline.class) {
-				((Polyline)item).remove();
-			} else if (item.getClass() == GroundOverlay.class) {
-				((GroundOverlay)item).remove();
-			}
-		}
+        _getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                for (Object item : _getMapShortTimeItems()) {
+                    if (item.getClass() == Marker.class) {
+                        ((Marker)item).remove();
+                    } else if (item.getClass() == Polyline.class) {
+                        ((Polyline)item).remove();
+                    } else if (item.getClass() == GroundOverlay.class) {
+                        ((GroundOverlay)item).remove();
+                    }
+                }
+            }
+        });
 	}
 	public void addMapShortTimeItem(Object item) {
 		_getMapShortTimeItems().add(item);
@@ -343,6 +354,11 @@ public class ModelPaths {
 			removeMapShortTimeItems();
 		}
 	}
+
+    private Stations _nearblyStations;
+    public void setNearblyStations(Stations stations) {
+        _nearblyStations = stations;
+    }
 	
 	public void updateStations() {
 		if (pathsIsOn()) {
@@ -358,6 +374,16 @@ public class ModelPaths {
 					_listener.onStationsLoaded(stations);
 				}
 			}
+            if (_nearblyStations != null) {
+                _listener.onStationsLoaded(_nearblyStations);
+            }
 		}
 	}
+
+    private Handler _getHandler() {
+        if (_handler == null) {
+            _handler = new Handler(Looper.getMainLooper());
+        }
+        return _handler;
+    }
 }

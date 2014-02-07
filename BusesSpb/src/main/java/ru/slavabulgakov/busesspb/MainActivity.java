@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
@@ -19,7 +23,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import ru.slavabulgakov.busesspb.controller.Controller;
@@ -43,15 +46,15 @@ public class MainActivity extends BaseActivity {
 	private CheckButton _tramFilter;
 	private CheckButton _shipFilter;
 	
-	LinearLayout _ticketsLayout;
 	private LeftMenu _leftMenu;
 	private RightMenu _rightMenu;
 	private InternetDenyImageButtonController _internetDenyImageButtonController;
 	private AdView _adView;
 	private CheckButton _pathsButton;
 	private CloselessTicketsTray _closelessTicketsTray;
-    private ImageButton _rightMenuButton;
+    private FrameLayout _rightMenuButton;
     private LocationClient _locationClient;
+    private ImageView _rightMenuButtonImage;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -106,10 +109,30 @@ public class MainActivity extends BaseActivity {
 		_closelessTicketsTray.setOnClickListener(Controller.getInstance());
 		_closelessTicketsTray.inition(_model);
 
-        _rightMenuButton = (ImageButton)findViewById(R.id.rightMenuButton);
+        _rightMenuButton = (FrameLayout)findViewById(R.id.rightMenuButton);
         _rightMenuButton.setOnClickListener(Controller.getInstance());
 
         _locationClient = new LocationClient(this, Controller.getInstance(), Controller.getInstance());
+        _rightMenuButtonImage = (ImageView)findViewById(R.id.rightMenuButtonImage);
+        setRightMenuButtonLoading(false);
+
+        Controller.getInstance().switchToState(new MapState());
+    }
+
+    public void setRightMenuButtonLoading(final boolean loading) {
+        Controller.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                ProgressBar progressBar = (ProgressBar)findViewById(R.id.rightMenuButtonProgressBar);
+                if (loading) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    _rightMenuButtonImage.setVisibility(View.GONE);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    _rightMenuButtonImage.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
@@ -128,10 +151,6 @@ public class MainActivity extends BaseActivity {
         return _locationClient.getLastLocation();
     }
 
-    public CloselessTicketsTray getCloselessTicketsTray() {
-    	return _closelessTicketsTray;
-    }
-    
     public InternetDenyImageButtonController getInternetDenyButtonController() {
 		return _internetDenyImageButtonController;
 	}
@@ -151,8 +170,10 @@ public class MainActivity extends BaseActivity {
 		if (width < 400) {
 			LinearLayout zoom = (LinearLayout)findViewById(R.id.zoomControls);
 			RelativeLayout.LayoutParams zoomLayoutParams = (LayoutParams)zoom.getLayoutParams();
-			zoomLayoutParams.bottomMargin = _model.dpToPx(isAdsOff() ? 10 : 60);
-			zoom.setLayoutParams(zoomLayoutParams);
+            if (zoomLayoutParams != null) {
+                zoomLayoutParams.bottomMargin = _model.dpToPx(isAdsOff() ? 10 : 60);
+                zoom.setLayoutParams(zoomLayoutParams);
+            }
 		}
 		
 		_adView.setVisibility(isAdsOff() ? View.GONE : View.VISIBLE);
@@ -173,7 +194,9 @@ public class MainActivity extends BaseActivity {
 		_model.saveFavorite();
 		_model.saveLocation();
 		_model.saveZoom();
-		Controller.getInstance().getState().pause();
+        if (Controller.getInstance().getState() != null) {
+            Controller.getInstance().getState().pause();
+        }
 		super.onPause();
 	}
 
@@ -239,8 +262,8 @@ public class MainActivity extends BaseActivity {
 		}
 
         int resId = _model.menuIsOpened(MenuKind.Right) ? R.drawable.menu_open_icon : R.drawable.menu_close_icon;
-        _rightMenuButton.setImageResource(resId);
-	}
+        _rightMenuButtonImage.setImageResource(resId);
+    }
     
     public void keyboardTurnOff() {
     	InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -251,26 +274,6 @@ public class MainActivity extends BaseActivity {
     	_rootView.toggleMenu(kind);
 	}
     
-    public void showMenu(MenuKind kind) {
-		_rootView.open(kind);
-	}
-    
-	@SuppressLint("UseValueOf")
-	public static float _distFrom(LatLng point1, LatLng point2) {
-	    double earthRadius = 3958.75;
-	    double dLat = Math.toRadians(point2.latitude - point1.latitude);
-	    double dLng = Math.toRadians(point2.longitude - point1.longitude);
-	    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-	               Math.cos(Math.toRadians(point1.latitude)) * Math.cos(Math.toRadians(point2.latitude)) *
-	               Math.sin(dLng/2) * Math.sin(dLng/2);
-	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-	    double dist = earthRadius * c;
-
-	    int meterConversion = 1609;
-
-	    return new Float(dist * meterConversion).floatValue();
-	}
-	
 	@SuppressLint("NewApi")
 	public void updateTransport() {
 		if (_model.getFavorite().size() == 0) {

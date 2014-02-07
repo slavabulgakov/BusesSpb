@@ -1,8 +1,6 @@
 package ru.slavabulgakov.busesspb.controller;
 
-import android.location.Location;
-
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.maps.model.LatLng;
 
 import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.model.Loader;
@@ -12,18 +10,19 @@ import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
 /**
- * Created by user on 30.12.13.
+ * Created by Slava Bulgakov on 30.12.13.
  */
 public class RightMenuStationsState extends State {
-    private Location _location;
+    private LatLng _location;
 
-    public RightMenuStationsState(Location location) {
+    public RightMenuStationsState(LatLng location) {
         _location = location;
     }
 
     @Override
     public void start() {
         super.start();
+        _controller.getMainActivity().setRightMenuButtonLoading(true);
         _loadStations();
     }
 
@@ -39,16 +38,9 @@ public class RightMenuStationsState extends State {
             _menuModel().loadForContainer(new StationsContainer(), _controller);
         } else {
             if (loader.getState().getValue() > Loader.State.staticLoading.getValue()) {
-                _findNearblyStations();
+                _findNearbyStations();
             }
         }
-    }
-
-    private RightMenu _menu() {
-        if (_controller.getMainActivity() != null) {
-            return _controller.getMainActivity().getRightMenu();
-        }
-        return null;
     }
 
     private RightMenuModel _menuModel() {
@@ -59,47 +51,48 @@ public class RightMenuStationsState extends State {
         if (_location == null) {
             return null;
         }
-        double loc_lat = _location.getLatitude();
-        double loc_lng = _location.getLongitude();
+        double loc_lat = _location.latitude;
+        double loc_lng = _location.longitude;
         double station_lat = station.point.getLatlng().latitude;
         double station_lng = station.point.getLatlng().longitude;
         Double dist = Math.abs(loc_lat - station_lat) + Math.abs(loc_lng - station_lng);
         return dist;
     }
 
-    private void _findNearblyStations() {
+    private void _findNearbyStations() {
         Loader loader = _menuModel().getLoader(StationsContainer.class);
-        Stations nearblyStations = new Stations();
+        Stations nearbyStations = new Stations();
         for (Object obj: loader.getContainer().getData()) {
             Station station = (Station)obj;
             Double dist = _distationOfStation(station);
             if (dist != null) {
                 int index = 0;
                 boolean setted = false;
-                for (Station nearblyStation : nearblyStations) {
+                for (Station nearblyStation : nearbyStations) {
                     if (dist < _distationOfStation(nearblyStation)) {
-                        nearblyStations.add(index, station);
+                        nearbyStations.add(index, station);
                         setted = true;
                         break;
                     }
                     index++;
                 }
                 if (!setted) {
-                    nearblyStations.add(station);
+                    nearbyStations.add(station);
                 }
             }
-            while (nearblyStations.size() > 10) {
-                nearblyStations.remove(nearblyStations.size() - 1);
+            while (nearbyStations.size() > 20) {
+                nearbyStations.remove(nearbyStations.size() - 1);
             }
         }
-        if (_menu() != null) {
-            _menu().loadNearblyStations(nearblyStations);
-        }
+        _controller.getModel().getModelPaths().setNearblyStations(nearbyStations);
+        _controller.getModel().getModelPaths().updateStations();
+        _controller.switchToLastState();
+        _controller.getMainActivity().setRightMenuButtonLoading(false);
     }
 
     public void staticLoaded(Loader loader) {
         if (loader.getContainer().getClass() == StationsContainer.class) {
-            _findNearblyStations();
+            _findNearbyStations();
         }
     }
 }
