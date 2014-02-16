@@ -1,4 +1,4 @@
-package ru.slavabulgakov.busesspb.model;
+package ru.slavabulgakov.busesspb.Network;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -8,6 +8,7 @@ import com.android.volley.VolleyError;
 import java.util.ArrayList;
 
 import ru.slavabulgakov.busesspb.Files;
+import ru.slavabulgakov.busesspb.model.Model;
 
 public class Loader {
 	
@@ -65,9 +66,9 @@ public class Loader {
 			@Override
 			public void run() {
 				_state = State.staticLoading;
-                ArrayList<Object> data = null;
+                Object data = null;
                 if (_container.getCacheFileName() != null) {
-                    data = (ArrayList<Object>)Files.loadFromFile(_container.getCacheFileName(), _model);
+                    data = Files.loadFromFile(_container.getCacheFileName(), _model);
                 }
 				if (data == null) {
                     if (_container.getStaticFileName() != null) {
@@ -108,10 +109,4 @@ public class Loader {
 			}
 		}).start();
 	}
-
-    public void reload() {
-        if (_state == State.complete) {
-            load();
-        }
-    }
 }

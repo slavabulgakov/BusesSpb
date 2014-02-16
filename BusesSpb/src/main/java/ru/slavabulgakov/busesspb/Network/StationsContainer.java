@@ -1,9 +1,10 @@
-package ru.slavabulgakov.busesspb.model;
+package ru.slavabulgakov.busesspb.Network;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.paths.Point;
 import ru.slavabulgakov.busesspb.paths.Station;
 
@@ -15,7 +16,7 @@ public class StationsContainer extends LoaderContainer {
 	private static final long serialVersionUID = 1L;
 	
 	public StationsContainer() {
-		super("http://futbix.ru/busesspb/v1_0/stationsdata/", "stationsNames.txt", "stationsNames.ser");
+		super("http://futbix.ru/busesspb/v1_0/stationsdata/", "stationsNames.txt", "v1_stationsNames.ser");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -64,9 +65,6 @@ public class StationsContainer extends LoaderContainer {
 			}
 			
 			data.add(station);
-		}
-		if (_data != null) {
-			_data.clear();
 		}
 		_data = data;
 	}

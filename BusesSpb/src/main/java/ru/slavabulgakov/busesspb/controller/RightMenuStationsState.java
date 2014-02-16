@@ -2,10 +2,11 @@ package ru.slavabulgakov.busesspb.controller;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import ru.slavabulgakov.busesspb.controls.RightMenu;
-import ru.slavabulgakov.busesspb.model.Loader;
-import ru.slavabulgakov.busesspb.model.RightMenuModel;
-import ru.slavabulgakov.busesspb.model.StationsContainer;
+import java.util.ArrayList;
+
+import ru.slavabulgakov.busesspb.Network.Loader;
+import ru.slavabulgakov.busesspb.Network.Network;
+import ru.slavabulgakov.busesspb.Network.StationsContainer;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
@@ -33,21 +34,26 @@ public class RightMenuStationsState extends State {
     }
 
     private void _loadStations() {
-        Loader loader = _menuModel().getLoader(StationsContainer.class);
+        Loader loader = _network().getLoader(StationsContainer.class);
         if (loader == null) {
-            _menuModel().loadForContainer(new StationsContainer(), _controller);
+            _network().loadForContainer(new StationsContainer(), _controller);
         } else {
             if (loader.getState().getValue() > Loader.State.staticLoading.getValue()) {
-                _findNearbyStations();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        _findNearbyStations();
+                    }
+                }).start();
             }
         }
     }
 
-    private RightMenuModel _menuModel() {
-        return _controller.getModel().getRightMenuModel();
+    private Network _network() {
+        return _controller.getModel().getNetwork();
     }
 
-    private Double _distationOfStation(Station station) {
+    private Double _distantionOfStation(Station station) {
         if (_location == null) {
             return null;
         }
@@ -60,16 +66,16 @@ public class RightMenuStationsState extends State {
     }
 
     private void _findNearbyStations() {
-        Loader loader = _menuModel().getLoader(StationsContainer.class);
+        Loader loader = _network().getLoader(StationsContainer.class);
         Stations nearbyStations = new Stations();
-        for (Object obj: loader.getContainer().getData()) {
+        for (Object obj: (ArrayList<?>)loader.getContainer().getData()) {
             Station station = (Station)obj;
-            Double dist = _distationOfStation(station);
+            Double dist = _distantionOfStation(station);
             if (dist != null) {
                 int index = 0;
                 boolean setted = false;
                 for (Station nearblyStation : nearbyStations) {
-                    if (dist < _distationOfStation(nearblyStation)) {
+                    if (dist < _distantionOfStation(nearblyStation)) {
                         nearbyStations.add(index, station);
                         setted = true;
                         break;
@@ -84,7 +90,7 @@ public class RightMenuStationsState extends State {
                 nearbyStations.remove(nearbyStations.size() - 1);
             }
         }
-        _controller.getModel().getModelPaths().setNearblyStations(nearbyStations);
+        _controller.getModel().getModelPaths().setNearbyStations(nearbyStations);
         _controller.getModel().getModelPaths().updateStations();
         _controller.switchToLastState();
         _controller.getMainActivity().setRightMenuButtonLoading(false);

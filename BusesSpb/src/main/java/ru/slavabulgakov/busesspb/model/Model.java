@@ -37,6 +37,8 @@ import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.LoadTaskException;
 import ru.slavabulgakov.busesspb.Mercator;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
+import ru.slavabulgakov.busesspb.Network.Network;
+import ru.slavabulgakov.busesspb.Network.RoutesNamesLoaderContainer;
 import ru.slavabulgakov.busesspb.ParserWebPageTask;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import ru.slavabulgakov.busesspb.ShareModel;
@@ -48,20 +50,22 @@ public class Model extends Application {
 		Left,
 		Right
 	};
+
+    private Network _network;
+    public Network getNetwork() {
+        if (_network == null) {
+            _network = new Network(this);
+        }
+        return _network;
+    }
 	
 	private ModelPaths _paths;
-	private RightMenuModel _rightMenuModel;
 	public Model() {
 		_paths = new ModelPaths(this);
-		_rightMenuModel = new RightMenuModel(this);
 	}
 
 	public ModelPaths getModelPaths() {
 		return _paths;
-	}
-	
-	public RightMenuModel getRightMenuModel() {
-		return _rightMenuModel;
 	}
 	
 	private static final int BUS_FILTER = 1;
@@ -105,8 +109,10 @@ public class Model extends Application {
 		if (value == null) {
 			SharedPreferences settings = getSharedPreferences(STORAGE_NAME, 0);
 			Map<String, ?>map = settings.getAll();
-			value = map.get(key);
-		}
+            if (map != null) {
+                value = map.get(key);
+            }
+        }
 		return value;
 	}
 	public Object getData(String key, Object defValue) {
@@ -826,6 +832,13 @@ public class Model extends Application {
 		}
 		return _rightMenuIsOpened;
 	}
+
+    public boolean menuIsClosed(MenuKind kind) {
+        if (kind == MenuKind.Left) {
+            return !_leftMenuIsOpened;
+        }
+        return !_rightMenuIsOpened;
+    }
 	
 	public boolean menuIsOpenedOnce() {
 		boolean isOpenedOnce = (Boolean)getData("menu_is_opened_once", false);
@@ -890,4 +903,19 @@ public class Model extends Application {
 		}
 		return false;
 	}
+
+
+    private RoutesNamesLoaderContainer _routesNamesContainer;
+    public RoutesNamesLoaderContainer.RouteName getRouteName(int id) {
+        if (_routesNamesContainer == null) {
+            _routesNamesContainer = (RoutesNamesLoaderContainer)getNetwork().getLoader(RoutesNamesLoaderContainer.class).getContainer();
+        }
+        for (Object obj : (ArrayList<?>)_routesNamesContainer.getData()) {
+            RoutesNamesLoaderContainer.RouteName routeName = (RoutesNamesLoaderContainer.RouteName)obj;
+            if (routeName.id == id) {
+                return routeName;
+            }
+        }
+        return null;
+    }
 }

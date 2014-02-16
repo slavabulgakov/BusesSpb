@@ -1,7 +1,9 @@
-package ru.slavabulgakov.busesspb.model;
+package ru.slavabulgakov.busesspb.Network;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import ru.slavabulgakov.busesspb.model.TransportKind;
 
 
 public class RoutesNamesLoaderContainer extends LoaderContainer {

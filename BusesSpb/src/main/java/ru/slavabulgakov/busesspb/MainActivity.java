@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -99,8 +98,7 @@ public class MainActivity extends BaseActivity {
 		
 		_rightMenu = (RightMenu)findViewById(R.id.rightMenu);
 		_rightMenu.setModel(_model);
-        _rightMenu.setListener(Controller.getInstance());
-		
+
 		_internetDenyImageButtonController = new InternetDenyImageButtonController((ImageButton)findViewById(R.id.internetDeny), _model, this);
 		
 		_adView = (AdView)findViewById(R.id.mainAdView);
@@ -188,7 +186,6 @@ public class MainActivity extends BaseActivity {
     
 	@Override
 	protected void onPause() {
-		_model.getModelPaths().save();
 		_model.saveAllTransportOverlays();
 		_model.saveLastSimpleTransportView();
 		_model.saveFavorite();
@@ -257,7 +254,7 @@ public class MainActivity extends BaseActivity {
     public void updateControls() {
     	_closelessTicketsTray.update();
     	
-    	if (!_model.menuIsOpened(MenuKind.Left)) {
+    	if (_model.menuIsClosed(MenuKind.Left)) {
     		_model.getModelPaths().loadPaths();
 		}
 

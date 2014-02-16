@@ -5,7 +5,16 @@ import com.google.android.gms.maps.model.Marker;
 /**
  * Created by user on 06.02.14.
  */
-public class StationMarker {
+public class StationMarker extends StationMapItem {
     public Marker marker;
-    public Station station;
+
+    public StationMarker(Marker marker, Station station) {
+        this.marker = marker;
+        _station = station;
+    }
+
+    @Override
+    public void remove() {
+        marker.remove();
+    }
 }

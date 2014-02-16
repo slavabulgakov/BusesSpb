@@ -38,12 +38,12 @@ import ru.slavabulgakov.busesspb.model.SimpleTransportView;
 import ru.slavabulgakov.busesspb.model.Transport;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.model.TransportOverlay;
+import ru.slavabulgakov.busesspb.paths.GroundOverlayMapItem;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Point;
+import ru.slavabulgakov.busesspb.paths.PolylineMapItem;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.StationMarker;
-import ru.slavabulgakov.busesspb.paths.Stations;
-import ru.slavabulgakov.busesspb.paths.SubPath;
 
 public class MapController implements OnCameraChangeListener, OnInfoWindowClickListener {
 	
@@ -313,18 +313,17 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 	        _countShows++;
 		}
 	}
-	
+
 	public void showPath(Path path) {
 		if (path != null) {
-			for (SubPath subPath : path) {
-				PolylineOptions polylineOptions = new PolylineOptions();
-				for (Point point : subPath) {
-					polylineOptions.add(point.getLatlng());
-				}
-				Polyline polyline = _map.addPolyline(polylineOptions.width(2).color(Color.rgb(220, 60, 0)).zIndex(-2));
-				_model.getModelPaths().addMapItem(polyline);
+            PolylineOptions polylineOptions = new PolylineOptions();
+			for (Point point : path.getPoints()) {
+                polylineOptions.add(point.getLatlng());
 			}
-		}
+            Polyline polyline = _map.addPolyline(polylineOptions.width(2).color(Color.rgb(220, 60, 0)).zIndex(-2));
+            PolylineMapItem polylineMapItem = new PolylineMapItem(polyline, path.getRouteId(), path.getDirection());
+            _model.getModelPaths().addMapItem(polylineMapItem);
+        }
 	}
 	
 	private float _getStationWidth() {
@@ -335,26 +334,47 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 		double w = .3 * Math.pow(2, Math.max(.0, 21.0 - zoom));
 		return (float)w;
 	}
-	
-	public void showStations(final Stations stations) {
-        _handler.post(new Runnable() {
-            @Override
-            public void run() {
-                for (Station station : stations) {
-                    MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name + " >").icon(_getEmptyBitMap()).anchor((float).5, (float).5);
-                    Marker marker = _map.addMarker(markerOptions);
-                    StationMarker stationMarker = new StationMarker();
-                    stationMarker.marker = marker;
-                    stationMarker.station = station;
-                    _model.getModelPaths().addMapItem(stationMarker);
 
-                    BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.station);
-                    GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(-1);
-                    GroundOverlay groundOverlay = _map.addGroundOverlay(groundOverlayOptions);
-                    _model.getModelPaths().addMapShortTimeItem(groundOverlay);
-                }
+	public void showStations(ArrayList<?> stations) {
+        for (Object object : stations) {
+            Station station = (Station)object;
+            if (station.name.contains("КОСТЮШКО")) {
+                int sd = 0;
+                sd++;
             }
-        });
+            MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name + " >").icon(_getEmptyBitMap()).anchor((float).5, (float).5);
+            Marker marker = _map.addMarker(markerOptions);
+            StationMarker stationMarker = new StationMarker(marker, station);
+            _model.getModelPaths().addMapItem(stationMarker);
+
+            int res;
+            switch (station.kind) {
+                case Bus:
+                    res = R.drawable.station_bus;
+                    break;
+
+                case Tram:
+                    res = R.drawable.station_tram;
+                    break;
+
+                case Trolley:
+                    res = R.drawable.station_trolley;
+                    break;
+
+                case Ship:
+                    res = R.drawable.station_ship;
+                    break;
+
+                default:
+                    res = R.drawable.station_bus;
+                    break;
+            }
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(res);
+            GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(-1);
+            GroundOverlay groundOverlay = _map.addGroundOverlay(groundOverlayOptions);
+            GroundOverlayMapItem groundOverlayMapItem = new GroundOverlayMapItem(groundOverlay, station.id);
+            _model.getModelPaths().addMapShortTimeItem(groundOverlayMapItem);
+        }
 	}
 
 	private BitmapDescriptor _getEmptyBitMap() {

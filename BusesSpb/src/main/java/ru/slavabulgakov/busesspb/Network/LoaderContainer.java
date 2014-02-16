@@ -1,7 +1,6 @@
-package ru.slavabulgakov.busesspb.model;
+package ru.slavabulgakov.busesspb.Network;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class LoaderContainer implements Serializable {
 	/**
@@ -12,7 +11,7 @@ public class LoaderContainer implements Serializable {
 	private String _staticFileName;
 	private String _cacheFileName;
     protected boolean _isJson;
-	protected ArrayList<Object> _data;
+	protected Object _data;
 	
 	public LoaderContainer(String urlString, String staticFileName, String cacheFileName) {
 		_urlString = urlString;
@@ -20,7 +19,7 @@ public class LoaderContainer implements Serializable {
 		_cacheFileName = cacheFileName;
 	}
 	
-	public ArrayList<Object> getData() {
+	public Object getData() {
 		return _data;
 	}
 	
@@ -37,15 +36,9 @@ public class LoaderContainer implements Serializable {
 	}
 	
 	public void handler(Object obj) {
-        if (_data != null) {
-            _data.clear();
-        }
 	}
 	
-	public void loadData(ArrayList<Object> data) {
-		if (_data != null) {
-			_data.clear();
-		}
+	public void loadData(Object data) {
 		_data = data;
 	}
 

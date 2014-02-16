@@ -17,7 +17,7 @@ import java.util.Comparator;
 
 import ru.slavabulgakov.busesspb.controls.TransportCellViewHolder;
 import ru.slavabulgakov.busesspb.model.Model;
-import ru.slavabulgakov.busesspb.model.StationsContainer;
+import ru.slavabulgakov.busesspb.Network.StationsContainer;
 import ru.slavabulgakov.busesspb.paths.Station;
 import ru.slavabulgakov.busesspb.paths.Stations;
 
@@ -57,9 +57,8 @@ public class StationsAdapter extends ArrayAdapter<Station> {
 			FilterResults filterResults = new FilterResults();
 			if (constraint != null) {
 				synchronized (this) {
-                    ArrayList<Object> list = _model.getRightMenuModel().getLoader(StationsContainer.class).getContainer().getData();
-                    for (Object object : list) {
-                        Station station = (Station)object;
+                    Stations list = (Stations)_model.getNetwork().getLoader(StationsContainer.class).getContainer().getData();
+                    for (Station station : list) {
                         if (station.name.toLowerCase().contains(constraint.toString().toLowerCase())) {
                             data.add(station);
                         }

@@ -1,4 +1,4 @@
-package ru.slavabulgakov.busesspb.model;
+package ru.slavabulgakov.busesspb.Network;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.paths.Forecast;
 
 /**
@@ -16,13 +17,13 @@ import ru.slavabulgakov.busesspb.paths.Forecast;
  */
 public class ForecastsContainer extends LoaderContainer {
 
-    private RightMenuModel _rightMenuModel;
+    private Model _model;
     private String _stationId;
 
-    public ForecastsContainer(String stationId, RightMenuModel rightMenuModel) {
+    public ForecastsContainer(String stationId, Model model) {
         super("http://transport.orgp.spb.ru/Portal/transport/internalapi/forecast/bystop?stopID=" + stationId, null, null);
         _stationId = stationId;
-        _rightMenuModel = rightMenuModel;
+        _model = model;
         _isJson = true;
     }
 
@@ -43,7 +44,7 @@ public class ForecastsContainer extends LoaderContainer {
                 JSONObject item = array.getJSONObject(i);
                 Forecast forecast = new Forecast();
                 forecast.time = format.parse(item.getString("arrivingTime"));
-                RoutesNamesLoaderContainer.RouteName routeName = _rightMenuModel.getRouteName(item.getInt("routeId"));
+                RoutesNamesLoaderContainer.RouteName routeName = _model.getRouteName(item.getInt("routeId"));
                 forecast.transportNumber = routeName.number;
                 forecast.transportKind = routeName.kind;
                 forecast.fullName = routeName.fullName;

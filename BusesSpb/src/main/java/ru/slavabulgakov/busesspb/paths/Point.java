@@ -1,8 +1,8 @@
 package ru.slavabulgakov.busesspb.paths;
 
-import java.io.Serializable;
-
 import com.google.android.gms.maps.model.LatLng;
+
+import java.io.Serializable;
 
 public class Point implements Serializable {
 	/**

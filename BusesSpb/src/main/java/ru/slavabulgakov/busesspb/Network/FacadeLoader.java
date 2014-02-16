@@ -1,4 +1,4 @@
-package ru.slavabulgakov.busesspb.model;
+package ru.slavabulgakov.busesspb.Network;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;

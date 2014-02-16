@@ -6,101 +6,35 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.flurry.android.FlurryAgent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.StationsAdapter;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.paths.Forecast;
-import ru.slavabulgakov.busesspb.paths.Station;
-import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class RightMenu extends LinearLayout implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher {
+public class RightMenu extends LinearLayout {
 	private TextView _title;
 	private Model _model;
 	private ListView _listView;
 	private SimpleDateFormat _format;
 	private RelativeLayout _progressBar;
-	private EditText _stationText;
-	private ProgressBar _stationProgressBar;
-	private ListView _stationListView;
-    private RelativeLayout _stationLayout;
-    private Button _stationsBackButton;
-	private LinearLayout _rightMenuLayout;
 	private Handler _handler;
-    private ArrayList<Object> _forecasts;
-    private Button _forecastsButton;
-    private Context _context;
-    private ImageButton _clearButton;
-    private Button _aboutButton;
+    private ArrayList<Forecast> _forecasts;
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        FlurryAgent.logEvent(FlurryConstants.onStationCellClick);
-        Station station = ((StationsAdapter)_stationListView.getAdapter()).getItem(position);
-        _model.setData("stationId", station.id);
-        _model.setData("stationTitle", station.name);
-        changeToState(State.FORECASTS, true);
-        _listener.willShowForecastsMenu();
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        String text = s.toString();
-        StationsAdapter adapter = (StationsAdapter)_stationListView.getAdapter();
-        if (adapter != null) {
-            adapter.getFilter().filter(text);
-        }
-        if (text.length() > 0) {
-            _clearButton.setVisibility(View.VISIBLE);
-        } else {
-            _clearButton.setVisibility(View.GONE);
-        }
-    }
-
-    public interface Listener {
-        void onClickStationsButton();
-        void willShowForecastsMenu();
-    }
-
-    private Listener _listener;
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-	
 	private Handler _getHandler() {
 		if (_handler == null) {
 			_handler = new Handler(Looper.getMainLooper());
@@ -116,12 +50,16 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
     	double delta = 100;
     	if (position > 0) {
         	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)getLayoutParams();
-        	lpRight.setMargins(0, 0, (_model.dpToPx(-200)), lpRight.bottomMargin);
-	    	setLayoutParams(lpRight);
+            if (lpRight != null) {
+                lpRight.setMargins(0, 0, (_model.dpToPx(-200)), lpRight.bottomMargin);
+                setLayoutParams(lpRight);
+            }
 		} else {
 			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
-	    	lp.setMargins(0, 0, (_model.dpToPx(-delta + delta * Math.abs(position))), lp.bottomMargin);
-	    	setLayoutParams(lp);
+            if (lp != null) {
+                lp.setMargins(0, 0, (_model.dpToPx(-delta + delta * Math.abs(position))), lp.bottomMargin);
+                setLayoutParams(lp);
+            }
         }
     }
 	
@@ -142,43 +80,14 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 	
 	public void setTitle(String title) {
 		_title.setText(title);
-        _stationsBackButton.setText(title);
 	}
 	
 	private void _load(Context context, AttributeSet attrs) {
-        _context = context;
 		View.inflate(context, R.layout.right_menu, this);
 		_title = (TextView)findViewById(R.id.rightMenuTitle);
 		_listView = (ListView)findViewById(R.id.rightMenuListView);
 		_format = new SimpleDateFormat("HH:mm", Locale.US);
 		_progressBar = (RelativeLayout)findViewById(R.id.rightMenuProgressBar);
-		_rightMenuLayout = (LinearLayout)findViewById(R.id.rightMenuLayout);
-
-		_stationText = (EditText)findViewById(R.id.stationText);
-        _stationText.addTextChangedListener(this);
-
-		_stationProgressBar = (ProgressBar)findViewById(R.id.stationProgressBar);
-
-		_stationListView = (ListView)findViewById(R.id.stationListView);
-        _stationListView.setOnItemClickListener(this);
-
-        _stationLayout = (RelativeLayout)findViewById(R.id.stationLayout);
-
-        _stationsBackButton = (Button)findViewById(R.id.stationsBack);
-        _stationsBackButton.setOnClickListener(this);
-
-        _forecastsButton = (Button)findViewById(R.id.forecastsButton);
-        _forecastsButton.setOnClickListener(this);
-
-        _clearButton = (ImageButton)findViewById(R.id.clearStationsText);
-        _clearButton.setVisibility(GONE);
-        _clearButton.setOnClickListener(this);
-
-        _aboutButton = (Button)findViewById(R.id.about);
-
-        _showBackButton(false);
-
-        _stationText.setEnabled(false);
 	}
 
 	public RightMenu(Context context) {
@@ -197,34 +106,7 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 		_load(context, attrs);
 	}
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
-        _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight() - _model.dpToPx(20)));
-    }
-
-    public void loadNearblyStations(final Stations nearblyStations) {
-		_getHandler().post(new Runnable() {
-			
-			@Override
-			public void run() {
-                _stationText.setEnabled(true);
-                _stationProgressBar.setVisibility(GONE);
-                _stationListView.setVisibility(VISIBLE);
-                StationsAdapter stationsAdapter = (StationsAdapter)_stationListView.getAdapter();
-                if (stationsAdapter != null) {
-                    stationsAdapter.setNearblyStations(nearblyStations);
-                } else {
-                    stationsAdapter = new StationsAdapter(_context, _model, nearblyStations);
-                    _stationListView.setAdapter(stationsAdapter);
-                }
-                stationsAdapter.getFilter().filter(_stationText.getText());
-			}
-		});
-	}
-
-    public void loadForecasts(ArrayList<Object> forecasts) {
+    public void loadForecasts(ArrayList<Forecast> forecasts) {
         _forecasts = forecasts;
         _getHandler().post(new Runnable() {
             @Override
@@ -266,25 +148,34 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
 
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
-                        LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
+                        LayoutInflater inflater = null;
+                        if (getContext() != null) {
+                            inflater = ((Activity) getContext()).getLayoutInflater();
+                        }
                         if (convertView == null) {
-                            convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
-
-                            _setViewHolder(convertView);
+                            if (inflater != null) {
+                                convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
+                                _setViewHolder(convertView);
+                            }
                         } else if (((ForecastCellViewHolder) convertView.getTag()).needInflate) {
-                            convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
-                            _setViewHolder(convertView);
+                            if (inflater != null) {
+                                convertView = inflater.inflate(R.layout.listitem_forecast, parent, false);
+                                _setViewHolder(convertView);
+                            }
                         }
 
-                        Forecast forecast = (Forecast) _forecasts.get(position);
+                        Forecast forecast = _forecasts.get(position);
 
-                        ForecastCellViewHolder vh = (ForecastCellViewHolder) convertView.getTag();
-                        vh.rightText.setText(_format.format(forecast.time));
-                        vh.leftText.setText(forecast.transportNumber);
-                        Pair<Integer, Integer> res = vh.backgroundAndIconByKind(forecast.transportKind);
-                        convertView.setBackgroundResource(res.first);
-                        vh.leftIcon.setImageResource(res.second);
-                        vh.centerText.setText(forecast.fullName);
+                        ForecastCellViewHolder vh = null;
+                        if (convertView != null) {
+                            vh = (ForecastCellViewHolder) convertView.getTag();
+                            vh.rightText.setText(_format.format(forecast.time));
+                            vh.leftText.setText(forecast.transportNumber);
+                            Pair<Integer, Integer> res = vh.backgroundAndIconByKind(forecast.transportKind);
+                            convertView.setBackgroundResource(res.first);
+                            vh.leftIcon.setImageResource(res.second);
+                            vh.centerText.setText(forecast.fullName);
+                        }
 
                         return convertView;
                     }
@@ -325,102 +216,5 @@ public class RightMenu extends LinearLayout implements View.OnClickListener, Ada
                 });
             }
         });
-    }
-
-    public enum State {
-        STATIONS,
-        FORECASTS
-    }
-
-    private State _state;
-    public State getState() {
-        return _state;
-    }
-    public void changeToState(State state, boolean animated) {
-        if (state != _state) {
-            _state = state;
-            switch (state) {
-                case FORECASTS:
-                    _changeToForecastsState(animated);
-                    break;
-
-                case STATIONS:
-                    _changeToStationsState(animated);
-                    break;
-            }
-        }
-    }
-
-    private void _showBackButton(boolean show) {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_stationListView.getLayoutParams();
-        if (show) {
-            _stationsBackButton.setVisibility(VISIBLE);
-            lp.setMargins(0, 0, 0, _model.dpToPx(50));
-        } else {
-            _stationsBackButton.setVisibility(GONE);
-            lp.setMargins(0, 0, 0, 0);
-        }
-        _stationListView.setLayoutParams(lp);
-    }
-
-    private void _changeToStationsState(boolean animated) {
-        _showBackButton(_model.getData("stationId") != null);
-        _stationProgressBar.setVisibility(View.VISIBLE);
-        _stationLayout.setVisibility(View.VISIBLE);
-        _aboutButton.setVisibility(VISIBLE);
-        if (animated) {
-            LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
-            _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));
-            TranslateAnimation animation = new TranslateAnimation(0, 0, -(getHeight() - _model.dpToPx(20)), 0);
-            animation.setDuration(500);
-            _rightMenuLayout.startAnimation(animation);
-        }
-    }
-
-    private void _changeToForecastsState(boolean animated) {
-        InputMethodManager imm = (InputMethodManager)_context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(_stationText.getWindowToken(), 0);
-        if (animated) {
-            LinearLayout.LayoutParams lp_ = (LayoutParams) _rightMenuLayout.getLayoutParams();
-            _rightMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(lp_.width, getHeight()));
-            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -(getHeight() - _model.dpToPx(20)));
-            animation.setDuration(500);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {}
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    _stationLayout.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            _stationLayout.setVisibility(GONE);
-                            _aboutButton.setVisibility(GONE);
-                        }
-                    });
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {}
-            });
-            _rightMenuLayout.setAnimation(animation);
-            _rightMenuLayout.startAnimation(animation);
-        } else {
-            _stationLayout.setVisibility(GONE);
-            _aboutButton.setVisibility(GONE);
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v == _stationsBackButton) {
-            changeToState(State.FORECASTS, true);
-            _listener.willShowForecastsMenu();
-        } else if (v == _forecastsButton) {
-            changeToState(State.STATIONS, true);
-            _listener.onClickStationsButton();
-        } else if (v == _clearButton) {
-            _stationText.setText("");
-        }
     }
 }

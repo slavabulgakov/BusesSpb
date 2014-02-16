@@ -37,12 +37,11 @@ import ru.slavabulgakov.busesspb.Animations;
 import ru.slavabulgakov.busesspb.BaseActivity;
 import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.MainActivity;
+import ru.slavabulgakov.busesspb.Network.Loader;
 import ru.slavabulgakov.busesspb.R;
 import ru.slavabulgakov.busesspb.controls.MapController.Listener;
-import ru.slavabulgakov.busesspb.controls.RightMenu;
 import ru.slavabulgakov.busesspb.controls.RootView.OnActionListener;
 import ru.slavabulgakov.busesspb.controls.TicketsTray;
-import ru.slavabulgakov.busesspb.model.Loader;
 import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Model.MenuKind;
 import ru.slavabulgakov.busesspb.model.Model.OnLoadCompleteListener;
@@ -52,9 +51,8 @@ import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.paths.ModelPaths.OnPathLoaded;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Station;
-import ru.slavabulgakov.busesspb.paths.Stations;
 
-public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, TicketsTray.Listener, Loader.Listener, RightMenu.Listener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, TicketsTray.Listener, Loader.Listener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	private static volatile Controller _instance;
 	private Model _model;
@@ -383,11 +381,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		} else if (kind == MenuKind.Right) {
             if (isOpen) {
                 FlurryAgent.logEvent(FlurryConstants.rightMenuIsOpen);
-                if (_mainActivity().getRightMenu().getState() == RightMenu.State.FORECASTS) {
-                    switchToState(new ForecastsState());
-                } else {
-                    switchToState(new RightMenuStationsState(getMainActivity().getMapController().getCameraLocation()));
-                }
+                switchToState(new ForecastsState());
             }
         }
 		if (!isOpen) {
@@ -421,9 +415,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	public void onInternetAccessSuccess() {
 		if (_isMainActivity()) {
 			_mainActivity().getInternetDenyButtonController().hideInternetDenyIcon();
-			if (_mainActivity().getMapController() == null) {
-				Log.d("slava", "null");
-			}
 			_mainActivity().getMapController().clearMap();
 		}
 	}
@@ -450,13 +441,23 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	}
 
 	@Override
-	public void onPathLoaded(Path path) {
-		_mainActivity().getMapController().showPath(path);
+	public void onPathLoaded(final Path path) {
+        getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                _mainActivity().getMapController().showPath(path);
+            }
+        });
 	}
 
 	@Override
-	public void onStationsLoaded(Stations stations) {
-		_mainActivity().getMapController().showStations(stations);
+	public void onStationsLoaded(final ArrayList<?> stations) {
+        getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                _mainActivity().getMapController().showStations(stations);
+            }
+        });
 	}
 
 	@Override
@@ -466,7 +467,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
             FlurryAgent.logEvent(FlurryConstants.onInfoWindowClick);
             _model.setData("stationId", station.id);
             _model.setData("stationTitle", station.name);
-            _mainActivity().getRightMenu().changeToState(RightMenu.State.FORECASTS, false);
             ((MainActivity)_currentActivity).toggleMenu(MenuKind.Right);
         }
     }
@@ -516,16 +516,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
             switchToState(new NetCheckState());
         }
 	}
-
-    @Override
-    public void onClickStationsButton() {
-        switchToState(new RightMenuStationsState(getMainActivity().getMapController().getCameraLocation()));
-    }
-
-    @Override
-    public void willShowForecastsMenu() {
-        switchToState(new ForecastsState());
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
