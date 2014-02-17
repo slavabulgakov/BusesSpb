@@ -33,7 +33,7 @@ public class ModelPaths implements Loader.Listener {
             _listener.onPathLoaded(path);
             ArrayList<?>stations = (ArrayList<?>)data.get("stops");
             _listener.onStationsLoaded(stations);
-            if (_nearbyStations.size() > 0) {
+            if (_nearbyStations != null) {
                 _listener.onStationsLoaded(_nearbyStations);
             }
         }

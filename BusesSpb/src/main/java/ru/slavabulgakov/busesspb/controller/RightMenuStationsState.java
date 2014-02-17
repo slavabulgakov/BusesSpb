@@ -79,11 +79,11 @@ public class RightMenuStationsState extends State {
             if (dist != null) {
                 int index = 0;
                 boolean setted = false;
-                boolean foo = false;
+                boolean needFind = false;
                 if (nearbyStations.size() > 0) {
-                    foo = dist < _distantionOfStation(nearbyStations.get(nearbyStations.size() - 1));
+                    needFind = dist < _distantionOfStation(nearbyStations.get(nearbyStations.size() - 1));
                 }
-                if (foo) {
+                if (needFind) {
                     for (Station nearbyStation : nearbyStations) {
                         if (dist < _distantionOfStation(nearbyStation)) {
                             nearbyStations.add(index, station);
