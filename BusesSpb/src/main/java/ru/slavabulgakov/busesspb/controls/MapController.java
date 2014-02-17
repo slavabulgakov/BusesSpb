@@ -320,7 +320,28 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 			for (Point point : path.getPoints()) {
                 polylineOptions.add(point.getLatlng());
 			}
-            Polyline polyline = _map.addPolyline(polylineOptions.width(2).color(Color.rgb(220, 60, 0)).zIndex(-2));
+            int color = 0;
+            switch (path.getKind()) {
+                case Bus:
+                    color = _model.getResources().getColor(R.color.bus);
+                    break;
+
+                case Tram:
+                    color = _model.getResources().getColor(R.color.tram);
+                    break;
+
+                case Trolley:
+                    color = _model.getResources().getColor(R.color.trolley);
+                    break;
+
+                case Ship:
+                    color = _model.getResources().getColor(R.color.ship);
+                    break;
+
+                default:
+                    break;
+            }
+            Polyline polyline = _map.addPolyline(polylineOptions.width(2).color(color).zIndex(-2));
             PolylineMapItem polylineMapItem = new PolylineMapItem(polyline, path.getRouteId(), path.getDirection());
             _model.getModelPaths().addMapItem(polylineMapItem);
         }

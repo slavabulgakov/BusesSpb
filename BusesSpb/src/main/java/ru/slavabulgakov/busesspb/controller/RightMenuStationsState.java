@@ -1,8 +1,11 @@
 package ru.slavabulgakov.busesspb.controller;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import ru.slavabulgakov.busesspb.Network.Loader;
 import ru.slavabulgakov.busesspb.Network.Network;
@@ -76,13 +79,19 @@ public class RightMenuStationsState extends State {
             if (dist != null) {
                 int index = 0;
                 boolean setted = false;
-                for (Station nearblyStation : nearbyStations) {
-                    if (dist < _distantionOfStation(nearblyStation)) {
-                        nearbyStations.add(index, station);
-                        setted = true;
-                        break;
+                boolean foo = false;
+                if (nearbyStations.size() > 0) {
+                    foo = dist < _distantionOfStation(nearbyStations.get(nearbyStations.size() - 1));
+                }
+                if (foo) {
+                    for (Station nearbyStation : nearbyStations) {
+                        if (dist < _distantionOfStation(nearbyStation)) {
+                            nearbyStations.add(index, station);
+                            setted = true;
+                            break;
+                        }
+                        index++;
                     }
-                    index++;
                 }
                 if (!setted) {
                     nearbyStations.add(station);
@@ -92,6 +101,7 @@ public class RightMenuStationsState extends State {
                 nearbyStations.remove(nearbyStations.size() - 1);
             }
         }
+
         _controller.getModel().getModelPaths().setNearbyStations(nearbyStations);
         _controller.getModel().getModelPaths().updateStationsAndPaths();
         _controller.switchToLastState();

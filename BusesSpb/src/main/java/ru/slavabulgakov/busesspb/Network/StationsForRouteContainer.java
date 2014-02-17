@@ -43,7 +43,7 @@ public class StationsForRouteContainer extends LoaderContainer {
         super.handler(obj);
         JSONObject response = (JSONObject)obj;
         ArrayList<Object> stops = new ArrayList<Object>();
-        Path path = new Path(_routeId, _direction);
+        Path path = null;
         try {
             JSONArray stopIDs = response.getJSONArray("result").getJSONObject(0).getJSONArray("stopIDs");
             int length = stopIDs.length();
@@ -53,6 +53,7 @@ public class StationsForRouteContainer extends LoaderContainer {
                 stops.add(station);
             }
 
+            path = new Path(_routeId, _direction, ((Station)stops.get(0)).kind);
             JSONArray pathJSON = response.getJSONArray("result").getJSONObject(0).getJSONArray("path");
             length = pathJSON.length();
             for (int i = 0; i < length; i++) {

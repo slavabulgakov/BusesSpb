@@ -3,10 +3,13 @@ package ru.slavabulgakov.busesspb.paths;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import ru.slavabulgakov.busesspb.model.TransportKind;
+
 public class Path implements Serializable {
-    public Path(int routeId, int direction) {
+    public Path(int routeId, int direction, TransportKind kind) {
         _routeId = routeId;
         _direction = direction;
+        _kind = kind;
     }
 
 	private static final long serialVersionUID = 1L;
@@ -19,6 +22,11 @@ public class Path implements Serializable {
     private int _routeId;
     public int getRouteId() {
         return _routeId;
+    }
+
+    private TransportKind _kind;
+    public TransportKind getKind() {
+        return _kind;
     }
 
     private ArrayList<Point> _points;
