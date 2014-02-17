@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -317,15 +319,47 @@ public class MainActivity extends BaseActivity {
 
 	public void updateFilterButtons() {
 		LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
+        TranslateAnimation animation;
 		if (_model.getFavorite().size() > 0) {
 			kindBtns.setVisibility(View.INVISIBLE);
-			_pathsButton.setVisibility(View.VISIBLE);
-            _rightMenuButton.setVisibility(View.VISIBLE);
+            animation = new TranslateAnimation(_model.dpToPx(50), 0, 0, 0);
+            animation.setDuration(500);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    _pathsButton.setVisibility(View.VISIBLE);
+                    _rightMenuButton.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {}
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            _pathsButton.startAnimation(animation);
+            _rightMenuButton.startAnimation(animation);
 		} else {
+            animation = new TranslateAnimation(0, _model.dpToPx(50), 0, 0);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    _pathsButton.setVisibility(View.INVISIBLE);
+                    _rightMenuButton.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+
 			kindBtns.setVisibility(View.VISIBLE);
-			_pathsButton.setVisibility(View.INVISIBLE);
-            _rightMenuButton.setVisibility(View.INVISIBLE);
 		}
+        animation.setDuration(500);
+        _pathsButton.startAnimation(animation);
+        _rightMenuButton.startAnimation(animation);
 		_busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
 		_trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
 		_tramFilter.setChecked(_model.isEnabledFilter(TransportKind.Tram));
