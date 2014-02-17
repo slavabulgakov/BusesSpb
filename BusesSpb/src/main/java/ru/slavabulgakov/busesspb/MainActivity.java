@@ -76,6 +76,9 @@ public class MainActivity extends BaseActivity {
 		
 		_shipFilter = (CheckButton)findViewById(R.id.shipFilter);
 		_shipFilter.setOnClickListener(Controller.getInstance());
+
+        _rightMenuButton = (FrameLayout)findViewById(R.id.rightMenuButton);
+        _rightMenuButton.setOnClickListener(Controller.getInstance());
 		
 		_pathsButton = (CheckButton)findViewById(R.id.paths);
 		_pathsButton.setOnClickListener(Controller.getInstance());
@@ -106,9 +109,6 @@ public class MainActivity extends BaseActivity {
 		_closelessTicketsTray = (CloselessTicketsTray)findViewById(R.id.closelessTicketsTray);
 		_closelessTicketsTray.setOnClickListener(Controller.getInstance());
 		_closelessTicketsTray.inition(_model);
-
-        _rightMenuButton = (FrameLayout)findViewById(R.id.rightMenuButton);
-        _rightMenuButton.setOnClickListener(Controller.getInstance());
 
         _locationClient = new LocationClient(this, Controller.getInstance(), Controller.getInstance());
         _rightMenuButtonImage = (ImageView)findViewById(R.id.rightMenuButtonImage);
@@ -320,9 +320,11 @@ public class MainActivity extends BaseActivity {
 		if (_model.getFavorite().size() > 0) {
 			kindBtns.setVisibility(View.INVISIBLE);
 			_pathsButton.setVisibility(View.VISIBLE);
+            _rightMenuButton.setVisibility(View.VISIBLE);
 		} else {
 			kindBtns.setVisibility(View.VISIBLE);
 			_pathsButton.setVisibility(View.INVISIBLE);
+            _rightMenuButton.setVisibility(View.INVISIBLE);
 		}
 		_busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
 		_trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));

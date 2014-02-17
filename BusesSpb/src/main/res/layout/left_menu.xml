@@ -6,6 +6,19 @@
         android:background="@color/menu_bg"
         android:orientation="vertical" >
 
+    <Button
+        android:id="@+id/about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_dark_gray"
+        android:text="@string/about"
+        android:minHeight="40dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="#6d6d6d"/>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
