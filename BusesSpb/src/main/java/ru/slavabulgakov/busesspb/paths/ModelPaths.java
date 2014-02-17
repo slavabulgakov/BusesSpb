@@ -26,7 +26,7 @@ public class ModelPaths implements Loader.Listener {
 
     private void  _didLoad(final Loader loader) {
         if (loader.getContainer().getClass() == StationsContainer.class) {
-            loadPaths();
+            updateStationsAndPaths();
         } else if (loader.getContainer().getClass() == StationsForRouteContainer.class && loader.getState().getValue() > Loader.State.staticLoading.getValue()) {
             HashMap<String, Object> data = (HashMap<String, Object>)loader.getContainer().getData();
             Path path = (Path)data.get("path");
@@ -60,7 +60,7 @@ public class ModelPaths implements Loader.Listener {
 		_listener = listener;
 	}
 	
-	public void loadPaths() {
+	public void updateStationsAndPaths() {
         removeMapItems();
         removeMapShortTimeItems();
         if (pathsIsOn()) {
@@ -69,6 +69,7 @@ public class ModelPaths implements Loader.Listener {
                 _model.getNetwork().loadForContainer(new StationsContainer(), this);
                 return;
             } else if (loader_.getState().getValue() < Loader.State.netLoading.getValue()) {
+                loader_.setListener(this);
                 return;
             }
 
@@ -178,7 +179,7 @@ public class ModelPaths implements Loader.Listener {
 	public void setPathsOn(boolean on) {
 		_model.setData("pathsIsOn", on, true);
 		if (on) {
-			loadPaths();
+            updateStationsAndPaths();
 		} else {
 			removeMapItems();
 			removeMapShortTimeItems();
@@ -190,13 +191,6 @@ public class ModelPaths implements Loader.Listener {
         _nearbyStations = stations;
     }
 	
-	public void updateStations() {
-		loadPaths();
-        if (_nearbyStations != null) {
-            _listener.onStationsLoaded(_nearbyStations);
-        }
-	}
-
     private Handler _getHandler() {
         if (_handler == null) {
             _handler = new Handler(Looper.getMainLooper());

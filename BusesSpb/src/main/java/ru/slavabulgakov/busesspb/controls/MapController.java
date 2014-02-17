@@ -148,7 +148,7 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 				if (_map != null) {
 					_map.clear();
 					if (!_model.menuIsOpened(MenuKind.Left)) {
-			    		_model.getModelPaths().loadPaths();
+			    		_model.getModelPaths().updateStationsAndPaths();
 					}
 				}
 			}
@@ -338,10 +338,6 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 	public void showStations(ArrayList<?> stations) {
         for (Object object : stations) {
             Station station = (Station)object;
-            if (station.name.contains("КОСТЮШКО")) {
-                int sd = 0;
-                sd++;
-            }
             MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name + " >").icon(_getEmptyBitMap()).anchor((float).5, (float).5);
             Marker marker = _map.addMarker(markerOptions);
             StationMarker stationMarker = new StationMarker(marker, station);

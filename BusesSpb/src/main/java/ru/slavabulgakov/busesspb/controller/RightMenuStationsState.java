@@ -45,6 +45,8 @@ public class RightMenuStationsState extends State {
                         _findNearbyStations();
                     }
                 }).start();
+            } else {
+                loader.setListener(_controller);
             }
         }
     }
@@ -91,7 +93,7 @@ public class RightMenuStationsState extends State {
             }
         }
         _controller.getModel().getModelPaths().setNearbyStations(nearbyStations);
-        _controller.getModel().getModelPaths().updateStations();
+        _controller.getModel().getModelPaths().updateStationsAndPaths();
         _controller.switchToLastState();
         _controller.getMainActivity().setRightMenuButtonLoading(false);
     }

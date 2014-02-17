@@ -255,10 +255,10 @@ public class MainActivity extends BaseActivity {
     	_closelessTicketsTray.update();
     	
     	if (_model.menuIsClosed(MenuKind.Left)) {
-    		_model.getModelPaths().loadPaths();
+    		_model.getModelPaths().updateStationsAndPaths();
 		}
 
-        int resId = _model.menuIsOpened(MenuKind.Right) ? R.drawable.menu_open_icon : R.drawable.menu_close_icon;
+        int resId = _model.menuIsOpened(MenuKind.Right) ? R.drawable.menu_open_icon : R.drawable.nearby_stations;
         _rightMenuButtonImage.setImageResource(resId);
     }
     

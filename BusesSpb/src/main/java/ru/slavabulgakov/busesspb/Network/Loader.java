@@ -31,14 +31,34 @@ public class Loader {
 		void netLoaded(Loader loader);
 		void netError(Loader loader);
 	}
-	private Listener _listener;
+	private ArrayList<Listener> _listeners;
 	public void setListener(Listener listener) {
-		_listener = listener;
-	}
+        if (_listeners == null) {
+            _listeners = new ArrayList<Listener>();
+        }
+        if (!_listeners.contains(listener)) {
+            _listeners.add(listener);
+        }
+    }
+    private void _staticLoadedListeners() {
+        for (Listener listener : _listeners) {
+            listener.staticLoaded(Loader.this);
+        }
+    }
+    private void _netLoadedListeners() {
+        for (Listener listener : _listeners) {
+            listener.netLoaded(Loader.this);
+        }
+    }
+    private void _netErrorListeners() {
+        for (Listener listener : _listeners) {
+            listener.netError(Loader.this);
+        }
+    }
 
 	private LoaderContainer _container;
 	private Model _model;
-	private State _state;
+	private State _state = State.staticLoading;
 	private RequestQueue _queue;
 	public Loader(LoaderContainer container, Model model, RequestQueue queue) {
 		_container = container;
@@ -75,12 +95,12 @@ public class Loader {
                         ArrayList<String> strings = Files.stringsArrayFromFile(_container.getStaticFileName(), _model);
                         _container.handler(strings);
                         _state = State.netLoading;
-                        _listener.staticLoaded(Loader.this);
+                        _staticLoadedListeners();
                     }
 				} else {
 					_container.loadData(data);
                     _state = State.netLoading;
-                    _listener.staticLoaded(Loader.this);
+                    _staticLoadedListeners();
 				}
 				
                 Request request = (Request)FacadeLoader.createRequest(_container.isJson(), _container.getUrlString(), new FacadeLoader.Listener() {
@@ -92,7 +112,7 @@ public class Loader {
                                     public void run() {
                                         _container.handler(obj);
                                         _state = State.complete;
-                                        _listener.netLoaded(Loader.this);
+                                        _netLoadedListeners();
                                         _cache();
                                     }
                                 }).start();
@@ -101,7 +121,7 @@ public class Loader {
 
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                _listener.netError(Loader.this);
+                                _netErrorListeners();
                             }
                         }
                 );

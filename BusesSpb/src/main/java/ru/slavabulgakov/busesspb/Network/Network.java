@@ -39,6 +39,10 @@ public class Network {
             needNewLoader = true;
         } else if (!loader.getContainer().isEqual(container)) {
             needNewLoader = true;
+        } else if (loader.getContainer().isEqual(container)) {
+            if (loader.getState().getValue() < Loader.State.staticLoading.getValue()) {
+                loader.setListener(listener);
+            }
         }
         if (needNewLoader) {
             loader = new Loader(container, _model, _getQueue());
