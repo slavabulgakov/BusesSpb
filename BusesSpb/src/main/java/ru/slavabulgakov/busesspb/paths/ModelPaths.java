@@ -61,16 +61,16 @@ public class ModelPaths implements Loader.Listener {
 	}
 
     public void showNearbyStations() {
-        removeMapItems();
-        removeMapShortTimeItems();
         if (_nearbyStations != null) {
             _listener.onStationsLoaded(_nearbyStations);
         }
     }
 	
 	public void updateStationsAndPaths() {
+        removeMapItems();
+        removeMapShortTimeItems();
         showNearbyStations();
-        if (pathsIsOn()) {
+        if (pathsIsOn() && _model.getFavorite().size() > 0) {
             Loader loader_ = _model.getNetwork().getLoader(StationsContainer.class);
             if (loader_ == null) {
                 _model.getNetwork().loadForContainer(new StationsContainer(), this);
@@ -185,12 +185,7 @@ public class ModelPaths implements Loader.Listener {
 	}
 	public void setPathsOn(boolean on) {
 		_model.setData("pathsIsOn", on, true);
-		if (on) {
-            updateStationsAndPaths();
-		} else {
-			removeMapItems();
-			removeMapShortTimeItems();
-		}
+        updateStationsAndPaths();
 	}
 
     private Stations _nearbyStations;

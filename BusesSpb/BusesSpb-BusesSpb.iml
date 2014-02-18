@@ -75,7 +75,7 @@
     <orderEntry type="library" exported="" name="GoogleAdMobAdsSdk-6.4.1" level="project" />
     <orderEntry type="library" exported="" name="FlurryAgent" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.0.0" level="project" />
-    <orderEntry type="library" exported="" name="twitter4j-core-3.0.3" level="project" />
+    <orderEntry type="library" exported="" name="twitter4j-core-3.0.5" level="project" />
     <orderEntry type="module" module-name="FacebookSDK" exported="" />
   </component>
 </module>

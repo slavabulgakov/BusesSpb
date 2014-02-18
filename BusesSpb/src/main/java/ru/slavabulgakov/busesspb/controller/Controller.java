@@ -268,7 +268,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			if (Math.abs(_model.getZoom() - cameraPosition.zoom) > .1 || _model.isFirstCameraChange()) {
 				_mainActivity().updateTransportOffline();
 				_model.getModelPaths().updateStationsAndPaths();
-                _model.getModelPaths().showNearbyStations();
 			}
 			_model.setZoom(cameraPosition.zoom);
 			_model.setLocation(cameraPosition.target);
