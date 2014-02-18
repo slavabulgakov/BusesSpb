@@ -1,16 +1,5 @@
 package ru.slavabulgakov.busesspb;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import ru.slavabulgakov.busesspb.ShareModel.IShareView;
-import ru.slavabulgakov.busesspb.model.Model;
-
-import com.facebook.*;
-import com.facebook.widget.LoginButton;
-import com.flurry.android.FlurryAgent;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +10,25 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.LoginButton;
+import com.flurry.android.FlurryAgent;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import ru.slavabulgakov.busesspb.ShareModel.IShareView;
+import ru.slavabulgakov.busesspb.controller.Controller;
+import ru.slavabulgakov.busesspb.model.Model;
 
 public class ShareFragment extends Fragment implements IShareView, OnClickListener {
 	
@@ -219,8 +227,10 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 
 	@Override
 	public void onTwitterGetPin(ShareModel share, String url) {
-		_model.setData("twitterUrl", url);
-		getActivity().startActivity(new Intent(getActivity(), Browser.class));
+        if (url != null) {
+            _model.setData("twitterUrl", url);
+            getActivity().startActivity(new Intent(getActivity(), Browser.class));
+        }
 	}
 
 	@Override
@@ -276,26 +286,20 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 		
 	}
 
-	
-	public void showAlertDialog(int titleId, int messageId, int iconId) {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setMessage(messageId)
-			.setTitle(titleId)
-			.setCancelable(false)
-			.setIcon(iconId)
-			.setPositiveButton(R.string.ok, null);
-		AlertDialog alert = builder.create();
-		alert.show();
+	public void showAlertDialog(final int titleId, final int messageId, final int iconId) {
+        Controller.getInstance().getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(messageId)
+                        .setTitle(titleId)
+                        .setCancelable(false)
+                        .setIcon(iconId)
+                        .setPositiveButton(R.string.ok, null);
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
-	
-	public void showAlertDialog(String title, String message, int iconId) {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setMessage(message)
-			.setTitle(title)
-			.setCancelable(false)
-			.setIcon(iconId)
-			.setPositiveButton(R.string.ok, null);
-		AlertDialog alert = builder.create();
-		alert.show();
-    }
+
 }

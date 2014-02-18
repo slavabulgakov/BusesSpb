@@ -1,16 +1,17 @@
 package ru.slavabulgakov.busesspb;
 
-import ru.slavabulgakov.busesspb.VkApp.*;
-import ru.slavabulgakov.busesspb.controller.Controller;
-import ru.slavabulgakov.busesspb.ParserWebPageTask;
+import android.app.Activity;
+import android.content.Context;
+
+import com.facebook.android.Facebook;
+
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
+import ru.slavabulgakov.busesspb.VkApp.VkPostWallListener;
+import ru.slavabulgakov.busesspb.controller.Controller;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.RequestToken;
-import android.app.Activity;
-import android.content.Context;
-import com.facebook.android.Facebook;
 
 public class ShareModel {
 	public interface IShareView {
@@ -161,12 +162,11 @@ public class ShareModel {
 			    _requestToken = null;
 				try {
 					_requestToken = _twitter.getOAuthRequestToken();
+                    _url = _requestToken.getAuthorizationURL();
 				} catch (TwitterException e) {
 					_shareView.onTwitterErrorUpdating();
 				}
-				
-				_url = _requestToken.getAuthorizationURL();		
-			}
+            }
 			
 			@Override
 			public boolean needExecute() {
