@@ -446,7 +446,9 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
         getHandler().post(new Runnable() {
             @Override
             public void run() {
-                _mainActivity().getMapController().showPath(path);
+                if (_mainActivity().getMapController() != null) {
+                    _mainActivity().getMapController().showPath(path);
+                }
             }
         });
 	}

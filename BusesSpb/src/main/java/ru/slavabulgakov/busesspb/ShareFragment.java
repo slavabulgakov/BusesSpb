@@ -71,8 +71,7 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
 		
 		_fbUiLifecycleHelper = new UiLifecycleHelper(getActivity(), new Session.StatusCallback() {
     		@Override
-			public void call(Session session, SessionState state,
-					Exception exception) {
+			public void call(Session session, SessionState state, Exception exception) {
     			if (state == SessionState.OPENING) {
 					_model.setfbLoggedInPressed(true);
 				}
@@ -82,16 +81,15 @@ public class ShareFragment extends Fragment implements IShareView, OnClickListen
     					publishStory();	
     		        }
     			}
-			}
-    	});
+			}});
 		_fbUiLifecycleHelper.onCreate(savedInstanceState);
 		
 		_fbPublishBtn = (ImageButton)v.findViewById(R.id.shareFBImageButton);
 		_fbPublishBtn.setOnClickListener(this);
 		_fbLoginBtn = (LoginButton)v.findViewById(R.id.shareFBLoginButton);
-		((ImageButton)v.findViewById(R.id.shareVKImageButton)).setOnClickListener(this);
-		((ImageButton)v.findViewById(R.id.shareEmailImageButton)).setOnClickListener(this);
-		((ImageButton)v.findViewById(R.id.shareTwitterImageButton)).setOnClickListener(this);
+		v.findViewById(R.id.shareVKImageButton).setOnClickListener(this);
+		v.findViewById(R.id.shareEmailImageButton).setOnClickListener(this);
+		v.findViewById(R.id.shareTwitterImageButton).setOnClickListener(this);
 		
 		_updateFacebookButtons();
 		

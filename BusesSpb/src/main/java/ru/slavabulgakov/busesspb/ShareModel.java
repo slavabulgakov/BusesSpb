@@ -56,19 +56,19 @@ public class ShareModel {
 	public void sendMess2VK(final Context context) {
 		if (_vkApp == null) {
 			_vkApp = new VkApp(context);
-			_vkApp.postToWall(context.getString(R.string.share_message), new VkPostWallListener() {
-				
-				@Override
-				public void onErrorPost() {
-					_shareView.onVKError();
-				}
-				
-				@Override
-				public void onCompletePost() {
-					_shareView.onVKSendSuccess();
-				}
-			});
 		}
+        _vkApp.postToWall(context.getString(R.string.share_message), new VkPostWallListener() {
+
+            @Override
+            public void onErrorPost() {
+                _shareView.onVKError();
+            }
+
+            @Override
+            public void onCompletePost() {
+                _shareView.onVKSendSuccess();
+            }
+        });
 	}
 	//=======
 	/////////
