@@ -77,10 +77,12 @@ public class MainActivity extends BaseActivity {
 
         _rightMenuButton = (FrameLayout)findViewById(R.id.rightMenuButton);
         _rightMenuButton.setOnClickListener(Controller.getInstance());
+        _rightMenuButton.setVisibility(View.INVISIBLE);
 		
 		_pathsButton = (CheckButton)findViewById(R.id.paths);
 		_pathsButton.setOnClickListener(Controller.getInstance());
 		_pathsButton.setChecked(_model.getModelPaths().pathsIsOn());
+        _pathsButton.setVisibility(View.INVISIBLE);
 
 		
 		findViewById(R.id.location).setOnClickListener(Controller.getInstance());
@@ -215,7 +217,6 @@ public class MainActivity extends BaseActivity {
 			_leftMenu.setFiltersButtonsVisibility(true);
 			_closelessTicketsTray.setVisibility(View.VISIBLE);
 			_leftMenu.setInputVisible(true);
-			_rightMenuButton.setVisibility(View.VISIBLE);
 			_leftMenu.setProgressBarVisible(true);
 			findViewById(R.id.zoomControls).setVisibility(View.VISIBLE);
 			findViewById(R.id.location).setVisibility(View.VISIBLE);
@@ -303,24 +304,30 @@ public class MainActivity extends BaseActivity {
 
     public void updateStationsButton() {
         TranslateAnimation animation;
-        boolean existPaths = _model.getFavorite().size() > 0;
-        if (_model.getModelPaths().pathsIsOn() && existPaths) {
+        final boolean showButton = _model.getModelPaths().pathsIsOn() && _model.getFavorite().size() > 0;
+        if (showButton) {
+            if (_rightMenuButton.getVisibility() == View.VISIBLE) {
+                return;
+            }
             animation = new TranslateAnimation(_model.dpToPx(50), 0, 0, 0);
         } else {
+            if (_rightMenuButton.getVisibility() == View.INVISIBLE) {
+                return;
+            }
             animation = new TranslateAnimation(0, _model.dpToPx(50), 0, 0);
         }
         animation.setDuration(500);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                if (_model.getModelPaths().pathsIsOn()) {
+                if (showButton) {
                     _rightMenuButton.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (!_model.getModelPaths().pathsIsOn()) {
+                if (!showButton) {
                     _rightMenuButton.setVisibility(View.INVISIBLE);
                 }
             }
@@ -334,27 +341,41 @@ public class MainActivity extends BaseActivity {
     }
 
 	public void updateFilterButtons() {
+        _busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
+        _trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
+        _tramFilter.setChecked(_model.isEnabledFilter(TransportKind.Tram));
+        _shipFilter.setChecked(_model.isEnabledFilter(TransportKind.Ship));
+
+        _leftMenu.updateFilterButtons();
+
+        updateStationsButton();
 		LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
         TranslateAnimation animation;
-        final boolean existPaths = _model.getFavorite().size() > 0;
-		if (existPaths) {
+        final boolean showButton = _model.getFavorite().size() > 0;
+		if (showButton) {
+            if (_pathsButton.getVisibility() == View.VISIBLE) {
+                return;
+            }
 			kindBtns.setVisibility(View.INVISIBLE);
             animation = new TranslateAnimation(_model.dpToPx(50), 0, 0, 0);
         } else {
+            if (_pathsButton.getVisibility() == View.INVISIBLE) {
+                return;
+            }
             animation = new TranslateAnimation(0, _model.dpToPx(50), 0, 0);
 			kindBtns.setVisibility(View.VISIBLE);
 		}
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                if (existPaths) {
+                if (showButton) {
                     _pathsButton.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (!existPaths) {
+                if (!showButton) {
                     _pathsButton.setVisibility(View.INVISIBLE);
                 }
             }
@@ -365,11 +386,5 @@ public class MainActivity extends BaseActivity {
         });
         animation.setDuration(500);
         _pathsButton.startAnimation(animation);
-		_busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
-		_trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
-		_tramFilter.setChecked(_model.isEnabledFilter(TransportKind.Tram));
-		_shipFilter.setChecked(_model.isEnabledFilter(TransportKind.Ship));
-		
-		_leftMenu.updateFilterButtons();
 	}
 }
