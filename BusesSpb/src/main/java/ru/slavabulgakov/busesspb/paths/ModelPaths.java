@@ -33,9 +33,6 @@ public class ModelPaths implements Loader.Listener {
             _listener.onPathLoaded(path);
             ArrayList<?>stations = (ArrayList<?>)data.get("stops");
             _listener.onStationsLoaded(stations);
-            if (_nearbyStations != null) {
-                _listener.onStationsLoaded(_nearbyStations);
-            }
         }
     }
 
@@ -62,10 +59,17 @@ public class ModelPaths implements Loader.Listener {
 	public void setListener(OnPathLoaded listener) {
 		_listener = listener;
 	}
-	
-	public void updateStationsAndPaths() {
+
+    public void showNearbyStations() {
         removeMapItems();
         removeMapShortTimeItems();
+        if (_nearbyStations != null) {
+            _listener.onStationsLoaded(_nearbyStations);
+        }
+    }
+	
+	public void updateStationsAndPaths() {
+        showNearbyStations();
         if (pathsIsOn()) {
             Loader loader_ = _model.getNetwork().getLoader(StationsContainer.class);
             if (loader_ == null) {

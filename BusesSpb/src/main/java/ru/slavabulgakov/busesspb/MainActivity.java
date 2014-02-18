@@ -77,8 +77,7 @@ public class MainActivity extends BaseActivity {
 
         _rightMenuButton = (FrameLayout)findViewById(R.id.rightMenuButton);
         _rightMenuButton.setOnClickListener(Controller.getInstance());
-        _rightMenuButton.setVisibility(View.INVISIBLE);
-		
+
 		_pathsButton = (CheckButton)findViewById(R.id.paths);
 		_pathsButton.setOnClickListener(Controller.getInstance());
 		_pathsButton.setChecked(_model.getModelPaths().pathsIsOn());
@@ -302,44 +301,6 @@ public class MainActivity extends BaseActivity {
     	return _leftMenu;
     }
 
-    public void updateStationsButton() {
-        TranslateAnimation animation;
-        final boolean showButton = _model.getModelPaths().pathsIsOn() && _model.getFavorite().size() > 0;
-        if (showButton) {
-            if (_rightMenuButton.getVisibility() == View.VISIBLE) {
-                return;
-            }
-            animation = new TranslateAnimation(_model.dpToPx(50), 0, 0, 0);
-        } else {
-            if (_rightMenuButton.getVisibility() == View.INVISIBLE) {
-                return;
-            }
-            animation = new TranslateAnimation(0, _model.dpToPx(50), 0, 0);
-        }
-        animation.setDuration(500);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                if (showButton) {
-                    _rightMenuButton.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if (!showButton) {
-                    _rightMenuButton.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        _rightMenuButton.startAnimation(animation);
-    }
-
 	public void updateFilterButtons() {
         _busFilter.setChecked(_model.isEnabledFilter(TransportKind.Bus));
         _trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
@@ -348,7 +309,6 @@ public class MainActivity extends BaseActivity {
 
         _leftMenu.updateFilterButtons();
 
-        updateStationsButton();
 		LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
         TranslateAnimation animation;
         final boolean showButton = _model.getFavorite().size() > 0;

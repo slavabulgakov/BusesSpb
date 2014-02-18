@@ -218,7 +218,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			
 		case R.id.paths:
 			_model.getModelPaths().setPathsOn(_mainActivity().pathsButton().checked());
-            _mainActivity().updateStationsButton();
 			FlurryAgent.logEvent(FlurryConstants.pathBtnPressed);
 			break;
 
@@ -269,6 +268,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 			if (Math.abs(_model.getZoom() - cameraPosition.zoom) > .1 || _model.isFirstCameraChange()) {
 				_mainActivity().updateTransportOffline();
 				_model.getModelPaths().updateStationsAndPaths();
+                _model.getModelPaths().showNearbyStations();
 			}
 			_model.setZoom(cameraPosition.zoom);
 			_model.setLocation(cameraPosition.target);
@@ -354,7 +354,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 
 	@Override
 	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
-        _mainActivity().updateStationsButton();
         _mainActivity().updateControls();
 
         if (!isOpen) {
