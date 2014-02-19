@@ -196,7 +196,7 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 		}
 		LatLng position = new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng);
 		String velocity = _model.getString(R.string.velocity) + Integer.toString(transportOverlay.transport.velocity) + _model.getString(R.string.km);
-		GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().zIndex(1000).image(_getBusBitMap(transportOverlay.transport.kind)).position(position, getWidth()).bearing(transportOverlay.transport.direction));
+		GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().zIndex(2).image(_getBusBitMap(transportOverlay.transport.kind)).position(position, getWidth()).bearing(transportOverlay.transport.direction));
 		Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber)));
 		transportOverlay.groundOverlay = groundOverlay;
 		transportOverlay.marker = marker;
@@ -387,7 +387,7 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
                     break;
             }
             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(res);
-            GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(-1);
+            GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(icon).position(station.point.getLatlng(), _getStationWidth()).zIndex(1);
             GroundOverlay groundOverlay = _map.addGroundOverlay(groundOverlayOptions);
             GroundOverlayMapItem groundOverlayMapItem = new GroundOverlayMapItem(groundOverlay, station.id);
             _model.getModelPaths().addMapShortTimeItem(groundOverlayMapItem);
