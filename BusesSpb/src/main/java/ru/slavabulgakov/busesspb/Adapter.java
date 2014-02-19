@@ -129,7 +129,7 @@ public class Adapter extends ArrayAdapter<Route> {
 	}
 	
 	public Adapter(Context context, Model model) {
-		super(context, R.layout.listitem_selectroute, model.getAllRoutes());
+		super(context, R.layout.listitem_selectroute, new ArrayList<Route>());
 		_context = context;
 		_model = model;
 		_filter = new MyFilter();
