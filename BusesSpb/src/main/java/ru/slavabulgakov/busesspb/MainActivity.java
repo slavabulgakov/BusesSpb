@@ -122,9 +122,11 @@ public class MainActivity extends BaseActivity {
                 ProgressBar progressBar = (ProgressBar)findViewById(R.id.rightMenuButtonProgressBar);
                 if (loading) {
                     progressBar.setVisibility(View.VISIBLE);
+                    _rightMenuButton.setEnabled(false);
                     _rightMenuButtonImage.setVisibility(View.GONE);
                 } else {
                     progressBar.setVisibility(View.GONE);
+                    _rightMenuButton.setEnabled(true);
                     _rightMenuButtonImage.setVisibility(View.VISIBLE);
                 }
             }
