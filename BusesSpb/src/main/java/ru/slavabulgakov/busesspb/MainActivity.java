@@ -187,9 +187,12 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+        _rightMenu.updatePosition();
+
         _leftMenu.setModel(_model);
         _leftMenu.updateFilterButtons();
-        
+
 		_updateBottomControls();
 		
 		GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();

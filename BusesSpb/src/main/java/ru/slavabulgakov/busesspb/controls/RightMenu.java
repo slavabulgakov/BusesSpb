@@ -46,6 +46,12 @@ public class RightMenu extends LinearLayout {
 		_model = model;
 	}
 
+    public void updatePosition() {
+        if (_model.menuIsClosed(Model.MenuKind.Right)) {
+            move(100);
+        }
+    }
+
 	public void move(double position) {
     	double delta = 100;
     	if (position > 0) {
