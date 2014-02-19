@@ -148,7 +148,13 @@ public class MainActivity extends BaseActivity {
     }
 
     public Location getLocation() {
-        return _locationClient.getLastLocation();
+        Location location = null;
+        try {
+            location = _locationClient.getLastLocation();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return location;
     }
 
     public InternetDenyImageButtonController getInternetDenyButtonController() {
