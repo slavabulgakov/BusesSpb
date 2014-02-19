@@ -54,14 +54,13 @@ public class RightMenu extends LinearLayout {
 
 	public void move(double position) {
     	double delta = 100;
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
     	if (position > 0) {
-        	RelativeLayout.LayoutParams lpRight = (RelativeLayout.LayoutParams)getLayoutParams();
-            if (lpRight != null) {
-                lpRight.setMargins(0, 0, (_model.dpToPx(-200)), lpRight.bottomMargin);
-                setLayoutParams(lpRight);
+            if (lp != null) {
+                lp.setMargins(0, 0, (_model.dpToPx(-200)), lp.bottomMargin);
+                setLayoutParams(lp);
             }
 		} else {
-			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)getLayoutParams();
             if (lp != null) {
                 lp.setMargins(0, 0, (_model.dpToPx(-delta + delta * Math.abs(position))), lp.bottomMargin);
                 setLayoutParams(lp);
