@@ -92,7 +92,6 @@ public class MainActivity extends BaseActivity {
 		findViewById(R.id.about).setOnClickListener(Controller.getInstance());
 
 		_leftMenu = (LeftMenu)findViewById(R.id.leftMenu);
-		_leftMenu.setModel(_model);
 		_leftMenu.getTicketsTray().inition(_model, Controller.getInstance());
 		_leftMenu.getTicketsTray().update();
 		
@@ -188,6 +187,9 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+        _leftMenu.setModel(_model);
+        _leftMenu.updateFilterButtons();
+        
 		_updateBottomControls();
 		
 		GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -306,8 +308,6 @@ public class MainActivity extends BaseActivity {
         _trolleyFilter.setChecked(_model.isEnabledFilter(TransportKind.Trolley));
         _tramFilter.setChecked(_model.isEnabledFilter(TransportKind.Tram));
         _shipFilter.setChecked(_model.isEnabledFilter(TransportKind.Ship));
-
-        _leftMenu.updateFilterButtons();
 
 		LinearLayout kindBtns = (LinearLayout)findViewById(R.id.kindBtns);
         TranslateAnimation animation;
