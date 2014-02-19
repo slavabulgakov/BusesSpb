@@ -112,7 +112,9 @@ public class MainActivity extends BaseActivity {
         _rightMenuButtonImage = (ImageView)findViewById(R.id.rightMenuButtonImage);
         setRightMenuButtonLoading(false);
 
-        Controller.getInstance().switchToState(new MapState());
+        if (Controller.getInstance().getState() == null) {
+            Controller.getInstance().switchToState(new MapState());
+        }
     }
 
     public void setRightMenuButtonLoading(final boolean loading) {
