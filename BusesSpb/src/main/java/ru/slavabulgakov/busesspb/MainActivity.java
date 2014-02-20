@@ -20,8 +20,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.VisibleRegion;
 
 import ru.slavabulgakov.busesspb.controller.Controller;
 import ru.slavabulgakov.busesspb.controller.MapState;
@@ -278,9 +280,14 @@ public class MainActivity extends BaseActivity {
 	public void updateTransport() {
 		if (_model.getFavorite().size() == 0) {
     		if (_mapController != null) {
-    			View mainFrame = findViewById(R.id.mainFrame);
-        		LatLngBounds bounds = _mapController.getMap().getProjection().getVisibleRegion().latLngBounds;
-                _model.loadImg(bounds, _model.pxToDp(mainFrame.getWidth()), _model.pxToDp(mainFrame.getHeight()));
+                if (_mapController.getMap() != null) {
+                    View mainFrame = findViewById(R.id.mainFrame);
+                    GoogleMap map = _mapController.getMap();
+                    Projection projection = map.getProjection();
+                    VisibleRegion region = projection.getVisibleRegion();
+                    LatLngBounds bounds = region.latLngBounds;
+                    _model.loadImg(bounds, _model.pxToDp(mainFrame.getWidth()), _model.pxToDp(mainFrame.getHeight()));
+                }
 			}
 		} else {
 			_model.showFavoriteRoutes();
