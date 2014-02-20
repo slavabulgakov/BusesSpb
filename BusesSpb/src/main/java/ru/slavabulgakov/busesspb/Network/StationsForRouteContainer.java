@@ -50,7 +50,9 @@ public class StationsForRouteContainer extends LoaderContainer {
             for (int i = 0; i < length; i++) {
                 String stopID = stopIDs.getString(i);
                 Station station = _getStationById(stopID);
-                stops.add(station);
+                if (station != null) {
+                    stops.add(station);
+                }
             }
 
             path = new Path(_routeId, _direction, ((Station)stops.get(0)).kind);

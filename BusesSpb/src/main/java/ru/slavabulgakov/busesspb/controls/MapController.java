@@ -359,7 +359,13 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 	public void showStations(ArrayList<?> stations) {
         for (Object object : stations) {
             Station station = (Station)object;
-            MarkerOptions markerOptions = new MarkerOptions().position(station.point.getLatlng()).title(station.name + " >").icon(_getEmptyBitMap()).anchor((float).5, (float).5);
+            LatLng latLng = station.point.getLatlng();
+            String name = station.name + " >";
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng)
+                    .title(name)
+                    .icon(_getEmptyBitMap())
+                    .anchor((float).5, (float).5);
             Marker marker = _map.addMarker(markerOptions);
             StationMarker stationMarker = new StationMarker(marker, station);
             _model.getModelPaths().addMapItem(stationMarker);
