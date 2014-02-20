@@ -349,6 +349,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 		
 		_mainActivity().getLeftMenu().getTicketsTray().addTicket(route);
 		Animations.slideDownRoutesListView();
+        getMainActivity().getLeftMenu().getInput().setText("");
 	}
 
 	@Override
