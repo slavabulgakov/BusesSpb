@@ -16,7 +16,7 @@ public class StationsContainer extends LoaderContainer {
 	private static final long serialVersionUID = 1L;
 	
 	public StationsContainer() {
-		super("http://futbix.ru/busesspb/v1_0/stationsdata/", "stationsNames.txt", "v1_stationsNames.ser");
+		super("http://futbix.ru/busesspb/v1_0/stationsdata/", "stationsNames.txt", "v2_stationsNames.ser");
 	}
 
 	@SuppressWarnings("unchecked")

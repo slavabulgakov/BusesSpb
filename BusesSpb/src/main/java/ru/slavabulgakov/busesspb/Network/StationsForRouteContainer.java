@@ -23,7 +23,7 @@ public class StationsForRouteContainer extends LoaderContainer {
     private int _direction;
     private Model _model;
     public StationsForRouteContainer(int routeId, int direction, Model model) {
-        super("http://transport.orgp.spb.ru/Portal/transport/internalapi/routes/stops?routeIDs=" + routeId + "&directions=" + String.valueOf(direction), null, "v1_stationsForRouteId" + routeId + "andDirection" + String.valueOf(direction));
+        super("http://transport.orgp.spb.ru/Portal/transport/internalapi/routes/stops?routeIDs=" + routeId + "&directions=" + String.valueOf(direction), null, "v2_stationsForRouteId" + routeId + "andDirection" + String.valueOf(direction) + ".ser");
         _model = model;
         _routeId = routeId;
         _direction = direction;
