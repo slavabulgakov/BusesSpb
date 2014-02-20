@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.TransportKind;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Point;
 import ru.slavabulgakov.busesspb.paths.Station;
@@ -55,7 +56,11 @@ public class StationsForRouteContainer extends LoaderContainer {
                 }
             }
 
-            path = new Path(_routeId, _direction, ((Station)stops.get(0)).kind);
+            TransportKind kind = TransportKind.Bus;
+            if (stops.size() > 0) {
+                kind = ((Station)stops.get(0)).kind;
+            }
+            path = new Path(_routeId, _direction, kind);
             JSONArray pathJSON = response.getJSONArray("result").getJSONObject(0).getJSONArray("path");
             length = pathJSON.length();
             for (int i = 0; i < length; i++) {
