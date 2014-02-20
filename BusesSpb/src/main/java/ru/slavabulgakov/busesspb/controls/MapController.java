@@ -359,6 +359,9 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 	public void showStations(ArrayList<?> stations) {
         for (Object object : stations) {
             Station station = (Station)object;
+            if (station == null) {
+                continue;
+            }
             LatLng latLng = station.point.getLatlng();
             String name = station.name + " >";
             MarkerOptions markerOptions = new MarkerOptions()
