@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -159,9 +158,6 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	
 	private void _setAdViewVisible(boolean visible) {
 		_adView.setVisibility(visible ? View.VISIBLE : View.GONE);
-		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)_scrollView.getLayoutParams();
-		lp.setMargins(lp.leftMargin, lp.topMargin, lp.rightMargin, visible ? _model.dpToPx(50) : 0);
-		_scrollView.setLayoutParams(lp);
 	}
 	
 	private void _setPurchaseButtonVisible() {

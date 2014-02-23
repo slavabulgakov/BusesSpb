@@ -21,8 +21,8 @@ public class LeftMenuState extends State {
     }
 
     private void _startTimer() {
-        if (!_controller.getModel().allRouteIsLoaded()) {
-            setTimerTask(new UpdateMenuContentTimerTask((MainActivity)_controller.getActivity(), _controller.getModel()));
+        if (!_controller.getModel().allRouteIsLoaded() && _controller.getMainActivity() != null) {
+            setTimerTask(new UpdateMenuContentTimerTask(_controller.getMainActivity(), _controller.getModel()));
         }
     }
 

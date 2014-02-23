@@ -91,6 +91,8 @@ public class RightMenu extends LinearLayout {
 		View.inflate(context, R.layout.right_menu, this);
 		_title = (TextView)findViewById(R.id.rightMenuTitle);
 		_listView = (ListView)findViewById(R.id.rightMenuListView);
+        LinearLayout linearLayout = (LinearLayout)View.inflate(context, R.layout.under_nav_bar_footer, null);
+        _listView.addFooterView(linearLayout);
 		_format = new SimpleDateFormat("HH:mm", Locale.US);
 		_progressBar = (RelativeLayout)findViewById(R.id.rightMenuProgressBar);
 	}

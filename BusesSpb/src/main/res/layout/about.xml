@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AboutElement"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,8 +11,7 @@
         android:id="@+id/topLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp" >
+        android:orientation="horizontal">
         <ImageButton
         	android:id="@+id/back_btn"
         	android:layout_width="wrap_content"
@@ -25,7 +25,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp" >
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="10dp">
             <LinearLayout
         	android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,8 +52,9 @@
     <ScrollView
         android:id="@+id/aboutScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/topLinearLayout" >
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/topLinearLayout"
+        android:layout_alignParentBottom="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,22 +91,20 @@
         android:shadowDy="1"
         android:shadowColor="#000000"
         android:gravity="center"
-        android:textColor="#FFFFFF" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp"/>
+        android:textColor="#FFFFFF" android:layout_marginTop="10dp"/>
             
             <fragment
                 android:id="@+id/shareFragment"
                 android:name="ru.slavabulgakov.busesspb.ShareFragment"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp" />
             
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginBottom="10dp" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:text="@string/about_5days"/>
+                android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginBottom="10dp" android:text="@string/about_5days"/>
             
             <Button
         android:id="@+id/aboutRateBtn"
@@ -119,7 +119,7 @@
         android:shadowDy="1"
         android:shadowColor="#000000"
         android:gravity="center"
-        android:textColor="#FFFFFF" android:layout_marginBottom="10dp" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" />
+        android:textColor="#FFFFFF" android:layout_marginBottom="10dp" />
             
             
             
@@ -137,26 +137,31 @@
         android:shadowColor="#000000"
         android:gravity="center"
         android:textColor="#FFFFFF"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginBottom="5dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginBottom="10dp" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:text="@string/about_text"/>
+                android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginBottom="10dp" android:text="@string/about_text"/>
             
         </LinearLayout>
     </ScrollView>
 
     <com.google.ads.AdView
         android:id="@+id/aboutAdView"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/aboutUnderNavBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
         ads:adUnitId="@string/admob_publisher_id"
         ads:loadAdOnCreate="true" >
     </com.google.ads.AdView>
+
+    <LinearLayout
+        android:id="@+id/aboutUnderNavBarLayout"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        style="@style/UnderNavBarElement"/>
 
 </RelativeLayout>

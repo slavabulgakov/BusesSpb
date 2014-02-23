@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/TopElement"
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:background="@color/menu_bg"
-        android:orientation="vertical"
-        android:padding="10dp" >
+        android:orientation="vertical" >
 
     <TextView
         android:id="@+id/rightMenuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center"
         android:text="" />
@@ -31,8 +33,11 @@
     <ListView
         android:id="@+id/rightMenuListView"
         android:dividerHeight="10dp"
+        android:divider="@color/menu_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layoutAnimation="@anim/layout_bottom_to_top_slide" />
 
 </LinearLayout>

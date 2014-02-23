@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:id="@+id/mainFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/menu_bg" >
+    android:background="@color/menu_bg">
+
+    <LinearLayout
+        style="@style/UnderNavBarElement"
+        android:id="@+id/mainUnderNavBarLayout"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" />
 
     <ru.slavabulgakov.busesspb.controls.LeftMenu 
         android:id="@+id/leftMenu"
         android:layout_width="250dp"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/mainAdView" />
+        android:layout_height="match_parent"/>
     
     <ru.slavabulgakov.busesspb.controls.RightMenu
         android:id="@+id/rightMenu"
         android:layout_width="250dp"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/mainAdView" />
+        android:layout_alignParentRight="true"/>
          
     <ru.slavabulgakov.busesspb.controls.RootView
         android:id="@+id/mainMapLayout"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="-10dp"
-        android:layout_above="@+id/mainAdView" />
-        
-    <com.google.ads.AdView
-        		android:id="@+id/mainAdView"
-        		android:layout_width="match_parent"
-        		android:layout_height="wrap_content"
-        		android:layout_alignParentBottom="true"
-        		ads:adSize="BANNER"
-        		ads:adUnitId="@string/admob_publisher_id"
-        		ads:loadAdOnCreate="true"/>
-    
+        android:layout_marginRight="-10dp" />
+
 </RelativeLayout>

@@ -96,6 +96,7 @@ public class MainActivity extends BaseActivity {
 		findViewById(R.id.about).setOnClickListener(Controller.getInstance());
 
 		_leftMenu = (LeftMenu)findViewById(R.id.leftMenu);
+        _leftMenu.setModel(_model);
 		_leftMenu.getTicketsTray().inition(_model, Controller.getInstance());
 		_leftMenu.getTicketsTray().update();
 		

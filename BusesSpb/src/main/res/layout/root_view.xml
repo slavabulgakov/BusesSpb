@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb">
+    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -21,16 +22,27 @@
 
             </FrameLayout>
 
+    <com.google.ads.AdView
+        android:id="@+id/mainAdView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/underNavBarLayout"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/admob_publisher_id"
+        ads:loadAdOnCreate="true"/>
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:layout_above="@id/mainAdView"
+            android:layout_marginBottom="10dp">
 
             <ru.slavabulgakov.busesspb.controls.CloselessTicketsTray
+                style="@style/TopElement"
                 android:id="@+id/closelessTicketsTray"
                 android:layout_width="wrap_content"
     			android:layout_height="wrap_content"
-    			android:layout_marginLeft="10dp"
-    			android:layout_marginTop="10dp" />
+    			android:layout_marginLeft="10dp"/>
 
             <LinearLayout
                 android:id="@+id/kindBtns"
@@ -90,9 +102,8 @@
                 android:minHeight="40dp"
                 android:minWidth="40dp"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_alignTop="@+id/closelessTicketsTray"
                 android:background="@drawable/btn_pressed_black">
 
                 <ProgressBar
@@ -119,7 +130,6 @@
                 android:layout_alignRight="@+id/rightMenuButton"
                 android:background="@color/menu_bg"
                 android:orientation="vertical"
-                android:layout_marginBottom="10dp"
                 android:minHeight="40dp"
                 android:minWidth="40dp" >
 
@@ -157,10 +167,9 @@
                 android:src="@drawable/location"
                 android:minHeight="40dp"
                 android:minWidth="40dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="35dp"
                 android:layout_alignLeft="@+id/internetDeny"
-                android:layout_alignStart="@+id/internetDeny" />
+                android:layout_alignStart="@+id/internetDeny"
+                android:layout_alignParentBottom="true"/>
             
             <ru.slavabulgakov.busesspb.controls.CheckButton 
                 android:id="@+id/paths"
@@ -187,7 +196,12 @@
                 android:layout_marginTop="10dp" />
 
         </RelativeLayout>
-        
-        
+
+    <LinearLayout
+        style="@style/UnderNavBarElement"
+        android:id="@+id/underNavBarLayout"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

@@ -6,18 +6,13 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -32,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 
 import ru.slavabulgakov.busesspb.AboutActivity;
-import ru.slavabulgakov.busesspb.Adapter;
 import ru.slavabulgakov.busesspb.Animations;
 import ru.slavabulgakov.busesspb.BaseActivity;
 import ru.slavabulgakov.busesspb.FlurryConstants;
@@ -52,7 +46,7 @@ import ru.slavabulgakov.busesspb.paths.ModelPaths.OnPathLoaded;
 import ru.slavabulgakov.busesspb.paths.Path;
 import ru.slavabulgakov.busesspb.paths.Station;
 
-public class Controller implements OnClickListener, OnLoadCompleteListener, TextWatcher, OnItemClickListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, TicketsTray.Listener, Loader.Listener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+public class Controller implements OnClickListener, OnLoadCompleteListener, OnActionListener, OnKeyListener, OnPathLoaded, Listener, TicketsTray.Listener, Loader.Listener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 	
 	private static volatile Controller _instance;
 	private Model _model;
@@ -306,53 +300,6 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
 	}
 
 	@Override
-	public void afterTextChanged(Editable s) {
-		String text = s.toString();
-		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-		if (listView.getAdapter() != null) {
-			((Adapter)listView.getAdapter()).getFilter().filter(text);
-		}
-		
-		ImageButton clearButton = (ImageButton)_currentActivity.findViewById(R.id.clearRouteText);
-		if (text.length() > 0) {
-			clearButton.setVisibility(View.VISIBLE);
-		} else {
-			clearButton.setVisibility(View.GONE);
-		}
-		
-		if (!(Boolean)_model.getData("TextEditUsed2", false)) {
-			_model.setData("TextEditUsed2", true, false);
-			FlurryAgent.logEvent(FlurryConstants.textEditUsed);
-		}
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-			int arg3) {}
-
-	@Override
-	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
-
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-		ListView listView = (ListView) _currentActivity.findViewById(R.id.selectRouteListView);
-		final Adapter adapter = (Adapter)listView.getAdapter();
-		final Route route = adapter.getItem(position);
-		_model.setRouteToFavorite(route);
-		Animations.listItemCollapse(view, new Animations.OnAnimationEndListener() {
-			
-			@Override
-			public void onAnimated(View view) {
-				adapter.removeRoute(position, view);
-			}
-		});
-		
-		_mainActivity().getLeftMenu().getTicketsTray().addTicket(route);
-		Animations.slideDownRoutesListView();
-        getMainActivity().getLeftMenu().getInput().setText("");
-	}
-
-	@Override
 	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
         _mainActivity().updateControls();
 
@@ -446,8 +393,10 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
         getHandler().post(new Runnable() {
             @Override
             public void run() {
-                if (_mainActivity().getMapController() != null) {
-                    _mainActivity().getMapController().showPath(path);
+                if (_mainActivity() != null) {
+                    if (_mainActivity().getMapController() != null) {
+                        _mainActivity().getMapController().showPath(path);
+                    }
                 }
             }
         });
@@ -458,7 +407,11 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, Text
         getHandler().post(new Runnable() {
             @Override
             public void run() {
-                _mainActivity().getMapController().showStations(stations);
+                if (_mainActivity() != null) {
+                    if (_mainActivity().getMapController() != null) {
+                        _mainActivity().getMapController().showStations(stations);
+                    }
+                }
             }
         });
 	}

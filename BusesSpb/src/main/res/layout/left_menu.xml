@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/TopElement"
     	xmlns:app="http://schemas.android.com/apk/res/ru.slavabulgakov.busesspb"
         android:layout_width="250dp"
         android:layout_height="match_parent"
@@ -13,16 +14,17 @@
         android:background="@drawable/btn_dark_gray"
         android:text="@string/about"
         android:minHeight="40dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
         android:textColor="#6d6d6d"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp" >
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" >
             <EditText
             	android:id="@+id/selectRouteText"
             	android:layout_width="match_parent"
@@ -37,7 +39,8 @@
             	android:paddingRight="10dp"
             	android:paddingTop="5dp"
             	android:layout_alignParentLeft="true"
-            	android:singleLine="true" />
+            	android:singleLine="true"
+                android:textColor="@color/black"/>
             <ImageButton
                 android:id="@+id/clearRouteText"
                 android:layout_width="wrap_content"

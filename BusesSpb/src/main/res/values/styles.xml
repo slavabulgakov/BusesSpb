@@ -21,4 +21,12 @@
 		<item name="android:background">@drawable/share_facebook_btn_bg</item>
 	</style>
 
+    <style name="TopElement" parent="">
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="AboutElement" parent="">
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
 </resources>
