@@ -26,4 +26,9 @@
         <item name="android:minHeight">45dp</item>
     </style>
 
+    <style name="BrowserElement" parent="">
+        <item name="android:layout_marginTop">30dp</item>
+        <item name="android:layout_marginBottom">45dp</item>
+    </style>
+
 </resources>

@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,8 +29,9 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	
 	private ShareFragment _shareFragment;
 	private AdView _adView;
-	private ScrollView _scrollView;
 	private Button _purchaseButton;
+    private ScrollView _scrollView;
+    private LinearLayout _underAdsLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,8 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 		_adView = (AdView)findViewById(R.id.aboutAdView);
 		_scrollView = (ScrollView)findViewById(R.id.aboutScrollView);
 		_purchaseButton = (Button)findViewById(R.id.aboutPurchaseAdsOff);
+
+        _underAdsLayout = (LinearLayout)findViewById(R.id.underAdsLayout);
 	}
 	
 	@Override
@@ -158,6 +162,7 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnIa
 	
 	private void _setAdViewVisible(boolean visible) {
 		_adView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        _underAdsLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 	
 	private void _setPurchaseButtonVisible() {

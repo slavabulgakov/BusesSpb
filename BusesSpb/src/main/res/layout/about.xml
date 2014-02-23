@@ -143,6 +143,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginBottom="10dp" android:text="@string/about_text"/>
+
+            <LinearLayout
+                android:id="@+id/underAdsLayout"
+                android:layout_width="fill_parent"
+                android:orientation="horizontal"
+                android:layout_height="50dp"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:orientation="horizontal"
+                style="@style/UnderNavBarElement"/>
             
         </LinearLayout>
     </ScrollView>
