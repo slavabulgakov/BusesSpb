@@ -36,4 +36,7 @@
     <style name="LocationButton" parent="">
     </style>
 
+    <style name="AdsElement" parent="">
+    </style>
+
 </resources>

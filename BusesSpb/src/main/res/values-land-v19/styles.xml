@@ -29,4 +29,7 @@
     <style name="MapElement" parent="">
     </style>
 
+    <style name="AdsElement" parent="">
+    </style>
+
 </resources>

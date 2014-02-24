@@ -24,6 +24,7 @@
             </FrameLayout>
 
     <com.google.ads.AdView
+        style="@style/AdsElement"
         android:id="@+id/mainAdView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -177,9 +178,10 @@
                 android:id="@+id/paths"
                 android:layout_alignRight="@+id/rightMenuButton"
                 android:layout_marginRight="0dp"
+                android:layout_marginBottom="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_above="@+id/zoomControls"
                 android:src="@drawable/paths"
                 app:iconBackground="@drawable/btn_pressed_black"
                 app:background="@drawable/btn_selected_black"
