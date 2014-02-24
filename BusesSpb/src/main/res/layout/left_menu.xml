@@ -40,7 +40,8 @@
             	android:paddingTop="5dp"
             	android:layout_alignParentLeft="true"
             	android:singleLine="true"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textCursorDrawable="@null"/>
             <ImageButton
                 android:id="@+id/clearRouteText"
                 android:layout_width="wrap_content"

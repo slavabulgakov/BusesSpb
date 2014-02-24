@@ -25,4 +25,8 @@
         <item name="android:layout_marginTop">30dp</item>
     </style>
 
+    <style name="LocationButton" parent="">
+        <item name="android:layout_marginBottom">30dp</item>
+    </style>
+
 </resources>
