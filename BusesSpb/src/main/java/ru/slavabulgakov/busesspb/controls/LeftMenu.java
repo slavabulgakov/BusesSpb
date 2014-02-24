@@ -8,7 +8,6 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageButton;
@@ -40,7 +39,6 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
 	private CheckButton _menuShipFilter;
 	private ImageButton _clearButton;
 	private Context _context;
-    private Button _aboutButton;
 	
 	public EditText getInput() {
 		return _editText;
@@ -95,8 +93,6 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
 		
 		_menuShipFilter = (CheckButton)findViewById(R.id.menuShipFilter);
 		_menuShipFilter.setOnClickListener(Controller.getInstance());
-
-        _aboutButton = (Button)findViewById(R.id.about);
 	}
 
 	public LeftMenu(Context context) {
@@ -169,27 +165,8 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
 	public void setProgressBarVisible(boolean visible) {
 		_progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
-
-    private void _keyboardShown() {
-        _aboutButton.setVisibility(GONE);
-    }
-
-    private void _keyboardHide() {
-        _aboutButton.setVisibility(VISIBLE);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int newSpec = MeasureSpec.getSize(heightMeasureSpec);
-        if (getHeight() - newSpec > _model.dpToPx(50)){
-            _keyboardShown();
-        } else if (getHeight() - newSpec < -_model.dpToPx(50)){
-            _keyboardHide();
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    public void loadMenuContent() {
+	
+	public void loadMenuContent() {
     	_progressBar.setVisibility(View.VISIBLE);
 		_editText.setEnabled(false);
 		_menuBusFilter.setEnabled(false);
