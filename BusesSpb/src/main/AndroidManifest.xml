@@ -53,7 +53,7 @@
         
         <activity 
             android:name="ru.slavabulgakov.busesspb.AboutActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"/>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
         <activity
             android:theme="@android:style/Theme.NoTitleBar"
@@ -64,7 +64,7 @@
             android:name="com.google.ads.AdActivity" />
         <activity 
             android:name="ru.slavabulgakov.busesspb.Browser"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"/>
         <meta-data android:name="com.crashlytics.ApiKey" android:value="b0f19251d74cce33f5a3dfe48172a4c8f8b5f906"/>
     </application>
 
