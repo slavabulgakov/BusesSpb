@@ -12,8 +12,6 @@
 
     <style name="AboutElement" parent="">
         <item name="android:layout_marginTop">30dp</item>
-        <item name="android:layout_marginLeft">10dp</item>
-        <item name="android:layout_marginRight">10dp</item>
     </style>
 
     <style name="RightElement" parent="">
@@ -24,11 +22,18 @@
     <style name="UnderNavBarElement" parent="">
         <item name="android:layout_height">45dp</item>
         <item name="android:minHeight">45dp</item>
+        <item name="android:maxHeight">45dp</item>
     </style>
 
     <style name="BrowserElement" parent="">
         <item name="android:layout_marginTop">30dp</item>
         <item name="android:layout_marginBottom">45dp</item>
+    </style>
+
+    <style name="MapElement" parent="">
+    </style>
+
+    <style name="LocationButton" parent="">
     </style>
 
 </resources>
