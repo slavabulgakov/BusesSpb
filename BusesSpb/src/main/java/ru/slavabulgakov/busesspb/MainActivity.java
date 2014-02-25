@@ -122,6 +122,17 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (_model.menuIsOpened(MenuKind.Left)) {
+            _rootView.toggleMenu(MenuKind.Left);
+        } else if (_model.menuIsOpened(MenuKind.Right)) {
+            _rootView.toggleMenu(MenuKind.Right);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     public void setRightMenuButtonLoading(final boolean loading) {
         Controller.getInstance().getHandler().post(new Runnable() {
             @Override
