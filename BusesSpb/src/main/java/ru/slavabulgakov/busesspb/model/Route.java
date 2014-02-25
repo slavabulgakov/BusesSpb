@@ -11,6 +11,7 @@ public class Route implements Serializable {
 	public Integer cost;
 	public String routeNumber;
 	public TransportKind kind;
+    public String fullName;
 	Transport creatTransport() {
 		Transport transport = new Transport();
 		transport.routeNumber = this.routeNumber;

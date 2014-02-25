@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.maps.model.GroundOverlay;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -37,8 +35,9 @@ import ru.slavabulgakov.busesspb.FlurryConstants;
 import ru.slavabulgakov.busesspb.LoadTaskException;
 import ru.slavabulgakov.busesspb.Mercator;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
+import ru.slavabulgakov.busesspb.Network.Loader;
 import ru.slavabulgakov.busesspb.Network.Network;
-import ru.slavabulgakov.busesspb.Network.RoutesNamesLoaderContainer;
+import ru.slavabulgakov.busesspb.Network.RoutesLoaderContainer;
 import ru.slavabulgakov.busesspb.ParserWebPageTask;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import ru.slavabulgakov.busesspb.ShareModel;
@@ -372,71 +371,36 @@ public class Model extends Application {
 		}
 		
 		_allRoutesIsLoading = true;
-		
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				Log.d("routes", "try load");
-				@SuppressWarnings("unchecked")
-				ArrayList<Route> arrayFromCache = (ArrayList<Route>)Files.loadFromFile("allRoutes.ser", Model.this);
-				if (arrayFromCache == null) {
-					String json = Files.stringFromFile("allRoutes.json", Model.this);
-					arrayFromCache = _routesFromString(json);
-				}
-				_setAllRoutes(arrayFromCache);
-				Log.d("routes", "load from cache");
-				_listener.onRouteKindsLoadComplete(arrayFromCache);
-				
-				
-				ArrayList<Route> array = null;
-				try {
-					Integer version = (Integer)getData("allRoutesVersion");
-					URL url = new URL("http://futbix.ru/busesspb/version/");
-					URLConnection conn = url.openConnection();
-					conn.connect();
-					BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-					String line = rd.readLine();
-					Integer serverVersion = Integer.parseInt(line);
-					if (version == null || serverVersion > version) {
-						String json = "";
-						if (serverVersion == 1) {
-							json = Files.stringFromFile("allRoutes.json", Model.this);
-						} else {
-							url = new URL("http://futbix.ru/busesspb/echo/");
-							conn = url.openConnection();
-							conn.setRequestProperty("Cookie", _cookie);
-							conn.connect();
-							rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-							line = "";
-				  
-							while ((line = rd.readLine()) != null) {
-								json += line;
-							}
-						}
-						
-						array = _routesFromString(json);
-				        Files.saveToFile(array, "allRoutes.ser", Model.this);
-						setData("allRoutesVersion", serverVersion, true);
-					}
-				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				if (array != null) {
-					if (array.size() > 0) {
-						_setAllRoutes(array);
-						Log.d("routes", "load from net");
-						_listener.onRouteKindsLoadComplete(array);
-					}
-				}
-				
-				_allRoutesIsLoaded = true;
-				_allRoutesIsLoading = false;
-			}
-		}).start();
+
+        Loader loader = getNetwork().getLoader(RoutesLoaderContainer.class);
+        if (loader == null) {
+            getNetwork().loadForContainer(new RoutesLoaderContainer(), new Loader.Listener() {
+                @Override
+                public void staticLoaded(Loader loader) {
+                    _allRoutesIsLoaded = true;
+                    _allRoutesIsLoading = false;
+                    _setAllRoutes((ArrayList<Route>)loader.getContainer().getData());
+                    _listener.onRouteKindsLoadComplete((ArrayList<Route>)loader.getContainer().getData());
+                }
+
+                @Override
+                public void netLoaded(Loader loader) {
+                    _setAllRoutes((ArrayList<Route>)loader.getContainer().getData());
+                    _listener.onRouteKindsLoadComplete((ArrayList<Route>)loader.getContainer().getData());
+                }
+
+                @Override
+                public void netError(Loader loader) {
+                    _allRoutesIsLoaded = true;
+                    _allRoutesIsLoading = false;
+                }
+            });
+        } else {
+            _setAllRoutes((ArrayList<Route>)loader.getContainer().getData());
+            _listener.onRouteKindsLoadComplete((ArrayList<Route>)loader.getContainer().getData());
+            _allRoutesIsLoaded = true;
+            _allRoutesIsLoading = false;
+        }
 	}
 	
 	private ArrayList<ParserWebPageTask> _getParsers() {
@@ -905,15 +869,15 @@ public class Model extends Application {
 	}
 
 
-    private RoutesNamesLoaderContainer _routesNamesContainer;
-    public RoutesNamesLoaderContainer.RouteName getRouteName(int id) {
-        if (_routesNamesContainer == null) {
-            _routesNamesContainer = (RoutesNamesLoaderContainer)getNetwork().getLoader(RoutesNamesLoaderContainer.class).getContainer();
+    private RoutesLoaderContainer _routesContainer;
+    public Route getRoute(int id) {
+        if (_routesContainer == null) {
+            _routesContainer = (RoutesLoaderContainer)getNetwork().getLoader(RoutesLoaderContainer.class).getContainer();
         }
-        for (Object obj : (ArrayList<?>)_routesNamesContainer.getData()) {
-            RoutesNamesLoaderContainer.RouteName routeName = (RoutesNamesLoaderContainer.RouteName)obj;
-            if (routeName.id == id) {
-                return routeName;
+        for (Object obj : (ArrayList<?>) _routesContainer.getData()) {
+            Route route = (Route)obj;
+            if (route.id == id) {
+                return route;
             }
         }
         return null;

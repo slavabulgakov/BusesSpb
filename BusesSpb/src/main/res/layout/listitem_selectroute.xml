@@ -23,28 +23,17 @@
         android:text="123"
         android:textColor="@color/white"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <ImageView
-        android:id="@+id/currency"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="18dp"
-        android:src="@drawable/rub" />
 
     <TextView
-        android:id="@+id/listItemSelectRouteCost"
+        android:id="@+id/listItemSelectRouteFullName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/currency"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="3dp"
-        android:paddingTop="10dp"
-        android:text="35"
+        android:text="АВТОБУСНАЯ СТАНЦИЯ УЛ. ЖЕНИ ЕГОРОВОЙ - ПОС. ПАРГОЛОВО, СПК ПРИГОРОДНЫЙ"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:textColor="@color/white"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textSize="10sp"
+        android:layout_toRightOf="@+id/listItemSelectRouteRouteName" />
 
 </RelativeLayout>

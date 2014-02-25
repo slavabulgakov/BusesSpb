@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import ru.slavabulgakov.busesspb.model.Model;
+import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.paths.Forecast;
 
 /**
@@ -44,10 +45,10 @@ public class ForecastsContainer extends LoaderContainer {
                 JSONObject item = array.getJSONObject(i);
                 Forecast forecast = new Forecast();
                 forecast.time = format.parse(item.getString("arrivingTime"));
-                RoutesNamesLoaderContainer.RouteName routeName = _model.getRouteName(item.getInt("routeId"));
-                forecast.transportNumber = routeName.number;
-                forecast.transportKind = routeName.kind;
-                forecast.fullName = routeName.fullName;
+                Route route = _model.getRoute(item.getInt("routeId"));
+                forecast.transportNumber = route.routeNumber;
+                forecast.transportKind = route.kind;
+                forecast.fullName = route.fullName;
                 forecasts.add(forecast);
             }
         } catch (JSONException e) {

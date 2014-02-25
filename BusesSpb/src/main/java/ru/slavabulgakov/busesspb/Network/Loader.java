@@ -1,9 +1,12 @@
 package ru.slavabulgakov.busesspb.Network;
 
+import android.util.Log;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
 import java.util.ArrayList;
 
@@ -80,6 +83,37 @@ public class Loader {
         }
 	}
 
+    private void _netLoad() {
+        Request request = (Request)FacadeLoader.createRequest(_container.isJson(), _container.getUrlString(), new FacadeLoader.Listener() {
+
+                    @Override
+                    public void onResponse(final Object obj) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                _container.handler(obj);
+                                _state = State.complete;
+                                _netLoadedListeners();
+                                _cache();
+                                Log.d("data_loading", "did load from internet");
+                            }
+                        }).start();
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (_container.getVersionUrlString() != null) {
+                            _model.removeData(_container.getVersionKeyString());
+                        }
+                        _netErrorListeners();
+                        Log.d("data_loading", "error loading data from internet");
+                    }
+                }
+        );
+        _queue.add(request);
+    }
+
 	public void load() {
 		new Thread(new Runnable() {
 			
@@ -96,37 +130,59 @@ public class Loader {
                         _container.handler(strings);
                         _state = State.netLoading;
                         _staticLoadedListeners();
+                        Log.d("data_loading", "did load from static");
                     }
 				} else {
 					_container.loadData(data);
                     _state = State.netLoading;
                     _staticLoadedListeners();
+                    Log.d("data_loading", "did load from cache");
 				}
-				
-                Request request = (Request)FacadeLoader.createRequest(_container.isJson(), _container.getUrlString(), new FacadeLoader.Listener() {
 
-                            @Override
-                            public void onResponse(final Object obj) {
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        _container.handler(obj);
-                                        _state = State.complete;
-                                        _netLoadedListeners();
-                                        _cache();
+
+                if (_container.getVersionUrlString() != null) {
+                    StringRequest stringRequest = new StringRequest(_container.getVersionUrlString(), new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(final String response) {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String versionString = (String)_model.getData(_container.getVersionKeyString(), "0");
+                                    Integer versionCache = Integer.parseInt(versionString);
+                                    Integer versionNet = 0;
+                                    try {
+                                        versionNet = Integer.parseInt(response);
+                                    } catch (NumberFormatException ignored) {
+
                                     }
-                                }).start();
-                            }
-                        }, new Response.ErrorListener() {
 
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                _netErrorListeners();
-                            }
+                                    if (versionNet > versionCache) {
+                                        Log.d("data_loading", "exist new data, versionNet: " + versionNet.toString() + ", versionCache: " + versionCache.toString());
+                                        _model.setData(_container.getVersionKeyString(), versionNet.toString(), true);
+                                        _netLoad();
+                                    } else {
+                                        Log.d("data_loading", "not exist new data, versionNet: " + versionNet.toString() + ", versionCache: " + versionCache.toString());
+                                    }
+                                }
+                            }).start();
                         }
-                );
-				_queue.add(request);
-			}
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("data_loading", "error loading version from internet");
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    _netLoad();
+                                }
+                            });
+                        }
+                    });
+                    _queue.add(stringRequest);
+                } else {
+                    _netLoad();
+                }
+            }
 		}).start();
 	}
 }

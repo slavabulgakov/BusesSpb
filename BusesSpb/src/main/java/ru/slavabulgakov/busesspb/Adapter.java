@@ -160,16 +160,13 @@ public class Adapter extends ArrayAdapter<Route> {
 		convertView.setBackgroundResource(res.first);
 		vh.leftIcon.setImageResource(res.second);
 		
-		Integer cost = getItem(position).cost;
-		TextView costTextView = vh.rightText;
-		ImageView currency = vh.rightIcon;
-		if (cost == null) {
-			costTextView.setVisibility(View.INVISIBLE);
-			currency.setVisibility(View.INVISIBLE);
+		String fullName = getItem(position).fullName;
+		TextView fullNameTextView = vh.rightText;
+		if (fullName == null) {
+			fullNameTextView.setVisibility(View.INVISIBLE);
 		} else {
-			costTextView.setText(cost.toString());
-			costTextView.setVisibility(View.VISIBLE);
-			currency.setVisibility(View.VISIBLE);
+			fullNameTextView.setText(fullName);
+			fullNameTextView.setVisibility(View.VISIBLE);
 		}
 		
 		return convertView;
@@ -179,8 +176,7 @@ public class Adapter extends ArrayAdapter<Route> {
 		TransportCellViewHolder vh = new TransportCellViewHolder();
 		vh.leftIcon = (ImageView)view.findViewById(R.id.listItemSelectRouteKind);
 		vh.leftText = (TextView)view.findViewById(R.id.listItemSelectRouteRouteName);
-		vh.rightText = (TextView)view.findViewById(R.id.listItemSelectRouteCost);
-		vh.rightIcon = (ImageView)view.findViewById(R.id.currency);
+		vh.rightText = (TextView)view.findViewById(R.id.listItemSelectRouteFullName);
 		vh.needInflate = false;
 		view.setTag(vh);
 	}

@@ -1,33 +1,24 @@
 package ru.slavabulgakov.busesspb.Network;
 
-import java.io.Serializable;
+import android.util.Log;
+
 import java.util.ArrayList;
 
+import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 
 
-public class RoutesNamesLoaderContainer extends LoaderContainer {
+public class RoutesLoaderContainer extends LoaderContainer {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public RoutesNamesLoaderContainer() {
-		super("http://futbix.ru/busesspb/v1_0/routesdata/", "routesNames.txt", "routesNames.ser");
+	public RoutesLoaderContainer() {
+        super("http://futbix.ru/busesspb/v1_0/routesdata/", "routesNames.txt", "v1_routesNames.ser", "http://futbix.ru/busesspb/v1_0/feed/version/", "RoutesNamesLoaderContainerKey");
 	}
 
-	public class RouteName implements Serializable {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		public String number;
-		public int id;
-		public TransportKind kind;
-        public String fullName;
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void handler(Object obj) {
@@ -48,24 +39,27 @@ public class RoutesNamesLoaderContainer extends LoaderContainer {
 		strings.remove(0);
 		for (String line : strings) {
 			String items[] = line.split(",");
-			RouteName routeName = new RouteName();
-			routeName.id = Integer.parseInt(items[0]);
-			routeName.number = items[2];
-            routeName.fullName = items[3];
+            Route route = new Route();
+            route.id = Integer.parseInt(items[0]);
+            route.routeNumber = items[2];
+            if (route.routeNumber.equals("0")) {
+                Log.d("slava", "exist: " + line);
+            }
+            route.fullName = items[3];
 			String kind = items[items.length - 4];
 			if (kind.equals("bus")) {
-				 routeName.kind = TransportKind.Bus;
+				 route.kind = TransportKind.Bus;
 			} else if (kind.equals("tram")) {
-				routeName.kind = TransportKind.Tram;
+                route.kind = TransportKind.Tram;
 			} else if (kind.equals("trolley")) {
-				routeName.kind = TransportKind.Trolley;
+                route.kind = TransportKind.Trolley;
 			} else if (kind.equals("ship")) {
-				routeName.kind = TransportKind.Ship;
+                route.kind = TransportKind.Ship;
 			} else {
-				routeName.kind = TransportKind.None;
+                route.kind = TransportKind.None;
 			}
 			
-			data.add(routeName);
+			data.add(route);
 		}
 		_data = data;
 	}

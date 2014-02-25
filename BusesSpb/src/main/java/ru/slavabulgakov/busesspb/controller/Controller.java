@@ -278,7 +278,7 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, OnAc
 	@Override
 	public void onRouteKindsLoadComplete(final ArrayList<Route> array) {
 		getHandler().post(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				if (_isMainActivity()) {
