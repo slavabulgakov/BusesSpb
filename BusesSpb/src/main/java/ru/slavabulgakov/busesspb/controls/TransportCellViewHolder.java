@@ -1,19 +1,19 @@
 package ru.slavabulgakov.busesspb.controls;
 
-import ru.slavabulgakov.busesspb.R;
-import ru.slavabulgakov.busesspb.model.TransportKind;
 import android.util.Pair;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import ru.slavabulgakov.busesspb.R;
+import ru.slavabulgakov.busesspb.model.TransportKind;
 
 public class TransportCellViewHolder {
 	public boolean needInflate;
 	public TextView leftText;
 	public ImageView leftIcon;
 	public TextView rightText;
-	public ImageView rightIcon;
-	
-	public Pair<Integer, Integer> backgroundAndIconByKind(TransportKind kind) {
+
+    public Pair<Integer, Integer> backgroundAndIconByKind(TransportKind kind) {
 		Integer bgResId = -1;
 		Integer iconResId = -1;
 		switch (kind) {

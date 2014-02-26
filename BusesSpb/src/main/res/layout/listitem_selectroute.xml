@@ -26,14 +26,15 @@
 
     <TextView
         android:id="@+id/listItemSelectRouteFullName"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:text="АВТОБУСНАЯ СТАНЦИЯ УЛ. ЖЕНИ ЕГОРОВОЙ - ПОС. ПАРГОЛОВО, СПК ПРИГОРОДНЫЙ"
+        android:text="АВТОБУСНАЯ СТАНЦИЯ УЛ. ЖЕНИ"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:textColor="@color/white"
         android:textSize="10sp"
-        android:layout_toRightOf="@+id/listItemSelectRouteRouteName" />
+        android:layout_toRightOf="@+id/listItemSelectRouteRouteName"
+        android:gravity="right"/>
 
 </RelativeLayout>

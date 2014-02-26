@@ -1,7 +1,5 @@
 package ru.slavabulgakov.busesspb.Network;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 import ru.slavabulgakov.busesspb.model.Route;
@@ -42,9 +40,6 @@ public class RoutesLoaderContainer extends LoaderContainer {
             Route route = new Route();
             route.id = Integer.parseInt(items[0]);
             route.routeNumber = items[2];
-            if (route.routeNumber.equals("0")) {
-                Log.d("slava", "exist: " + line);
-            }
             route.fullName = items[3];
 			String kind = items[items.length - 4];
 			if (kind.equals("bus")) {

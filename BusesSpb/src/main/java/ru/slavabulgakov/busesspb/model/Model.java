@@ -351,7 +351,11 @@ public class Model extends Application {
 		return _allRoutes;
 	}
 	private void _setAllRoutes(ArrayList<Route> all) {
-		_allRoutes = all;
+        ArrayList<Route>routes = new ArrayList<Route>();
+        for (Route route : all) {
+            routes.add(route);
+        }
+		_allRoutes = routes;
 		for (Route route : _favoriteRoutes) {
 			_removeRouteFromList(route, _allRoutes);
 		}
@@ -874,7 +878,7 @@ public class Model extends Application {
         if (_routesContainer == null) {
             _routesContainer = (RoutesLoaderContainer)getNetwork().getLoader(RoutesLoaderContainer.class).getContainer();
         }
-        for (Object obj : (ArrayList<?>) _routesContainer.getData()) {
+        for (Object obj : (ArrayList<?>)_routesContainer.getData()) {
             Route route = (Route)obj;
             if (route.id == id) {
                 return route;

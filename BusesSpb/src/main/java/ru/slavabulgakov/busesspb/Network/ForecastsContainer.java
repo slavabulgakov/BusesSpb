@@ -46,10 +46,12 @@ public class ForecastsContainer extends LoaderContainer {
                 Forecast forecast = new Forecast();
                 forecast.time = format.parse(item.getString("arrivingTime"));
                 Route route = _model.getRoute(item.getInt("routeId"));
-                forecast.transportNumber = route.routeNumber;
-                forecast.transportKind = route.kind;
-                forecast.fullName = route.fullName;
-                forecasts.add(forecast);
+                if (route != null) {
+                    forecast.transportNumber = route.routeNumber;
+                    forecast.transportKind = route.kind;
+                    forecast.fullName = route.fullName;
+                    forecasts.add(forecast);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
