@@ -32,12 +32,12 @@ import java.util.Map;
 
 import ru.slavabulgakov.busesspb.Files;
 import ru.slavabulgakov.busesspb.FlurryConstants;
-import ru.slavabulgakov.busesspb.LoadTaskException;
 import ru.slavabulgakov.busesspb.Mercator;
 import ru.slavabulgakov.busesspb.Mercator.AxisType;
 import ru.slavabulgakov.busesspb.Network.Loader;
 import ru.slavabulgakov.busesspb.Network.Network;
 import ru.slavabulgakov.busesspb.Network.RoutesLoaderContainer;
+import ru.slavabulgakov.busesspb.Network.TransportsContainer;
 import ru.slavabulgakov.busesspb.ParserWebPageTask;
 import ru.slavabulgakov.busesspb.ParserWebPageTask.IRequest;
 import ru.slavabulgakov.busesspb.ShareModel;
@@ -415,133 +415,33 @@ public class Model extends Application {
 	}
 	
 	public void showFavoriteRoutes() {
-		for (Route route : getFavorite()) {
-			_loadDataForRoute(route);
-		}
+        String ids = "";
+        for (Route route : getFavorite()) {
+            ids += route.id.toString() + ",";
+        }
+        ids = ids.substring(0, ids.length() - 1);
+        _network.loadForContainer(new TransportsContainer(ids, this), new Loader.Listener() {
+            @Override
+            public void staticLoaded(Loader loader) {
+
+            }
+
+            @Override
+            public void netLoaded(Loader loader) {
+                _listener.onTransportListOfRouteLoadComplete((ArrayList<Transport>)loader.getContainer().getData());
+            }
+
+            @Override
+            public void netError(Loader loader) {
+
+            }
+        });
 	}
 	
 	private String _cookie = null;
 	private String _scope = null;
 	private boolean _scopeCookieIsLoading = false;
-	private void _loadDataForRoute(final Route route) {
-		final int requestId = route.id;
-		IRequest req = new IRequest() {
-			
-			boolean _canceled;
-			int _step = 0;
-			ArrayList<Transport> _array;
-			
-			@Override
-			public void setCanceled() {
-				_canceled = true;
-			}
-			
-			@Override
-			public void nextExecute() {
-				URL url;
-				try {
-					if (_scope == null || _cookie == null) {
-						if (_scopeCookieIsLoading) {
-							_step++;
-							return;
-						}
-						_scopeCookieIsLoading = true;
-						url = new URL("http://transport.orgp.spb.ru/Portal/transport/route/1329");
-						URLConnection conn = url.openConnection();
-						conn.connect();
-						BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-						String line = "";
-						
-						String headerName=null;
-						for (int i=1; (headerName = conn.getHeaderFieldKey(i))!=null; i++) {
-						 	if (headerName.equals("Set-Cookie")) {                  
-						 		_cookie = conn.getHeaderField(i).split(";")[0];
-						 		break;
-						 	}
-						}
-			  
-						int index =  0;
-						while ((line = rd.readLine()) != null) {
-							if ((index = line.indexOf("scope")) != -1) {
-								break;
-							}
-							if (_canceled) {
-								throw new LoadTaskException();
-							}
-						}
-						
-						index += 8;
-						int end = index;
-						while (line.charAt(end) != '"') {
-							end++;
-						}
-						_scope = URLEncoder.encode(line.substring(index, end));
-						_scopeCookieIsLoading = false;
-					}
-//					url = new URL("http://transport.orgp.spb.ru/Portal/transport/map/routeVehicle?ROUTE=" + route.id.toString() + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.4202592596411705&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
-					url = new URL("http://transport.orgp.spb.ru/Portal/transport/mapx/innerRouteVehicle?ROUTE=" + route.id.toString() + "&SCOPE=" + _scope + "&SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&SRS=EPSG%3A900913&LAYERS=&WHEELCHAIRONLY=false&_OLSALT=0.6481046043336391&BBOX=3272267.2330292,8264094.7670049,3479564.4537096,8483621.912209");
-					URLConnection conn = url.openConnection();
-					conn.setRequestProperty("Cookie", _cookie);
-					conn.connect();
-					BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-					String line = "";
-		  
-					String json = "";
-					while ((line = rd.readLine()) != null) {
-						json += line;
-						if (_canceled) {
-							throw new LoadTaskException();
-						}
-					}
-					
-					Mercator m = new Mercator();
-					
-					JSONObject jo = new JSONObject(json);
-					JSONArray ja = jo.getJSONArray("features");
-					_array = new ArrayList<Transport>();
-					for (int i = 0; i < ja.length(); i++) {
-						JSONArray coordinates = ja.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates");
-						Transport transport = route.creatTransport();
-						transport.Lat = m.deg(coordinates.getDouble(1), AxisType.LAT);
-						transport.Lng = m.deg(coordinates.getDouble(0), AxisType.LNG);
-						transport.direction = (float)ja.getJSONObject(i).getJSONObject("properties").getDouble("direction");
-						transport.velocity = (int)ja.getJSONObject(i).getJSONObject("properties").getDouble("velocity");
-						transport.id = ja.getJSONObject(i).getInt("id");
-						_array.add(transport);
-						if (_canceled) {
-							throw new LoadTaskException();
-						}
-					}
-				} catch (LoadTaskException e) {
-					_array = null;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				_step++;
-			}
-			
-			@Override
-			public boolean needExecute() {
-				return _step == 0;
-			}
-			
-			@Override
-			public void finish() {
-				if (isOnline()) {
-					_listener.onTransportListOfRouteLoadComplete(_array);
-				}
-				removeParserById(requestId);
-			}
 
-			@Override
-			public int getRequestId() {
-				return requestId;
-			}
-		};
-		
-		startParserWithId(req, requestId);
-	}
-	
 	public void startParserWithId(IRequest req, int id) {
 		boolean exist = false;
 		for (ParserWebPageTask parser : _getParsers()) {

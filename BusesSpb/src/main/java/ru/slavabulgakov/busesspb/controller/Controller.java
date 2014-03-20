@@ -269,9 +269,14 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, OnAc
 	}
 
 	@Override
-	public void onTransportListOfRouteLoadComplete(ArrayList<Transport> array) {
+	public void onTransportListOfRouteLoadComplete(final ArrayList<Transport> array) {
 		if (_isMainActivity()) {
-			_mainActivity().getMapController().showTransportListOnMap(array);
+            getHandler().post(new Runnable() {
+                @Override
+                public void run() {
+                    _mainActivity().getMapController().showTransportListOnMap(array);
+                }
+            });
 		}
 	}
 

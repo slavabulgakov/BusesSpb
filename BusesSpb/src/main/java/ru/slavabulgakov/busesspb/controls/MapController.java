@@ -167,12 +167,14 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
     public void showTransportListOnMap(ArrayList<Transport> array) {
 		if (_map != null) {
 			if (array != null) {
+                for (TransportOverlay transportOverlay : _model.getAllTransportOverlays()) {
+                    transportOverlay.marker.remove();
+                    transportOverlay.groundOverlay.remove();
+                }
+                _model.getAllTransportOverlays().clear();
 				for (Transport transport : array) {
-					TransportOverlay transportOverlay = _getTransportOverlayById(transport.id);
-					if (transportOverlay == null) {
-						transportOverlay = new TransportOverlay();
-						_model.getAllTransportOverlays().add(transportOverlay);
-					}
+					TransportOverlay transportOverlay = new TransportOverlay();
+                    _model.getAllTransportOverlays().add(transportOverlay);
 					transportOverlay.transport = transport;
 					_addTransportOverlay(transportOverlay);
 				}
@@ -195,9 +197,8 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 			transportOverlay.marker.remove();
 		}
 		LatLng position = new LatLng(transportOverlay.transport.Lat, transportOverlay.transport.Lng);
-		String velocity = _model.getString(R.string.velocity) + Integer.toString(transportOverlay.transport.velocity) + _model.getString(R.string.km);
 		GroundOverlay groundOverlay = _map.addGroundOverlay(new GroundOverlayOptions().zIndex(2).image(_getBusBitMap(transportOverlay.transport.kind)).position(position, getWidth()).bearing(transportOverlay.transport.direction));
-		Marker marker = _map.addMarker(new MarkerOptions().position(position).title(velocity).icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber)));
+		Marker marker = _map.addMarker(new MarkerOptions().position(position).icon(_getRouteNumberBitMap(transportOverlay.transport.routeNumber)));
 		transportOverlay.groundOverlay = groundOverlay;
 		transportOverlay.marker = marker;
     }
@@ -264,17 +265,6 @@ public class MapController implements OnCameraChangeListener, OnInfoWindowClickL
 		canvas.drawText(routeNumber, textWidth / 2, height / 2 - _model.dpToPx(1), paint);
 		
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
-	}
-	
-	private TransportOverlay _getTransportOverlayById(int id) {
-		TransportOverlay findTransportOverlay = null;
-		for (TransportOverlay transportOverlay : _model.getAllTransportOverlays()) {
-			if (transportOverlay.transport.id == id) {
-				findTransportOverlay = transportOverlay;
-				break;
-			}
-		}
-		return findTransportOverlay;
 	}
 	
 	private int _countShows = 0;

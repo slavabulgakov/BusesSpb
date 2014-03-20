@@ -12,7 +12,7 @@ public class Route implements Serializable {
 	public String routeNumber;
 	public TransportKind kind;
     public String fullName;
-	Transport creatTransport() {
+	public Transport createTransport() {
 		Transport transport = new Transport();
 		transport.routeNumber = this.routeNumber;
 		transport.cost = this.cost;
