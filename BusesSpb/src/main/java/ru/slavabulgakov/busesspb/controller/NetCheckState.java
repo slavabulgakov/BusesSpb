@@ -40,7 +40,9 @@ public class NetCheckState extends State {
                 public void onErrorResponse(VolleyError error) {
                     Log.d("internet", "retry");
                     _timer.schedule(new CheckInternetConnectionTimerTask(), 3000);
-                    _controller.getMainActivity().getInternetDenyButtonController().showInternetDenyIcon();
+                    if (_controller.getMainActivity() != null) {
+                        _controller.getMainActivity().getInternetDenyButtonController().showInternetDenyIcon();
+                    }
                 }
             });
             _queue.add(request);
