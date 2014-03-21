@@ -40,10 +40,14 @@ public class StationsContainer extends LoaderContainer {
 		for (String line : strings) {
 //			17609,17609,"ПР. АВИАКОНСТРУКТОРОВ, 38",60.027851,30.222640,0,2,bus
 			String items[] = line.split(",");
+            int stationNameIndex = 5;
+            if (items.length - stationNameIndex < 0) {
+                continue;
+            }
 			Station station = new Station();
 			station.id = items[0];
 			int length = 0;
-			for (int i = items.length - 5; i < items.length; i++) {
+			for (int i = items.length - stationNameIndex; i < items.length; i++) {
 				length += items[i].length() + 1;
 			}
 			station.name = line.substring(items[0].length() + 1 + items[1].length() + 1, line.length() - length);
