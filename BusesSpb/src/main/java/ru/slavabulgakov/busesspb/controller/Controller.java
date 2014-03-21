@@ -306,7 +306,9 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, OnAc
 
 	@Override
 	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
-        _mainActivity().updateControls();
+        if (_isMainActivity()) {
+            _mainActivity().updateControls();
+        }
 
         if (!isOpen) {
             _mainActivity().keyboardTurnOff();
