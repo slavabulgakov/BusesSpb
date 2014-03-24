@@ -420,7 +420,7 @@ public class Model extends Application {
             ids += route.id.toString() + ",";
         }
         ids = ids.substring(0, ids.length() - 1);
-        _network.loadForContainer(new TransportsContainer(ids, this), new Loader.Listener() {
+        getNetwork().loadForContainer(new TransportsContainer(ids, this), new Loader.Listener() {
             @Override
             public void staticLoaded(Loader loader) {
 
