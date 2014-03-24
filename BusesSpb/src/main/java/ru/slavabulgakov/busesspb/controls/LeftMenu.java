@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageButton;
@@ -39,6 +40,9 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
 	private CheckButton _menuShipFilter;
 	private ImageButton _clearButton;
 	private Context _context;
+    private Button _aboutButton;
+    private boolean _editFocused;
+    private LinearLayout _hiddenLayout;
 	
 	public EditText getInput() {
 		return _editText;
@@ -57,17 +61,36 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
 			adapter.getFilter().filter(_editText.getText());
 		}
 	}
+
+    public boolean focused() {
+        return _editFocused;
+    }
+
+    public void removeFocus() {
+        _hiddenLayout.requestFocus();
+    }
 	
 	private void _load(Context context, AttributeSet attrs) {
 		_context = context;
 		View.inflate(context, R.layout.left_menu, this);
 		_ticketsTray = (TicketsTray)findViewById(R.id.routeTicketsScrollView);
 		_progressBar = (ProgressBar)findViewById(R.id.selectRouteProgressBar);
+
+        _aboutButton = (Button)findViewById(R.id.about);
+
+        _hiddenLayout = (LinearLayout)findViewById(R.id.hidden);
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
 		_editText.addTextChangedListener(this);
 		_editText.setOnKeyListener(Controller.getInstance());
+        _editText.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                _aboutButton.setVisibility(hasFocus ? GONE : VISIBLE);
+                _editFocused = hasFocus;
+            }
+        });
 		
 		_clearButton = (ImageButton)findViewById(R.id.clearRouteText);
 		_clearButton.setOnClickListener(Controller.getInstance());

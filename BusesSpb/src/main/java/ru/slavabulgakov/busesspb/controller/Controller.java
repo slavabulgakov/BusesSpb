@@ -308,23 +308,23 @@ public class Controller implements OnClickListener, OnLoadCompleteListener, OnAc
 	public void onMenuChangeState(boolean isOpen, MenuKind kind) {
         if (_isMainActivity()) {
             _mainActivity().updateControls();
+            if (!isOpen) {
+                _mainActivity().keyboardTurnOff();
+                _mainActivity().getLeftMenu().removeFocus();
+            }
+            _mainActivity().getMapController().toggleRotateMap(isOpen);
         }
-
-        if (!isOpen) {
-            _mainActivity().keyboardTurnOff();
-        }
-
-        _mainActivity().getMapController().toggleRotateMap(isOpen);
 
 		if (kind == MenuKind.Left) {
 			if (isOpen) {
 	    		switchToState(new LeftMenuState());
 			}
-			
-			_mainActivity().updateFilterButtons();
-			
-			
-			if (isOpen) {
+
+            if (_isMainActivity()) {
+                _mainActivity().updateFilterButtons();
+            }
+
+            if (isOpen) {
 				FlurryAgent.logEvent(FlurryConstants.menuIsOpen);
 			} else {
 				if (_model.getFavorite().size() > 0) {
