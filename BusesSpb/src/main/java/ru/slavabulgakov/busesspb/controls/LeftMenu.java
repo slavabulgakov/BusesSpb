@@ -7,6 +7,8 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +30,7 @@ import ru.slavabulgakov.busesspb.model.Model;
 import ru.slavabulgakov.busesspb.model.Route;
 import ru.slavabulgakov.busesspb.model.TransportKind;
 
-public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.OnItemClickListener {
+public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
 	private Model _model;
 	private TicketsTray _ticketsTray;
 	private ListView _listView;
@@ -43,6 +45,7 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
     private Button _aboutButton;
     private boolean _editFocused;
     private LinearLayout _hiddenLayout;
+    private LinearLayout _routesLayout;
 	
 	public EditText getInput() {
 		return _editText;
@@ -69,7 +72,7 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
     public void removeFocus() {
         _hiddenLayout.requestFocus();
     }
-	
+
 	private void _load(Context context, AttributeSet attrs) {
 		_context = context;
 		View.inflate(context, R.layout.left_menu, this);
@@ -79,18 +82,13 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
         _aboutButton = (Button)findViewById(R.id.about);
 
         _hiddenLayout = (LinearLayout)findViewById(R.id.hidden);
+        _routesLayout = (LinearLayout)findViewById(R.id.routesLayout);
 		
 		_editText = (EditText)findViewById(R.id.selectRouteText);
 		_editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
 		_editText.addTextChangedListener(this);
 		_editText.setOnKeyListener(Controller.getInstance());
-        _editText.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                _aboutButton.setVisibility(hasFocus ? GONE : VISIBLE);
-                _editFocused = hasFocus;
-            }
-        });
+        _editText.setOnFocusChangeListener(this);
 		
 		_clearButton = (ImageButton)findViewById(R.id.clearRouteText);
 		_clearButton.setOnClickListener(Controller.getInstance());
@@ -249,5 +247,37 @@ public class LeftMenu extends LinearLayout implements TextWatcher, AdapterView.O
         getTicketsTray().addTicket(route);
         Animations.slideDownRoutesListView();
         getInput().setText("");
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        _editFocused = hasFocus;
+        TranslateAnimation animation;
+        int height = _aboutButton.getHeight() + _model.dpToPx(10);
+        if (hasFocus) {
+            animation = new TranslateAnimation(0, 0, 0, -height);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _aboutButton.setVisibility(GONE);
+                        }
+                    });
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+        } else {
+            _aboutButton.setVisibility(VISIBLE);
+            animation = new TranslateAnimation(0, 0, -height, 0);
+        }
+        animation.setDuration(500);
+        _routesLayout.startAnimation(animation);
     }
 }
